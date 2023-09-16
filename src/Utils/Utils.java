@@ -6,9 +6,6 @@ public class Utils {
 
 
     private static Scanner userInput = new Scanner(System.in);
-    public static void main(String[] args) {
-        
-    }
 
     // Jika gagal mendapatkan input dari user, mengembalikan -1.
     public static int getIntInput(String message, String mismatchMessage)
@@ -27,6 +24,11 @@ public class Utils {
 
         return res;
     }
+
+
+
+
+
 
     
 
