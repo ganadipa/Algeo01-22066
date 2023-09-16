@@ -22,12 +22,10 @@ MENU
 
         Input input = new Input();
         int chosenMenu;
-        do {
-            chosenMenu = input.getInt(
-                "Masukan harus dalam range 1 sampai 7",
-                (Integer d) -> d >= 1 && d <= 7
-            );
-        } while (!input.success);
+        chosenMenu = input.getInt(
+            "Masukan harus dalam range 1 sampai 7",
+            (Integer d) -> d >= 1 && d <= 7
+        );
 
         switch(chosenMenu) {
             case 1:
@@ -41,21 +39,23 @@ SUBMENU Sistem Persamaaan Linier
 4. Kaidah Cramer
         """
                 );
-                do {
-                    chosenMenu = input.getInt(
-                        "Masukan harus dalam range 1 sampai 4",
-                        (Integer d) -> d >= 1 && d <= 4
-                    );
-                } while (!input.success);
+                chosenMenu = input.getInt(
+                    "Masukan harus dalam range 1 sampai 4",
+                    (Integer d) -> d >= 1 && d <= 4
+                );
 
                 switch(chosenMenu) {
                     case 1:
+                        System.out.println("Metode eliminasi Gauss");
                         break;
                     case 2:
+                        System.out.println("Metode eliminasi Gauss-Jordan");
                         break;
                     case 3:
+                        System.out.println("Metode matriks balikan");
                         break;
                     case 4:
+                        System.out.println("Kaidah Cramer");
                         break;
                 }
                 
@@ -63,6 +63,7 @@ SUBMENU Sistem Persamaaan Linier
                 break;
 
             case 2:
+                System.out.println("Determinan");
                 break;
             case 3:
                 break;
@@ -81,5 +82,4 @@ SUBMENU Sistem Persamaaan Linier
         
 
     }
-    boolean a() {return true;};
 }

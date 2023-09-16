@@ -19,7 +19,6 @@ public class Input {
                 success = validator.apply(res);
                 if(!success) {
                     System.out.println(errorMessage);
-                    break;
                 }
             } catch (InputMismatchException e) {
                 if(userInput.nextLine() == "exit") {
