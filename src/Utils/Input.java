@@ -19,18 +19,17 @@ public class Input {
     {
         success = false;
         Integer num = -1;
-        String line = "";
         while (!success) {
             try {
-                line = userInput.nextLine();
-                num = Integer.parseInt(line);
+                num = userInput.nextInt();
                 success = validator.apply(num);
                 if(!success) {
                     System.out.println(errorMessage);
                 }
-            } catch (NumberFormatException e) {
+            } catch (InputMismatchException e) {
                 success = false;
                 System.out.println(mustIntegerMessage);
+                userInput.next();
             } 
         }
 

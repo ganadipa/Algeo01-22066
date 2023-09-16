@@ -107,8 +107,8 @@ Pilih metode: """
         System.out.println("\nMasukkan panjang baris dan kolom: ");
 
         int N = Input.getInt(
-            "Masukan tidak boleh negatif",
-            (Integer n) -> n >= 0
+            "Masukan harus positif",
+            (Integer n) -> n >= 1
         );
         Matrix mat = new Matrix(N, N);
 
