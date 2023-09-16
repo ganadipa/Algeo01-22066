@@ -190,11 +190,23 @@ public class Matrix {
     public enum DeterminantMethod {
         RowReduction, CofactorExpansion
     } 
+    /**
+    * Mengembalikan determinan matrix dengan metode yang dipilih.
+    *
+    * @param  method Metode yang digunakan untuk mendapatkan determinan
+    * @return  determinan matrix
+    * @see DeterminantMethod
+    */
     public double getDeterminant(DeterminantMethod method) {
         if(matrix.length != matrix[0].length) throw new Error("Panjang dan lebar matrix harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
-            return 0;
+            toRowEchelon();
+            double total = 1;
+            for(int i = 0; i < matrix.length; i++) {
+                total *= matrix[i][i];
+            }
+            return total;
         }
         else { // (method == DeterminantMethod.CofactorExpansion)
 
@@ -218,13 +230,32 @@ public class Matrix {
                 }
                 subMatrix.displayMatrix(null);
 
-
                 total += Math.pow(-1, j) * matrix[i][j] * subMatrix.getDeterminant(method);
-                System.out.println(total);
             }
 
             return total;
         }
     }
 
+    /**
+    * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
+    * @see getDeterminant
+    */
+    public void toRowEchelon() {
+        for(int j = 0; j < matrix.length-1; j++) {
+            for(int i = matrix.length-1; i > j; i--) {
+                System.out.println(matrix[i][j]);
+
+                // traverse to right
+                double targetMultiplier = matrix[i][j] / matrix[i-1][j];
+                for(int k = j; k < matrix.length; k++) {
+                    matrix[i][k] -= targetMultiplier * matrix[i-1][k];
+                }
+            }
+        }
+        displayMatrix(null);
+    }
+    public void swapRow(int row1, int row2) {
+        
+    }
 }

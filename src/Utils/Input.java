@@ -8,7 +8,6 @@ public class Input {
     private static Scanner userInput = new Scanner(System.in);
     static boolean success = false;
 
-    // if input invalid, return -1, success = false
     /**
     * Input dengan validasi integer sekalian validator ekstra dengan error message ekstranya.
     *
