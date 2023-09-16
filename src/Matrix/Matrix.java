@@ -6,8 +6,8 @@ import java.io.*;
 import java.util.*;
 
 public class Matrix {
-
-    private static Scanner userInput = new Scanner(System.in);
+    private double tolerance = 1e6;
+    private Scanner userInput = new Scanner(System.in);
     
 
     // Property of the matrix dan set to public sehingga bisa di akses darimana saja.
@@ -183,5 +183,80 @@ public class Matrix {
             System.out.println();
         }
         System.out.println("]");
+    }
+
+    /**
+     * Desc: Tuker baris i dengan matriks j dalam matriks.
+     */
+    public void tukerBaris(int i, int j)
+    {
+
+    }
+
+    // need testing
+    public boolean isEchelon() {
+        int currentLeadingOne = -1;
+
+        for(int row = 0; row < this.row; row++)
+        {
+            int prev = currentLeadingOne;
+
+            for (int col = 0; col < this.col; col++)
+            {
+
+                if (Utils.isEqual(this.matrix[row][col], 0.0  )){
+
+                    continue;
+                } else if (Utils.isNotEqual(this.matrix[row][col], 1.0 )){
+
+                    return false;
+                } else {
+
+                    if (col > currentLeadingOne){
+                        currentLeadingOne = col;
+                        break;
+                    } else return false;
+                }
+            }
+
+            // jika currentLeadingOne ga keupdate berarti isi rownya cuma 0;
+            if (currentLeadingOne == prev) currentLeadingOne = this.col;
+        }
+
+
+        return true;
+    }
+
+    public boolean isReducedEchelon() {
+        int currentLeadingOne = -1;
+
+        for(int row = 0; row < this.row; row++)
+        {
+            int prev = currentLeadingOne;
+
+            for (int col = 0; col < this.col; col++)
+            {
+
+                if (Utils.isEqual(this.matrix[row][col], 0.0  )){
+
+                    continue;
+                } else if (Utils.isNotEqual(this.matrix[row][col], 1.0 )){
+
+                    return false;
+                } else {
+
+                    if (col > currentLeadingOne){
+                        currentLeadingOne = col;
+                        break;
+                    } else return false;
+                }
+            }
+
+            // jika currentLeadingOne ga keupdate berarti isi rownya cuma 0;
+            if (currentLeadingOne == prev) currentLeadingOne = this.col;
+        }
+
+
+        return true;
     }
 }

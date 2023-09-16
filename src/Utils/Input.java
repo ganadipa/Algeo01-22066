@@ -8,7 +8,13 @@ public class Input {
     private static Scanner userInput = new Scanner(System.in);
     public boolean success = false;
 
-    // if input invalid, return -1, success = false
+    /**
+     * This function gets user input with integer data type
+     * 
+     * @param errorMessage This is the message that pops when it doesnt match the validator function
+     * @param validator function to validate the input.
+     * @return -1 if input invalid, otherwise get integer inputted from user
+     */
     public int getInt(String errorMessage, Function<Integer,Boolean> validator)
     {
         success = false;
