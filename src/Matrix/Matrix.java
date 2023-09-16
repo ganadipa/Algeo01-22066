@@ -149,7 +149,7 @@ public class Matrix {
 
     }
 
-    private void readMatrixFromUserInput() throws Exception {
+    public void readMatrixFromUserInput() throws Exception {
         // Input matriks dilakukan baris per baris (BELUM HANDLE ERROR SPESIFIK).
         for (int i = 0; i < this.row; i++)
         {
@@ -184,4 +184,47 @@ public class Matrix {
         }
         System.out.println("]");
     }
+
+
+    // Metode yang digunakan untuk mendapatkan determinan
+    public enum DeterminantMethod {
+        RowReduction, CofactorExpansion
+    } 
+    public double getDeterminant(DeterminantMethod method) {
+        if(matrix.length != matrix[0].length) throw new Error("Panjang dan lebar matrix harus sama");
+
+        if(method == DeterminantMethod.RowReduction) {
+            return 0;
+        }
+        else { // (method == DeterminantMethod.CofactorExpansion)
+
+            if(matrix.length == 2) {
+                return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
+            }
+
+            double total = 0;
+            int i = 0;
+            for(int j = 0; j < matrix.length; j++) {
+                
+                // Bikin matrix kecilnya
+                Matrix subMatrix = new Matrix(matrix.length-1, matrix.length-1);
+                for(int k = 0; k < subMatrix.matrix.length; k++) {
+                    for(int l = 0; l < subMatrix.matrix.length; l++) {
+                        if(k >= i && l >= j) subMatrix.matrix[k][l] = matrix[k+1][l+1];
+                        else if(k >= i) subMatrix.matrix[k][l] = matrix[k+1][l];
+                        else if(l >= j) subMatrix.matrix[k][l] = matrix[k][l+1];
+                        else subMatrix.matrix[k][l] = matrix[k][l];
+                    }
+                }
+                subMatrix.displayMatrix(null);
+
+
+                total += Math.pow(-1, j) * matrix[i][j] * subMatrix.getDeterminant(method);
+                System.out.println(total);
+            }
+
+            return total;
+        }
+    }
+
 }

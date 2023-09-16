@@ -6,43 +6,54 @@ import java.util.function.Function;
 
 public class Input {
     private static Scanner userInput = new Scanner(System.in);
-    public boolean success = false;
+    static boolean success = false;
 
     // if input invalid, return -1, success = false
-    public int getInt(String errorMessage, Function<Integer,Boolean> validator)
+    /**
+    * Input dengan validasi integer sekalian validator ekstra dengan error message ekstranya.
+    *
+    * @param  errorMessage pesan yang ditampilkan jika validator mengembalikan false
+    * @param  validator masukan fungsi lambda untuk validasi tambahan terhadap input jika input memang integer
+    * @return      input integer dari user
+    */
+    public static int getInt(String errorMessage, Function<Integer,Boolean> validator)
     {
         success = false;
-        Integer res = -1;
+        Integer num = -1;
+        String line = "";
         while (!success) {
             try {
-                res = userInput.nextInt();
-                success = validator.apply(res);
+                line = userInput.nextLine();
+                num = Integer.parseInt(line);
+                success = validator.apply(num);
                 if(!success) {
                     System.out.println(errorMessage);
                 }
-            } catch (InputMismatchException e) {
-                if(userInput.nextLine() == "exit") {
-                    return res;
-                }
+            } catch (NumberFormatException e) {
                 success = false;
                 System.out.println(mustIntegerMessage);
             } 
         }
 
-        return res;
+        return num;
     }
-    public int getInt()
+    
+    /**
+    * Input dengan validasi integer error message
+    *
+    * @return      input integer dari user
+    */
+    public static int getInt()
     {
         success = false;
         int res = -1;
-        while (res == -1) {
+        while (!success) {
             try {
                 res = userInput.nextInt();
                 success = true;
             } catch (InputMismatchException e) {
                 success = false;
                 System.out.println(mustIntegerMessage);
-                userInput.nextLine();
             } 
         }
 
