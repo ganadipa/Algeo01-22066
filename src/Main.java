@@ -66,19 +66,21 @@ SUBMENU Sistem Persamaaan Linier
                 System.out.println("Determinan");
                 break;
             case 3:
+                System.out.println("Matriks balikan");
                 break;
             case 4:
+                System.out.println("Interpolasi Polinom");
                 break;
             case 5:
+                System.out.println("Interpolasi Bicubic Spline");
                 break;
             case 6:
+                System.out.println("Regresi linier berganda");
                 break;
             case 7:
+                System.out.println("Keluar");
                 break;
         }
-        
-        
-
         
 
     }
