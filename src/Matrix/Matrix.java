@@ -33,6 +33,8 @@ public class Matrix {
         this.initMatrix(row, col);
     }
 
+    // ***********************************************************************************
+
     // Inisialisasi matriks
     public void initMatrix(int row, int col)
     {
@@ -196,13 +198,6 @@ public class Matrix {
         System.out.println("]");
     }
 
-    /**
-     * Desc: Tuker baris i dengan matriks j dalam matriks.
-     */
-    public void tukerBaris(int i, int j)
-    {
-
-    }
 
     // need testing
     public boolean isEchelon() {
@@ -292,9 +287,26 @@ public class Matrix {
 
 
         return true;
+    }
 
+    public void tukarBaris(int baris1, int baris2) {
+        if (baris1 == baris2) return;
+        if (baris1 < 0 || baris1 >= this.row || baris2 < 0 || baris2 >= this.row) {
+            System.out.println("Input baris tidak berada di dalam range baris yang valid.");
+        }
 
-}   
+        double tmpBaris[];
+        tmpBaris = new double[this.col];
+        for (int i = 0; i < this.col; i++)
+        {
+            tmpBaris[i] = this.matrix[baris1][i];
+            this.matrix[baris1][i] = this.matrix[baris2][i];
+            this.matrix[baris2][i] = tmpBaris[i];
+        }
+        
+    }
+
+ 
 
 
 }
