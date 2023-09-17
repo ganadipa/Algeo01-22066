@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.*;
 
 public class Matrix {
-    private double tolerance = 1e6;
     private Scanner userInput = new Scanner(System.in);
     
 
@@ -289,7 +288,7 @@ public class Matrix {
         return true;
     }
 
-    public void tukarBaris(int baris1, int baris2) {
+    public void swapRow(int baris1, int baris2) {
         if (baris1 == baris2) return;
         if (baris1 < 0 || baris1 >= this.row || baris2 < 0 || baris2 >= this.row) {
             System.out.println("Input baris tidak berada di dalam range baris yang valid.");
@@ -379,8 +378,5 @@ public class Matrix {
             }
         }
         displayMatrix(null);
-    }
-    public void swapRow(int row1, int row2) {
-        
     }
 }
