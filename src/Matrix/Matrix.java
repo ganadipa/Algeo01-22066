@@ -6,8 +6,7 @@ import java.io.*;
 import java.util.*;
 
 public class Matrix {
-
-    private static Scanner userInput = new Scanner(System.in);
+    private Scanner userInput = new Scanner(System.in);
     
 
     // Property of the matrix dan set to public sehingga bisa di akses darimana saja.
@@ -32,6 +31,8 @@ public class Matrix {
     {
         this.initMatrix(row, col);
     }
+
+    // ***********************************************************************************
 
     // Inisialisasi matriks
     public void initMatrix(int row, int col)
@@ -123,16 +124,24 @@ public class Matrix {
             String line;
             while ((line = bufferedReader.readLine()) != null)
             {   
-                col = Math.max(line.split(" ").length, col);
+                int tmpCol = line.split(" ").length;
+                if (tmpCol < col) {
+                    continue;
+                }
+                col = Math.max(tmpCol, col);
                 row += 1;
             }
+
 
             this.initMatrix(row, col);
             bufferedReader.reset();
 
+
             int i = 0;
             while((line = bufferedReader.readLine()) != null) {
                 String[] elmts = line.split(" ");
+                if (elmts.length == 0) continue;
+                if (elmts.length < this.col) throw new IllegalArgumentException();
                 for (int j = 0; j < elmts.length; j++)
                 {
                     this.matrix[i][j] = Double.parseDouble(elmts[j]);
@@ -145,6 +154,9 @@ public class Matrix {
         } catch (NumberFormatException e) {
             // Handle case saat ada nonnumeric di input.
             System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
         }
 
     }
@@ -184,6 +196,118 @@ public class Matrix {
         }
         System.out.println("]");
     }
+
+
+    // need testing
+    public boolean isEchelon() {
+        int currentLeadingOne = -1;
+
+        for(int row = 0; row < this.row; row++)
+        {
+            int prev = currentLeadingOne;
+
+            for (int col = 0; col < this.col; col++)
+            {
+
+                if (Utils.isEqual(this.matrix[row][col], 0.0  )){
+
+                    continue;
+                } else if (Utils.isNotEqual(this.matrix[row][col], 1.0 )){
+
+                    return false;
+                } else {
+
+                    if (col > currentLeadingOne){
+                        currentLeadingOne = col;
+                        
+                        break;
+                    } else return false;
+                }
+            }
+
+            // jika currentLeadingOne ga keupdate berarti isi rownya cuma 0;
+            if (currentLeadingOne == prev) currentLeadingOne = this.col;
+        }
+
+
+        return true;
+    }
+
+    public boolean isReducedEchelon() {
+
+        int leadingOnePosition[];
+        leadingOnePosition = new int[this.col];
+        int currentLeadingOne = -1;
+
+        for(int row = 0; row < this.row; row++)
+        {
+            int prev = currentLeadingOne;
+
+            for (int col = 0; col < this.col; col++)
+            {
+
+                if (Utils.isEqual(this.matrix[row][col], 0.0  )){
+
+                    continue;
+                } else if (Utils.isNotEqual(this.matrix[row][col], 1.0 )){
+
+                    return false;
+                } else {
+
+                    if (col > currentLeadingOne){
+                        currentLeadingOne = col;
+                        leadingOnePosition[col] = 1;
+                        break;
+                    } else return false;
+                }
+            }
+
+            // jika currentLeadingOne ga keupdate berarti isi rownya cuma 0;
+            if (currentLeadingOne == prev) {
+                currentLeadingOne = this.col;
+                continue;
+            }
+        }
+
+        // check the colomn that has leading one, does it only contain the leading one?
+        for (int pos = 0; pos < this.col; pos++){
+            if (leadingOnePosition[pos] == 1) {
+                // checking if its colomn only contains the leading one 
+                for (int row = 0; row < this.row; row++)
+                {
+                    if (Utils.isNotEqual(this.matrix[row][pos], 1.0) 
+                        && Utils.isNotEqual(this.matrix[row][pos], 0.0)) 
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+
+    public void swapRow(int baris1, int baris2) {
+        if (baris1 == baris2) return;
+        if (baris1 < 0 || baris1 >= this.row || baris2 < 0 || baris2 >= this.row) {
+            System.out.println("Input baris tidak berada di dalam range baris yang valid.");
+        }
+
+        double tmpBaris[];
+        tmpBaris = new double[this.col];
+        for (int i = 0; i < this.col; i++)
+        {
+            tmpBaris[i] = this.matrix[baris1][i];
+            this.matrix[baris1][i] = this.matrix[baris2][i];
+            this.matrix[baris2][i] = tmpBaris[i];
+        }
+        
+    }
+
+ 
+
+
 
 
     // Metode yang digunakan untuk mendapatkan determinan
@@ -254,8 +378,5 @@ public class Matrix {
             }
         }
         displayMatrix(null);
-    }
-    public void swapRow(int row1, int row2) {
-        
     }
 }
