@@ -162,7 +162,7 @@ public class Matrix {
 
     }
 
-    private void readMatrixFromUserInput() throws Exception {
+    public void readMatrixFromUserInput() throws Exception {
         // Input matriks dilakukan baris per baris (BELUM HANDLE ERROR SPESIFIK).
         for (int i = 0; i < this.row; i++)
         {
@@ -309,4 +309,78 @@ public class Matrix {
  
 
 
+
+
+    // Metode yang digunakan untuk mendapatkan determinan
+    public enum DeterminantMethod {
+        RowReduction, CofactorExpansion
+    } 
+    /**
+    * Mengembalikan determinan matrix dengan metode yang dipilih.
+    *
+    * @param  method Metode yang digunakan untuk mendapatkan determinan
+    * @return  determinan matrix
+    * @see DeterminantMethod
+    */
+    public double getDeterminant(DeterminantMethod method) {
+        if(matrix.length != matrix[0].length) throw new Error("Panjang dan lebar matrix harus sama");
+
+        if(method == DeterminantMethod.RowReduction) {
+            toRowEchelon();
+            double total = 1;
+            for(int i = 0; i < matrix.length; i++) {
+                total *= matrix[i][i];
+            }
+            return total;
+        }
+        else { // (method == DeterminantMethod.CofactorExpansion)
+
+            if(matrix.length == 2) {
+                return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
+            }
+
+            double total = 0;
+            int i = 0;
+            for(int j = 0; j < matrix.length; j++) {
+                
+                // Bikin matrix kecilnya
+                Matrix subMatrix = new Matrix(matrix.length-1, matrix.length-1);
+                for(int k = 0; k < subMatrix.matrix.length; k++) {
+                    for(int l = 0; l < subMatrix.matrix.length; l++) {
+                        if(k >= i && l >= j) subMatrix.matrix[k][l] = matrix[k+1][l+1];
+                        else if(k >= i) subMatrix.matrix[k][l] = matrix[k+1][l];
+                        else if(l >= j) subMatrix.matrix[k][l] = matrix[k][l+1];
+                        else subMatrix.matrix[k][l] = matrix[k][l];
+                    }
+                }
+                subMatrix.displayMatrix(null);
+
+                total += Math.pow(-1, j) * matrix[i][j] * subMatrix.getDeterminant(method);
+            }
+
+            return total;
+        }
+    }
+
+    /**
+    * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
+    * @see getDeterminant
+    */
+    public void toRowEchelon() {
+        for(int j = 0; j < matrix.length-1; j++) {
+            for(int i = matrix.length-1; i > j; i--) {
+                System.out.println(matrix[i][j]);
+
+                // traverse to right
+                double targetMultiplier = matrix[i][j] / matrix[i-1][j];
+                for(int k = j; k < matrix.length; k++) {
+                    matrix[i][k] -= targetMultiplier * matrix[i-1][k];
+                }
+            }
+        }
+        displayMatrix(null);
+    }
+    public void swapRow(int row1, int row2) {
+        
+    }
 }
