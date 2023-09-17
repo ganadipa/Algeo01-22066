@@ -123,16 +123,24 @@ public class Matrix {
             String line;
             while ((line = bufferedReader.readLine()) != null)
             {   
-                col = Math.max(line.split(" ").length, col);
+                int tmpCol = line.split(" ").length;
+                if (tmpCol < col) {
+                    continue;
+                }
+                col = Math.max(tmpCol, col);
                 row += 1;
             }
+
 
             this.initMatrix(row, col);
             bufferedReader.reset();
 
+
             int i = 0;
             while((line = bufferedReader.readLine()) != null) {
                 String[] elmts = line.split(" ");
+                if (elmts.length == 0) continue;
+                if (elmts.length < this.col) throw new IllegalArgumentException();
                 for (int j = 0; j < elmts.length; j++)
                 {
                     this.matrix[i][j] = Double.parseDouble(elmts[j]);
@@ -145,6 +153,9 @@ public class Matrix {
         } catch (NumberFormatException e) {
             // Handle case saat ada nonnumeric di input.
             System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
         }
 
     }
@@ -214,6 +225,7 @@ public class Matrix {
 
                     if (col > currentLeadingOne){
                         currentLeadingOne = col;
+                        
                         break;
                     } else return false;
                 }
@@ -228,6 +240,9 @@ public class Matrix {
     }
 
     public boolean isReducedEchelon() {
+
+        int leadingOnePosition[];
+        leadingOnePosition = new int[this.col];
         int currentLeadingOne = -1;
 
         for(int row = 0; row < this.row; row++)
@@ -247,16 +262,39 @@ public class Matrix {
 
                     if (col > currentLeadingOne){
                         currentLeadingOne = col;
+                        leadingOnePosition[col] = 1;
                         break;
                     } else return false;
                 }
             }
 
             // jika currentLeadingOne ga keupdate berarti isi rownya cuma 0;
-            if (currentLeadingOne == prev) currentLeadingOne = this.col;
+            if (currentLeadingOne == prev) {
+                currentLeadingOne = this.col;
+                continue;
+            }
+        }
+
+        // check the colomn that has leading one, does it only contain the leading one?
+        for (int pos = 0; pos < this.col; pos++){
+            if (leadingOnePosition[pos] == 1) {
+                // checking if its colomn only contains the leading one 
+                for (int row = 0; row < this.row; row++)
+                {
+                    if (Utils.isNotEqual(this.matrix[row][pos], 1.0) 
+                        && Utils.isNotEqual(this.matrix[row][pos], 0.0)) 
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
 
         return true;
-    }
+
+
+}   
+
+
 }

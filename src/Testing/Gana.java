@@ -12,7 +12,9 @@ public class Gana {
         try {
             m2.readMatrixFromFile();
             m2.displayMatrix("augmented");
-            System.out.println(m2.isEchelon());
+            if (m2.isEchelon()) System.out.println("Check isEchelon passed!");
+            if (m2.isReducedEchelon()) System.out.println("Check isReducedEchelon passed!");
+
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
