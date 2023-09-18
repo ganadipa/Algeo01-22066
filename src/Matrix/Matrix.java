@@ -198,7 +198,7 @@ public class Matrix {
     }
 
 
-    // need testing
+    // Tested
     public boolean isEchelon() {
         int currentLeadingOne = -1;
 
