@@ -37,6 +37,38 @@ public class Utils {
         return (Math.abs(val1-val2) > tolerance);
     }
 
+    public static void plusMinusList(double[] l1, double[] l2, boolean plus)
+    {
+        for (int i = 0; i < l1.length; i++)
+        {
+            if (plus){
+                l1[i] = l1[i] + l2[i];
+            } else {
+                l1[i] = l1[i] - l2[i];
+            }
+        }
+    }
+
+    public static void plusMinusList(double[] l1, double[] l2, boolean plus, double multiplier)
+    {
+        for (int i = 0; i < l1.length; i++)
+        {
+            if (plus){
+                l1[i] = l1[i] + l2[i];
+            } else {
+                l1[i] = l1[i] - l2[i]*multiplier;
+            }
+        }
+    }
+
+    public static void multiplyListBy(double[] l, double multiplier)
+    {
+        for (int i = 0; i < l.length; i++)
+        {
+            l[i] *= multiplier;
+        }
+    }
+
 
 
 
