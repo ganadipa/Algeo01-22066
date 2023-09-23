@@ -108,27 +108,6 @@ public class Main {
 
         interpolasi.solve();
 
-        System.out.println(
-                """
-                    
-                Coba lagi ?
-                1. Ya
-                2. Keluar
-                
-                Pilih instruksi:
-                """
-        );
-
-        int chosenInstruction = Input.getInt(
-                "Masukan harus dalam range 1 - 2",
-                (Integer n) -> n == 1 || n == 2
-        );
-
-        if(chosenInstruction == 1) {
-            handle;
-            return;
-        }
-
     }
 
     static void handleDeterminan() {
