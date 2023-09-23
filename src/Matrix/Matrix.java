@@ -379,4 +379,19 @@ public class Matrix {
         }
         displayMatrix(null);
     }
+
+    public Matrix getIdentityBySize() {
+        return null;
+    }
+
+    /**
+    * Mengembalikan inverse matrix.
+    * @return  inverse matrix
+    */
+    public Matrix getInverse() {
+        // Bikin matrix augmented dengan identitas di kanan
+        Matrix augMatrix = new Matrix(matrix.length, col)
+
+        return null;
+    }
 }

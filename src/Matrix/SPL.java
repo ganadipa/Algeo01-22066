@@ -78,7 +78,7 @@ class Parametric {
 
 public class SPL implements Solvable {
 
-    public void init() {
+    public void init(Matrix matrix) {
 
     }
     public void solve() {
