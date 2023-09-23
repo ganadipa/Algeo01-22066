@@ -574,7 +574,4 @@ public class SPL implements Solvable {
         this.augmentedMatrix.displayMatrix("augmented");
     }
 
-
-
-    
 }

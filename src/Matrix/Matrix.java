@@ -356,6 +356,15 @@ public class Matrix{
         }
     }
 
+    /**
+    * Mengembalikan determinan matrix dengan metode default yaitu CofactorExpansion.
+    * @return  determinan matrix
+    * @see getDeterminant
+    */
+    public double getDeterminant() {
+        return getDeterminant(DeterminantMethod.CofactorExpansion);
+    }
+
     public int getColomnNotEntirelyZero(int startRow, int endRow)
     {
         int idx = -1;
@@ -521,12 +530,15 @@ public class Matrix{
         }
     }
 
-
+    // Metode yang digunakan untuk mendapatkan determinan
+    public enum InverseMethod {
+        GaussJordan, Adjoin
+    } 
     /**
     * Mengembalikan inverse matrix.
     * @return  inverse matrix
     */
-    public Matrix getInverse() throws Error{
+    public Matrix getInverse(InverseMethod method) throws Error{
         if(getDeterminant(DeterminantMethod.CofactorExpansion) == 0) {
             throw new Error("Determinan tidak boleh 0");
         }
@@ -534,31 +546,45 @@ public class Matrix{
             throw new Error("Panjang baris dan kolom harus sama");
         }
 
-        // Bikin matrix augmented dengan identitas di kanan
-        Matrix augMatrix = new Matrix(row, col*2);
-        
-        for(int i = 0; i < row; i++) {
-            for(int j = 0; j < col; j++) {
-                augMatrix.matrix[i][j] = matrix[i][j];
+        if(method == InverseMethod.GaussJordan) {
+            // Bikin matrix augmented dengan identitas di kanan
+            Matrix augMatrix = new Matrix(row, col*2);
+            
+            for(int i = 0; i < row; i++) {
+                for(int j = 0; j < col; j++) {
+                    augMatrix.matrix[i][j] = matrix[i][j];
+                }
             }
-        }
-        for(int i = 0; i < row; i++) {
-            augMatrix.matrix[i][i+3] = 1;
-        }
-
-        augMatrix.toReducedRowEchelon();
-        Matrix inverseMatrix = new Matrix(row, col);
-
-        for(int i = 0; i < row; i++) {
-            for(int j = 0; j < col; j++) {
-                inverseMatrix.matrix[i][j] = augMatrix.matrix[i][j+col];
+            for(int i = 0; i < row; i++) {
+                augMatrix.matrix[i][i+3] = 1;
             }
+    
+            augMatrix.toReducedRowEchelon();
+            Matrix inverseMatrix = new Matrix(row, col);
+    
+            for(int i = 0; i < row; i++) {
+                for(int j = 0; j < col; j++) {
+                    inverseMatrix.matrix[i][j] = augMatrix.matrix[i][j+col];
+                }
+            }
+            return inverseMatrix;
+        }
+        else {
+            return getAdjoin().MultiplyByConst((double)1/(double)getDeterminant());
         }
 
-        return inverseMatrix;
+
     }
 
-    public void readInterpolasi() {
+    /**
+    * Mengembalikan inverse matrix dengan metode default yaitu gauss jordan.
+    * @return  inverse matrix
+    */
+    public Matrix getInverse() {
+        return getInverse(InverseMethod.GaussJordan);
+    }
+
+    public Double readInterpolasi() {
         System.out.print("Masukkan  banyak titik: ");
         int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
 
@@ -580,9 +606,13 @@ public class Matrix{
             }
             //c + bx + ax2 = y
         }
+
+        System.out.print("Masukkan nilai x yang ingin ditafsir nilai f(x) nya: ");
+        int x = Input.getInt("", (num) -> true);
+        return (double) x;
     }
 
-    public void readInterpolasiFromFile() {
+    public Double readInterpolasiFromFile() {
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
         String fileName = userInput.next();
@@ -594,7 +624,7 @@ public class Matrix{
                 titiks.add(line);
             }
 
-            this.initMatrix(titiks.size(), titiks.size() + 1);
+            this.initMatrix(titiks.size() - 1, titiks.size());
 
             for (int i = 0; i < this.row; i++) {
                 String[] titik = titiks.get(i).split(" ");
@@ -608,15 +638,119 @@ public class Matrix{
                     }
                 }
             }
+
+            return Double.parseDouble(titiks.get(titiks.size() - 1));
+
         } catch (IOException e) {
             // Handle case saat file not found atau ada IO error.
             System.out.println("File tidak ditemukan.");
+            return null;
         } catch (NumberFormatException e) {
             // Handle case saat ada nonnumeric di input.
             System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+            return null;
         } catch (IllegalArgumentException e) {
             // Jumlah elemen di setiap baris tidak konsisten.
             System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
+            return null;
         }
+    }
+
+    public Double[] readBicubicFromFile() {
+        System.out.println("Masukkan nama file beserta ekstensinya.");
+        System.out.print("(dir: test/input): ");
+        String fileName = userInput.next();
+        String fileInputPath = "test/input/" + fileName;
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
+            this.initMatrix(16, 1);
+            int row = 0;
+            for (int i = 0; i < 4; i++) {
+                String[] line = bufferedReader.readLine().split(" ");
+                for (String s : line) {
+                    this.matrix[row++][0] = Double.parseDouble(s);
+                }
+            }
+
+            String[] line = bufferedReader.readLine().split(" ");
+
+            return new Double[]{ Double.parseDouble(line[0]), Double.parseDouble(line[1]) };
+
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            System.out.println("File tidak ditemukan.");
+            return null;
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+            return null;
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
+            return null;
+        }
+    }
+
+    /**
+    * Mengembalikan matrix kofaktor.
+    * @param row baris
+    * @param col kolom
+    * @return  kofaktor matrix
+    */
+    public Matrix getCofactor(int row, int col) {
+        if(matrix.length <= 2) {
+            throw new Error("Panjang baris dan kolom minimal 3"); 
+        }
+
+        Matrix subMatrix = new Matrix(matrix.length-1, matrix.length-1);
+        for(int k = 0; k < subMatrix.matrix.length; k++) {
+            for(int l = 0; l < subMatrix.matrix.length; l++) {
+                if(k >= row && l >= col) subMatrix.matrix[k][l] = matrix[k+1][l+1];
+                else if(k >= row) subMatrix.matrix[k][l] = matrix[k+1][l];
+                else if(l >= col) subMatrix.matrix[k][l] = matrix[k][l+1];
+                else subMatrix.matrix[k][l] = matrix[k][l];
+            }
+        }
+
+        return subMatrix;
+    }
+
+    public Matrix getAdjoin() {
+        Matrix m = new Matrix(row, col);
+
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < row; j++) {
+                m.matrix[i][j] = Math.pow(-1,i+j) * getCofactor(i, j).getDeterminant();
+            }   
+        }
+
+        return m;
+    }
+
+    public Matrix MultiplyByConst(double x) {
+        Matrix m = new Matrix(row, col);
+        for (int i = 0; i < this.row; i++)
+        {
+            for (int j = 0; j < this.col; j++)
+            {
+                m.matrix[i][j] = matrix[i][j] * x;
+            }
+        }
+        return m;
+    }
+
+    public Matrix multiplyBy(Matrix m) {
+
+        Matrix result = new Matrix(this.row, m.col);
+
+        for (int i = 0; i < result.row; i++) {
+            for(int j = 0; j < result.col; j++) {
+                for (int k = 0; k < this.col; k++) {
+                    result.matrix[i][j] += this.matrix[i][k] * m.matrix[k][j];
+                }
+            }
+        }
+
+        return result;
     }
 }

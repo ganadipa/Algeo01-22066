@@ -5,8 +5,10 @@ import javax.swing.Action;
 
 import Matrix.Matrix;
 import Matrix.MultipleLinearRegression;
+import Matrix.SPL;
 import Utils.Input;
 import Matrix.Interpolasi;
+import Matrix.BicubicSplineInterpolation;
 
 public class Main {
 
@@ -82,7 +84,7 @@ public class Main {
                     handleInterpolasi();
                     break;
                 case 5:
-                    System.out.println("Interpolasi Bicubic Spline");
+                    handleBicubic();
                     break;
                 case 6:
                     RegresiLinierBerganda();
@@ -95,7 +97,22 @@ public class Main {
         }
     }
 
+    static void handleBicubic() {
+        System.out.println("\n[Interpolasi Bicubic Spline]");
+        BicubicSplineInterpolation bicubic = new BicubicSplineInterpolation();
+        Matrix matrixF = new Matrix();
+
+        Double[] ab = matrixF.readBicubicFromFile();
+        bicubic.init(matrixF);
+        bicubic.setA(ab[0]);
+        bicubic.setB(ab[1]);
+
+        bicubic.solve();
+    }
+
     static  void handleInterpolasi() {
+        System.out.println("\n[Interpolasi polinom]");
+
         Interpolasi interpolasi = new Interpolasi();
         Matrix matrix = new Matrix();
 
@@ -107,53 +124,60 @@ public class Main {
 
         System.out.print("Masukkan pilihan: ");
         int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
-
+        double x = 0;
         if (input == 1) {
-            matrix.readInterpolasi();
+            x = matrix.readInterpolasi();
         } else {
-            matrix.readInterpolasiFromFile();
+            x = matrix.readInterpolasiFromFile();
         }
 
         interpolasi.init(matrix);
+        interpolasi.setX(x);
 
         interpolasi.solve();
 
     }
 
-    static void handleCobaLagi(Runnable currentHandler) {
+    static void handleCobaLagi(Runnable currentInstruction) {
+
+        boolean isCobaLagi = true;
+        while(isCobaLagi) {
+            System.out.println(
+    """
         
-        System.out.println(
-"""
+    Coba lagi ?
+    1. Ya
+    2. Keluar
     
-Coba lagi ?
-1. Ya
-2. Keluar
+    Pilih instruksi: """
+            );
+    
+            int chosenInstruction = Input.getInt(
+                "Masukan harus dalam range 1 - 2",
+                (Integer n) -> n == 1 || n == 2
+            );
+    
+            if(chosenInstruction == 1) {
+                isCobaLagi = true;
+                currentInstruction.run();
+            }
+            else isCobaLagi = false;
 
-Pilih instruksi: """
-        );
-
-        int chosenInstruction = Input.getInt(
-            "Masukan harus dalam range 1 - 2",
-            (Integer n) -> n == 1 || n == 2
-        );
-
-        if(chosenInstruction == 1) {
-            currentHandler.run();
-            return;
         }
+        
     }
 
     static void handleDeterminan() {
         System.out.println("\n[Determinan]");
 
         System.out.println(
-"""
+            """
     
-Metode
-1. Metode Reduksi Baris
-2. Metode Expansi Kofaktor
+            Metode
+            1. Metode Reduksi Baris
+            2. Metode Expansi Kofaktor
 
-Pilih metode: """
+            Pilih metode: """
         );
         int chosenMethod = Input.getInt(
             "Masukan harus dalam range 1 - 2",
@@ -177,10 +201,26 @@ Pilih metode: """
         Matrix mat = mlr.getMatrixFromUserInput();
         mlr.init(mat);
         mlr.solve();
+        mlr.display();
     }
 
     static void handleMatrixBalikan() {
-        System.out.println("\n[Inverse]");
+        System.out.println("\n[Matrix Balikan]");
+
+        System.out.println(
+"""
+    
+Metode
+1. Metode Gauss Jordan
+2. Metode Adjoin
+
+Pilih metode: """
+        );
+        int chosenMethod = Input.getInt(
+            "Masukan harus dalam range 1 - 2",
+            (Integer n) -> n == 1 || n == 2
+        );
+
         
         Matrix mat = new Matrix();
         mat.readSquareMatrix();

@@ -4,12 +4,15 @@ import Interface.Solvable;
 
 public class Interpolasi implements Solvable {
     Matrix matrix;
-
+    double x;
 
     public void init(Matrix matrix) {
         this.matrix = matrix;
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
 
     public void solve() {
         this.matrix.toReducedRowEchelon();
@@ -30,6 +33,10 @@ public class Interpolasi implements Solvable {
                     System.out.print(" - ");
                 }
             }
+            result += (this.matrix.matrix[i][matrix.col - 1] * Math.pow(this.x, i));
         }
+        System.out.println("");
+
+        System.out.printf("f(%.4f) = %.4f", this.x, result);
     }
 }
