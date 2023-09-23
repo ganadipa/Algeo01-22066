@@ -40,13 +40,7 @@ public class Matrix {
         this.row = row;
         this.col = col;
         this.matrix = new double[row][col];
-        for (int i = 0; i < row; i++)
-        {
-            for (int j = 0; j < col; j++)
-            {
-                matrix[i][j] = 0;
-            }
-        }
+
     }
 
     // read Matrix from user input

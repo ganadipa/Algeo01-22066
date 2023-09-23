@@ -123,22 +123,24 @@ public class SPL {
         this.augmentedMatrix = new Matrix(row, col);
 
 
-        this.x = new Parametric[row];
-        for (int i = 0; i<row; i++)
+        this.x = new Parametric[col-1];
+        for (int i = 0; i<col-1; i++)
         {
-            x[i] = new Parametric(row);
+            x[i] = new Parametric(col-1);
         }
     }
     
     
 
     public void solve() {
-        if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon();
+        if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon(null);
 
-        for (int i = 0; i< this.B.length; i++)
+        for (int i = this.B.length-1; i >= 0; i--)
         {
+            System.out.printf("solving row: %d", i);
             this.solveRow(i);
         }
+
 
         for (int i = 0; i < this.x.length; i++)
         {
@@ -211,6 +213,8 @@ public class SPL {
             }
         }
 
+        System.out.println("get leading done");
+
         /**
          * Jika semua elemen kecuali paling terakhir bernilai 0,
          * haruslah elemen paling terakhir bernilai 0. Karena apabila tak nol maka tidak ada solusi
@@ -221,13 +225,23 @@ public class SPL {
 
 
         this.x[leadingOnePosition].c += rowArray[rowArray.length - 1]; 
+        System.out.println(Arrays.toString(rowArray));
+        System.out.print("x length is: ");
+        System.out.println(this.x.length);
+        System.out.println(Arrays.toString(this.x));
         for (int i = rowArray.length - 2; i > leadingOnePosition; i--)
         {
+            System.out.println(i);
             double multiplier = rowArray[i];
+            System.out.println(this.x[i].c); 
+            System.out.println("parameyric variable length: ");
+            System.out.println(this.x[i].parametricVariables.length);
             if (!this.x[i].isAssigned) this.x[i].setAsBaseParametric(i);
+            System.out.println("we have done set base parametric");
             this.x[leadingOnePosition].subtract(this.x[i], multiplier);
+            
         }
-
+        this.x[leadingOnePosition].isAssigned = true;
         System.out.println(this.x[leadingOnePosition].c);
         System.out.println(Arrays.toString(this.x[leadingOnePosition].parametricVariables));
         this.x[leadingOnePosition].showParametric();
