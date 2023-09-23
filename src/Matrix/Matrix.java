@@ -458,12 +458,15 @@ public class Matrix{
         }
     }
 
-
+    // Metode yang digunakan untuk mendapatkan determinan
+    public enum InverseMethod {
+        GaussJordan, Adjoin
+    } 
     /**
     * Mengembalikan inverse matrix.
     * @return  inverse matrix
     */
-    public Matrix getInverse() {
+    public Matrix getInverse(InverseMethod method) {
         if(getDeterminant(DeterminantMethod.CofactorExpansion) == 0) {
             throw new Error("Determinan tidak boleh 0");
         }
@@ -471,28 +474,41 @@ public class Matrix{
             throw new Error("Panjang baris dan kolom harus sama");
         }
 
-        // Bikin matrix augmented dengan identitas di kanan
-        Matrix augMatrix = new Matrix(row, col*2);
-        
-        for(int i = 0; i < row; i++) {
-            for(int j = 0; j < col; j++) {
-                augMatrix.matrix[i][j] = matrix[i][j];
+        if(method == InverseMethod.GaussJordan) {
+            // Bikin matrix augmented dengan identitas di kanan
+            Matrix augMatrix = new Matrix(row, col*2);
+            
+            for(int i = 0; i < row; i++) {
+                for(int j = 0; j < col; j++) {
+                    augMatrix.matrix[i][j] = matrix[i][j];
+                }
             }
-        }
-        for(int i = 0; i < row; i++) {
-            augMatrix.matrix[i][i+3] = 1;
-        }
-
-        augMatrix.toRowReducedEchelon();
-        Matrix inverseMatrix = new Matrix(row, col);
-
-        for(int i = 0; i < row; i++) {
-            for(int j = 0; j < col; j++) {
-                inverseMatrix.matrix[i][j] = augMatrix.matrix[i][j+col];
+            for(int i = 0; i < row; i++) {
+                augMatrix.matrix[i][i+3] = 1;
             }
+    
+            augMatrix.toRowReducedEchelon();
+            Matrix inverseMatrix = new Matrix(row, col);
+    
+            for(int i = 0; i < row; i++) {
+                for(int j = 0; j < col; j++) {
+                    inverseMatrix.matrix[i][j] = augMatrix.matrix[i][j+col];
+                }
+            }
+            return inverseMatrix;
+        }
+        else {
+            return getAdjoin().MultiplyByConst((double)1/(double)getDeterminant());
         }
 
-        return inverseMatrix;
+
+    }
+    /**
+    * Mengembalikan inverse matrix dengan metode default yaitu gauss jordan.
+    * @return  inverse matrix
+    */
+    public Matrix getInverse() {
+        return getInverse(InverseMethod.GaussJordan);
     }
 
     public void readInterpolasi() {
@@ -590,6 +606,18 @@ public class Matrix{
             }   
         }
 
+        return m;
+    }
+
+    public Matrix MultiplyByConst(double x) {
+        Matrix m = new Matrix(row, col);
+        for (int i = 0; i < this.row; i++)
+        {
+            for (int j = 0; j < this.col; j++)
+            {
+                m.matrix[i][j] = matrix[i][j] * x;
+            }
+        }
         return m;
     }
 }

@@ -188,7 +188,22 @@ Pilih metode: """
     }
 
     static void handleMatrixBalikan() {
-        System.out.println("\n[Inverse]");
+        System.out.println("\n[Matrix Balikan]");
+
+        System.out.println(
+"""
+    
+Metode
+1. Metode Gauss Jordan
+2. Metode Adjoin
+
+Pilih metode: """
+        );
+        int chosenMethod = Input.getInt(
+            "Masukan harus dalam range 1 - 2",
+            (Integer n) -> n == 1 || n == 2
+        );
+
         
         Matrix mat = new Matrix();
         mat.readSquareMatrix();
