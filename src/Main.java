@@ -67,10 +67,10 @@ public class Main {
                     handleDeterminan();
                     break;
                 case 3:
-                    System.out.println("Matriks balikan");
+                    handleMatrixBalikan();
                     break;
                 case 4:
-                    System.out.println("Interpolasi Polinom");
+                    handleInterpolasi();
                     break;
                 case 5:
                     System.out.println("Interpolasi Bicubic Spline");
@@ -83,23 +83,51 @@ public class Main {
                     break;
             }
         }
-
-        
-
     }
 
     static  void handleInterpolasi() {
-        int n;
-
-        System.out.print("Masukkan  banyak titik: ");
-        n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
-
-        Matrix matrix = new Matrix(n, n + 2);
         Interpolasi interpolasi = new Interpolasi();
+        Matrix matrix = new Matrix();
 
-        matrix.readInterpolasi();
+        System.out.println("""
+                Pilih cara input
+                1. Keyboard
+                2. File
+                """);
+
+        System.out.print("Masukkan pilihan: ");
+        int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
+
+        if (input == 1) {
+            matrix.readInterpolasi();
+        } else {
+            matrix.readInterpolasiFromFile();
+        }
 
         interpolasi.init(matrix);
+
+        interpolasi.solve();
+
+        System.out.println(
+                """
+                    
+                Coba lagi ?
+                1. Ya
+                2. Keluar
+                
+                Pilih instruksi:
+                """
+        );
+
+        int chosenInstruction = Input.getInt(
+                "Masukan harus dalam range 1 - 2",
+                (Integer n) -> n == 1 || n == 2
+        );
+
+        if(chosenInstruction == 1) {
+            handle;
+            return;
+        }
 
     }
 
@@ -120,26 +148,9 @@ Pilih metode: """
             (Integer n) -> n == 1 || n == 2
         );
 
-        System.out.println("\nMasukkan panjang baris dan kolom: ");
-
-        int N = Input.getInt(
-            "Masukan harus positif",
-            (Integer n) -> n >= 1
-        );
-        Matrix mat = new Matrix(N, N);
-
-                System.out.println("\nMasukkan matrix "+N+"x"+N+": ");
-        boolean isMatrixValid = false;
-        while(!isMatrixValid) {
-            try {
-                mat.readMatrixFromUserInput();
-                isMatrixValid = true;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                isMatrixValid = false;
-            }
-        }
-
+        
+        Matrix mat = new Matrix();
+        mat.readSquareMatrix();
 
         double determinan = mat.getDeterminant(chosenMethod == 1 ? Matrix.DeterminantMethod.RowReduction : Matrix.DeterminantMethod.CofactorExpansion);
 
@@ -162,6 +173,40 @@ Pilih instruksi: """
 
         if(chosenInstruction == 1) {
             handleDeterminan();
+            return;
+        }
+    }
+
+
+    static void handleMatrixBalikan() {
+        System.out.println("\n[Inverse]");
+
+        
+        Matrix mat = new Matrix();
+        mat.readSquareMatrix();
+
+        Matrix determinan = mat.getInverse();
+
+        System.out.println("\nInverse:\n");
+        determinan.displayMatrix(null);
+
+        System.out.println(
+"""
+    
+Coba lagi ?
+1. Ya
+2. Keluar
+
+Pilih instruksi: """
+        );
+
+        int chosenInstruction = Input.getInt(
+            "Masukan harus dalam range 1 - 2",
+            (Integer n) -> n == 1 || n == 2
+        );
+
+        if(chosenInstruction == 1) {
+            handleMatrixBalikan();
             return;
         }
     }

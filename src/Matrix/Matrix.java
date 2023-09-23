@@ -40,13 +40,7 @@ public class Matrix{
         this.row = row;
         this.col = col;
         this.matrix = new double[row][col];
-        for (int i = 0; i < row; i++)
-        {
-            for (int j = 0; j < col; j++)
-            {
-                matrix[i][j] = 0;
-            }
-        }
+
     }
 
     // read Matrix from user input
@@ -86,29 +80,25 @@ public class Matrix{
 
      // read Matrix from user input
     public void readSquareMatrix(){
-        int row = 0;
 
-        System.out.println("Membuat matriks persegi berukuran n x n...\n");
+        System.out.println("\nMasukkan panjang baris dan kolom: ");
 
-        // Dapatkan jumlah panjang matriks yang valid dari user.
-        do {
-            row = Utils.getIntInput("Masukkan jumlah baris (n): ", "Tipe masukkan diharapkan berupa integer.");
-            if (row < 0) {
-            System.out.println("Masukkanlah jumlah baris yang nonnegatif.");
+        int N = Input.getInt(
+            "Masukan harus positif",
+            (Integer n) -> n >= 1
+        );
+        initMatrix(N, N);
+
+        System.out.println("\nMasukkan matrix "+N+"x"+N+": ");
+        boolean isMatrixValid = false;
+        while(!isMatrixValid) {
+            try {
+                readMatrixFromUserInput();
+                isMatrixValid = true;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                isMatrixValid = false;
             }
-        } while (row < 0);
-
-        // Early return untuk matriks yang berukuran salah satu baris/kolom adalah nol.
-        if (row == 0) return;
-
-        // Menyiapkan baris dan kolom matriks.
-        this.initMatrix(row, row);
-        
-        System.out.println("Input Matriks: ");
-        try {
-            this.readMatrixFromUserInput();
-        } catch (Exception e) {
-            System.out.println("Terjadi suatu kesalahan, gagal membaca matriks.");
         }
     }
 
@@ -294,6 +284,8 @@ public class Matrix{
             System.out.println("Input baris tidak berada di dalam range baris yang valid.");
         }
 
+        
+
         double tmpBaris[];
         tmpBaris = new double[this.col];
         for (int i = 0; i < this.col; i++)
@@ -303,6 +295,8 @@ public class Matrix{
             this.matrix[baris2][i] = tmpBaris[i];
         }
         
+        
+        this.displayMatrix(null);
     }
 
  
@@ -325,7 +319,7 @@ public class Matrix{
         if(matrix.length != matrix[0].length) throw new Error("Panjang dan lebar matrix harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
-            toRowEchelon();
+            this.toRowEchelon();
             double total = 1;
             for(int i = 0; i < matrix.length; i++) {
                 total *= matrix[i][i];
@@ -361,24 +355,105 @@ public class Matrix{
         }
     }
 
+    public int getColomnNotEntirelyZero(int startRow, int endRow)
+    {
+        int idx = -1;
+        
+        int endTraverseRow = Math.min(this.row, endRow);
+        for (int col = 0; col < this.col; col++)
+        {
+            for (int row = startRow; row < endTraverseRow; row++)
+            {
+                if (Utils.isNotEqual(this.matrix[row][col], 0)) {
+                    return col;
+                }
+            }
+            
+        }
+
+        
+
+        return idx;
+    }
+
     /**
     * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
     * @see getDeterminan
     */
     public void toRowEchelon() {
-        for(int j = 0; j < matrix.length-1; j++) {
-            for(int i = matrix.length-1; i > j; i--) {
-                System.out.println(matrix[i][j]);
+        // We'll be using gauss elimination
 
-                // traverse to right
-                double targetMultiplier = matrix[i][j] / matrix[i-1][j];
-                for(int k = j; k < matrix.length; k++) {
-                    matrix[i][k] -= targetMultiplier * matrix[i-1][k];
+        // 1. get the first left most non zero colomn
+        int currRow = 0;
+        int notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
+
+        while (notZeroColomn != -1 && currRow < this.row)
+        {
+            int row;
+            for (row = currRow; row < this.row; row++)
+            {
+                if (Utils.isNotEqual(this.matrix[row][notZeroColomn], 0))
+                {
+                    break;
                 }
             }
+
+            // swap the row
+            swapRow(currRow, row);
+
+            // make the currRow have a leading one.
+            Utils.multiplyListBy(this.matrix[currRow], 1/this.matrix[currRow][notZeroColomn]);
+
+
+            // the rest row in the same colomn make it zero by subtracting or adding.
+            for (row = currRow+1; row < this.row; row++){
+                Utils.plusMinusList(this.matrix[row],  this.matrix[currRow], false, this.matrix[row][notZeroColomn]);
+            }
+
+            // do it again but with the next row
+            currRow += 1;
+            notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
         }
-        displayMatrix(null);
+
+
     }
+
+    public void toRowReducedEchelon() {
+        this.toRowEchelon();
+
+        for( int currRow = 0; currRow < this.row; currRow++)
+        {
+            int leadingOnePosition= -1;
+            for (leadingOnePosition = 0; leadingOnePosition < this.col; leadingOnePosition++)
+            {
+                if (Utils.isEqual(this.matrix[currRow][leadingOnePosition], 1)) break;
+            }
+
+            // Sudah berada di row yang isinya 0 semua, jadi ga perlu lanjut proses lagi.
+            if (leadingOnePosition == -1) break;
+
+            // the other row in the colomn make it to zero.
+            for (int row = 0; row < this.row; row++)
+            {
+                if (currRow == row) break;
+                Utils.plusMinusList(this.matrix[row], this.matrix[currRow], false, this.matrix[row][leadingOnePosition]);
+            }
+        }
+
+    }
+
+    // To normalize matrix, make the -0 to 0.
+    public void normalizeMatrix()
+    {
+        for (int row = 0; row < this.row; row++)
+        {
+            for (int col = 0; col < this.col; col++)
+            {
+                this.matrix[row][col] += 0.0;
+            }
+        }
+    }
+
 
     public Matrix getIdentityBySize() {
         return null;
@@ -389,26 +464,50 @@ public class Matrix{
     * @return  inverse matrix
     */
     public Matrix getInverse() {
-        // Bikin matrix augmented dengan identitas di kanan
-        Matrix augMatrix = new Matrix(matrix.length, col);
+        if(getDeterminant(DeterminantMethod.CofactorExpansion) == 0) {
+            throw new Error("Determinan tidak boleh 0");
+        }
 
-        return null;
+        // Bikin matrix augmented dengan identitas di kanan
+        Matrix augMatrix = new Matrix(row, col*2);
+        
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                augMatrix.matrix[i][j] = matrix[i][j];
+            }
+        }
+        for(int i = 0; i < row; i++) {
+            augMatrix.matrix[i][i+3] = 1;
+        }
+
+        augMatrix.toRowReducedEchelon();
+        augMatrix.displayMatrix(null);
+        Matrix inverseMatrix = new Matrix(row, col);
+
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                inverseMatrix.matrix[i][j] = augMatrix.matrix[i][j+col];
+            }
+        }
+
+        return inverseMatrix;
     }
 
     public void readInterpolasi() {
+        System.out.print("Masukkan  banyak titik: ");
+        int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
 
+        this.initMatrix(n, n+1);
 
         for (int i = 0; i < this.row; i++) {
             System.out.printf("Masukan titik ke %d: ", i + 1);
             String input = userInput.nextLine();
             String[] titik = input.split(" ");
-            int x = Integer.parseInt(titik[0]);
-            int y = Integer.parseInt(titik[1]);
+            double x = Double.parseDouble(titik[0]);
+            double y = Double.parseDouble(titik[1]);
 
             for (int j = 0; j < this.col; j++) {
-                if (j == 0) {
-                    matrix[i][j] = 1;
-                } else if (j == this.col - 1) {
+                if (j == this.col - 1) {
                     matrix[i][j] = y;
                 }else {
                     matrix[i][j] = Math.pow(x,j);
@@ -416,6 +515,43 @@ public class Matrix{
             }
             //c + bx + ax2 = y
         }
+    }
 
+    public void readInterpolasiFromFile() {
+        System.out.println("Masukkan nama file beserta ekstensinya.");
+        System.out.print("(dir: test/input): ");
+        String fileName = userInput.next();
+        String fileInputPath = "test/input/" + fileName;
+        List<String> titiks = new LinkedList<>();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
+            for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                titiks.add(line);
+            }
+
+            this.initMatrix(titiks.size(), titiks.size() + 1);
+
+            for (int i = 0; i < this.row; i++) {
+                String[] titik = titiks.get(i).split(" ");
+                double x = Double.parseDouble(titik[0]);
+                double y = Double.parseDouble(titik[1]);
+                for (int j = 0; j < this.col; j++) {
+                    if (j == this.col - 1) {
+                        matrix[i][j] = y;
+                    }else {
+                        matrix[i][j] = Math.pow(x,j);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            System.out.println("File tidak ditemukan.");
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
+        }
     }
 }
