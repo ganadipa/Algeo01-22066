@@ -40,13 +40,7 @@ public class Matrix {
         this.row = row;
         this.col = col;
         this.matrix = new double[row][col];
-        for (int i = 0; i < row; i++)
-        {
-            for (int j = 0; j < col; j++)
-            {
-                matrix[i][j] = 0;
-            }
-        }
+
     }
 
     // read Matrix from user input
@@ -294,6 +288,8 @@ public class Matrix {
             System.out.println("Input baris tidak berada di dalam range baris yang valid.");
         }
 
+        
+
         double tmpBaris[];
         tmpBaris = new double[this.col];
         for (int i = 0; i < this.col; i++)
@@ -303,6 +299,8 @@ public class Matrix {
             this.matrix[baris2][i] = tmpBaris[i];
         }
         
+        
+        this.displayMatrix(null);
     }
 
  
@@ -325,7 +323,7 @@ public class Matrix {
         if(matrix.length != matrix[0].length) throw new Error("Panjang dan lebar matrix harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
-            toRowEchelon();
+            this.toRowEchelon();
             double total = 1;
             for(int i = 0; i < matrix.length; i++) {
                 total *= matrix[i][i];
@@ -361,24 +359,106 @@ public class Matrix {
         }
     }
 
+    public int getColomnNotEntirelyZero(int startRow, int endRow)
+    {
+        int idx = -1;
+        
+        int endTraverseRow = Math.min(this.row, endRow);
+        for (int col = 0; col < this.col; col++)
+        {
+            for (int row = startRow; row < endTraverseRow; row++)
+            {
+                if (Utils.isNotEqual(this.matrix[row][col], 0)) {
+                    return col;
+                }
+            }
+            
+        }
+
+        
+
+        return idx;
+    }
+
     /**
     * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
     * @see getDeterminant
     */
     public void toRowEchelon() {
-        for(int j = 0; j < matrix.length-1; j++) {
-            for(int i = matrix.length-1; i > j; i--) {
-                System.out.println(matrix[i][j]);
+        // We'll be using gauss elimination
 
-                // traverse to right
-                double targetMultiplier = matrix[i][j] / matrix[i-1][j];
-                for(int k = j; k < matrix.length; k++) {
-                    matrix[i][k] -= targetMultiplier * matrix[i-1][k];
+        // 1. get the first left most non zero colomn
+        int currRow = 0;
+        int notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
+
+        while (notZeroColomn != -1 && currRow < this.row)
+        {
+            int row;
+            for (row = currRow; row < this.row; row++)
+            {
+                if (Utils.isNotEqual(this.matrix[row][notZeroColomn], 0))
+                {
+                    break;
                 }
             }
+
+            // swap the row
+            swapRow(currRow, row);
+
+            // make the currRow have a leading one.
+            Utils.multiplyListBy(this.matrix[currRow], 1/this.matrix[currRow][notZeroColomn]);
+
+
+            // the rest row in the same colomn make it zero by subtracting or adding.
+            for (row = currRow+1; row < this.row; row++){
+                Utils.plusMinusList(this.matrix[row],  this.matrix[currRow], false, this.matrix[row][notZeroColomn]);
+            }
+
+            // do it again but with the next row
+            currRow += 1;
+            notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
         }
-        displayMatrix(null);
+
+
     }
+
+    public void toRowReducedEchelon() {
+        this.toRowEchelon();
+
+        for( int currRow = 0; currRow < this.row; currRow++)
+        {
+            int leadingOnePosition= -1;
+            for (leadingOnePosition = 0; leadingOnePosition < this.col; leadingOnePosition++)
+            {
+                if (Utils.isEqual(this.matrix[currRow][leadingOnePosition], 1)) break;
+            }
+
+            // Sudah berada di row yang isinya 0 semua, jadi ga perlu lanjut proses lagi.
+            if (leadingOnePosition == -1) break;
+
+            // the other row in the colomn make it to zero.
+            for (int row = 0; row < this.row; row++)
+            {
+                if (currRow == row) break;
+                Utils.plusMinusList(this.matrix[row], this.matrix[currRow], false, this.matrix[row][leadingOnePosition]);
+            }
+        }
+
+        this.displayMatrix("augmented");
+    }
+
+    // To normalize matrix, make the -0 to 0.
+    public void normalizeMatrix()
+    {
+        for (int row = 0; row < this.row; row++)
+        {
+            for (int col = 0; col < this.col; col++)
+            {
+                this.matrix[row][col] += 0.0;
+            }
+        }
+    }
+
 
     public Matrix getIdentityBySize() {
         return null;
@@ -390,7 +470,7 @@ public class Matrix {
     */
     public Matrix getInverse() {
         // Bikin matrix augmented dengan identitas di kanan
-        Matrix augMatrix = new Matrix(matrix.length, col)
+        Matrix augMatrix = new Matrix(matrix.length, col);
 
         return null;
     }

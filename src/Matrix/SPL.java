@@ -64,13 +64,42 @@ class Parametric {
         this.isAssigned = true;
     }
 
-    public void toBaseParametric(int x){
+    public void setAsBaseParametric(int x){
         this.parametricVariables[x] = 1;
         this.isAssigned = true;
     }
 
     public void showParametric(){
+        if (!this.hasParametricVariables()) {
+            System.out.println(this.c);
+            return;
+        }
+        String parametricNames = "abcdefghijklmnopqrstuvwyz";
+        if (Utils.isNotEqual(this.c, 0))
+        {
+            System.out.printf("%.3f ", this.c);
+        }
 
+        for (int i = 0; i < parametricVariables.length; i++)
+        {
+            if (Utils.isNotEqual(parametricVariables[i], 0))
+            {
+                System.out.printf("%.3f%c ", parametricVariables[i], parametricNames.charAt(i) );
+            }
+        }
+        System.out.println();
+
+    }
+
+    public boolean hasParametricVariables() {
+        for (int i = 0; i < parametricVariables.length; i++)
+        {
+            if (Utils.isNotEqual(this.parametricVariables[i], 0))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -82,26 +111,68 @@ public class SPL implements Solvable {
 
     }
     public void solve() {
+        if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon();
 
+        for (int i = this.B.length-1; i >= 0; i--)
+        {
+            System.out.printf("solving row: %d", i);
+            this.solveRow(i);
+        }
+
+
+        for (int i = 0; i < this.x.length; i++)
+        {
+            if (!this.x[i].isAssigned) this.x[i].setAsBaseParametric(i);
+        }
+    }
+
+    public void fromMatrix(Matrix m) {
+
+        this.initSPL(m.row, m.col);
+        System.out.println("init passed");
+
+        for(int row = 0; row < m.matrix.length; row++)
+        {
+            for (int col = 0; col < m.matrix[0].length; col++)
+            {
+                this.augmentedMatrix.matrix[row][col] = m.matrix[row][col]; 
+                if (col == m.matrix[0].length-1) {
+                    this.B[row] = m.matrix[row][col];
+                    continue;
+                }
+
+                this.A[row][col] = m.matrix[row][col];
+            }
+        }
+    
     }
 
     // Kesepakatan: Ax = B;
     public double A[][];
     public Parametric x[];
     public double B[];
-    public double augmentedMatrix[][] = {{1,6,6}};
+    public Matrix augmentedMatrix;
     
 
-    public SPL(int n) {
-        this.x = new Parametric[n];
-        for (int i = 0; i<n; i++)
+    public SPL(int countEq, int countVar) {
+        this.initSPL(countEq, countVar);
+    }
+
+    public void initSPL(int row, int col) {
+        this.A = new double[row][col-1];
+        this.B = new double[row];
+        this.augmentedMatrix = new Matrix(row, col);
+
+
+        this.x = new Parametric[col-1];
+        for (int i = 0; i<col-1; i++)
         {
-            x[i] = new Parametric(n);
+            x[i] = new Parametric(col-1);
         }
         
     }
 
-    
+        
 
     public boolean hasSolution()
     {
@@ -136,7 +207,7 @@ public class SPL implements Solvable {
 
     public void solveRow(int row)
     {
-        double[] rowArray = this.augmentedMatrix[row];
+        double[] rowArray = this.augmentedMatrix.matrix[row];
         int leadingOnePosition = -1;
         for (int i =  0; i < rowArray.length-1; i++)
         {
@@ -146,6 +217,8 @@ public class SPL implements Solvable {
                 break;
             }
         }
+
+        System.out.println("get leading done");
 
         /**
          * Jika semua elemen kecuali paling terakhir bernilai 0,
@@ -157,21 +230,39 @@ public class SPL implements Solvable {
 
 
         this.x[leadingOnePosition].c += rowArray[rowArray.length - 1]; 
+        System.out.println(Arrays.toString(rowArray));
+        System.out.print("x length is: ");
+        System.out.println(this.x.length);
+        System.out.println(Arrays.toString(this.x));
         for (int i = rowArray.length - 2; i > leadingOnePosition; i--)
         {
+            System.out.println(i);
             double multiplier = rowArray[i];
-            if (!this.x[i].isAssigned) this.x[i].toBaseParametric(i);
+            System.out.println(this.x[i].c); 
+            System.out.println("parameyric variable length: ");
+            System.out.println(this.x[i].parametricVariables.length);
+            if (!this.x[i].isAssigned) this.x[i].setAsBaseParametric(i);
+            System.out.println("we have done set base parametric");
             this.x[leadingOnePosition].subtract(this.x[i], multiplier);
+            
         }
-
+        this.x[leadingOnePosition].isAssigned = true;
         System.out.println(this.x[leadingOnePosition].c);
         System.out.println(Arrays.toString(this.x[leadingOnePosition].parametricVariables));
+        this.x[leadingOnePosition].showParametric();
     
     }
 
     public void showSolution(){
-        // String variables = "pqrstuvwxyzabcdefghijklmno";
-        // for(int i)
+        for (int i = 0; i<this.x.length; i++){
+            System.out.printf("x%d = ", i+1);
+            this.x[i].showParametric();
+        }
+        
+    }
+
+    public void displayMatrix() {
+        this.augmentedMatrix.displayMatrix("augmented");
     }
 
     
