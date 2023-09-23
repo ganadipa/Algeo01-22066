@@ -184,6 +184,7 @@ Pilih metode: """
         Matrix mat = mlr.getMatrixFromUserInput();
         mlr.init(mat);
         mlr.solve();
+        mlr.display();
     }
 
     static void handleMatrixBalikan() {
