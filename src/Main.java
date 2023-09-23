@@ -6,6 +6,7 @@ import javax.swing.Action;
 import Matrix.Matrix;
 import Matrix.MultipleLinearRegression;
 import Utils.Input;
+import Matrix.Interpolasi;
 
 public class Main {
 
@@ -78,7 +79,7 @@ public class Main {
                     handleCobaLagi(()-> {handleMatrixBalikan();});
                     break;
                 case 4:
-                    System.out.println("Interpolasi Polinom");
+                    handleInterpolasi();
                     break;
                 case 5:
                     System.out.println("Interpolasi Bicubic Spline");
@@ -92,8 +93,30 @@ public class Main {
                     break;
             }
         }
+    }
 
-        
+    static  void handleInterpolasi() {
+        Interpolasi interpolasi = new Interpolasi();
+        Matrix matrix = new Matrix();
+
+        System.out.println("""
+                Pilih cara input
+                1. Keyboard
+                2. File
+                """);
+
+        System.out.print("Masukkan pilihan: ");
+        int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
+
+        if (input == 1) {
+            matrix.readInterpolasi();
+        } else {
+            matrix.readInterpolasiFromFile();
+        }
+
+        interpolasi.init(matrix);
+
+        interpolasi.solve();
 
     }
 
