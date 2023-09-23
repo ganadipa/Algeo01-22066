@@ -5,6 +5,7 @@ import javax.swing.Action;
 
 import Matrix.Matrix;
 import Matrix.MultipleLinearRegression;
+import Matrix.SPL;
 import Utils.Input;
 import Matrix.Interpolasi;
 import Matrix.BicubicSplineInterpolation;
@@ -137,26 +138,33 @@ public class Main {
 
     }
 
-    static void handleCobaLagi(Runnable currentHandler) {
+    static void handleCobaLagi(Runnable currentInstruction) {
+
+        boolean isCobaLagi = true;
+        while(isCobaLagi) {
+            System.out.println(
+    """
         
-        System.out.println(
-                """
-                Coba lagi ?
-                1. Ya
-                2. Keluar
-                
-                Pilih instruksi: """
-        );
+    Coba lagi ?
+    1. Ya
+    2. Keluar
+    
+    Pilih instruksi: """
+            );
+    
+            int chosenInstruction = Input.getInt(
+                "Masukan harus dalam range 1 - 2",
+                (Integer n) -> n == 1 || n == 2
+            );
+    
+            if(chosenInstruction == 1) {
+                isCobaLagi = true;
+                currentInstruction.run();
+            }
+            else isCobaLagi = false;
 
-        int chosenInstruction = Input.getInt(
-            "Masukan harus dalam range 1 - 2",
-            (Integer n) -> n == 1 || n == 2
-        );
-
-        if(chosenInstruction == 1) {
-            currentHandler.run();
-            return;
         }
+        
     }
 
     static void handleDeterminan() {
@@ -193,10 +201,26 @@ public class Main {
         Matrix mat = mlr.getMatrixFromUserInput();
         mlr.init(mat);
         mlr.solve();
+        mlr.display();
     }
 
     static void handleMatrixBalikan() {
-        System.out.println("\n[Inverse]");
+        System.out.println("\n[Matrix Balikan]");
+
+        System.out.println(
+"""
+    
+Metode
+1. Metode Gauss Jordan
+2. Metode Adjoin
+
+Pilih metode: """
+        );
+        int chosenMethod = Input.getInt(
+            "Masukan harus dalam range 1 - 2",
+            (Integer n) -> n == 1 || n == 2
+        );
+
         
         Matrix mat = new Matrix();
         mat.readSquareMatrix();

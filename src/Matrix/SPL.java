@@ -282,11 +282,6 @@ public class SPL implements Solvable {
             }
         }
 
-        // testing output
-        for (int i = 0; i < lengthX; i++)
-        {
-            System.out.println(Arrays.toString(this.x[i].param)); 
-        }
     }
 
     public void showSolution(){
