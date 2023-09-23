@@ -16,7 +16,7 @@ public class Gana {
             if (m2.isReducedEchelon()) System.out.println("Check isReducedEchelon passed!");
             SPL spl = new SPL(m2.row, m2.col);
             System.out.println("passed");
-            m2.toRowEchelon(null);
+            m2.toRowEchelon();
             m2.normalizeMatrix();
             spl.fromMatrix(m2);
             spl.displayMatrix();

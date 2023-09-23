@@ -49,6 +49,14 @@ public class Utils {
         }
     }
 
+    /**
+     * 
+     * Mengubah l1 menjadi l1+l2*multiplier atau l1-l2*multiplier,
+     * @param l1
+     * @param l2
+     * @param plus
+     * @param multiplier
+     */
     public static void plusMinusList(double[] l1, double[] l2, boolean plus, double multiplier)
     {
         for (int i = 0; i < l1.length; i++)

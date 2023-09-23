@@ -323,7 +323,7 @@ public class Matrix {
         if(matrix.length != matrix[0].length) throw new Error("Panjang dan lebar matrix harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
-            toRowEchelon(null);
+            this.toRowEchelon();
             double total = 1;
             for(int i = 0; i < matrix.length; i++) {
                 total *= matrix[i][i];
@@ -384,7 +384,7 @@ public class Matrix {
     * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
     * @see getDeterminant
     */
-    public void toRowEchelon(String opt) {
+    public void toRowEchelon() {
         // We'll be using gauss elimination
 
         // 1. get the first left most non zero colomn
@@ -419,10 +419,29 @@ public class Matrix {
             notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
         }
 
-        // REDUCED ROW ECHELON
-        if (opt == "reduced")
+
+    }
+
+    public void toRowReducedEchelon() {
+        this.toRowEchelon();
+
+        for( int currRow = 0; currRow < this.row; currRow++)
         {
-            
+            int leadingOnePosition= -1;
+            for (leadingOnePosition = 0; leadingOnePosition < this.col; leadingOnePosition++)
+            {
+                if (Utils.isEqual(this.matrix[currRow][leadingOnePosition], 1)) break;
+            }
+
+            // Sudah berada di row yang isinya 0 semua, jadi ga perlu lanjut proses lagi.
+            if (leadingOnePosition == -1) break;
+
+            // the other row in the colomn make it to zero.
+            for (int row = 0; row < this.row; row++)
+            {
+                if (currRow == row) break;
+                Utils.plusMinusList(this.matrix[], null, false, this.matrix[row][]);
+            }
         }
     }
 
