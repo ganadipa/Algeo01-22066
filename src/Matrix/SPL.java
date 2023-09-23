@@ -1,14 +1,17 @@
 package Matrix;
 
-import java.util.Arrays;
+import java.util.*;
 
 import Interface.Solvable;
 import Utils.Utils;
 
 class Parametric {
     public double c = 0 ;
-    public double parametricVariables[];
+    public double fullParametricVariables[];
     public boolean isAssigned;
+
+    // Effective parametric ordering
+    public double param[];
 
 
     /**
@@ -16,7 +19,7 @@ class Parametric {
      * @param n
      */
     public Parametric(int n){
-        this.parametricVariables = new double[n];
+        this.fullParametricVariables = new double[n];
         this.c = 0;
         this.isAssigned = false;
 
@@ -29,18 +32,18 @@ class Parametric {
 
     public void add(Parametric x) {
         this.c += x.c;
-        for (int i = 0; i < this.parametricVariables.length; i++)
+        for (int i = 0; i < this.fullParametricVariables.length; i++)
         {
-            this.parametricVariables[i] += x.parametricVariables[i];
+            this.fullParametricVariables[i] += x.fullParametricVariables[i];
         }
         this.isAssigned = true;
     }
 
     public void add(Parametric x, double multiplier) {
-        this.c += x.c;
-        for (int i = 0; i < this.parametricVariables.length; i++)
+        this.c += x.c*multiplier;
+        for (int i = 0; i < this.fullParametricVariables.length; i++)
         {
-            this.parametricVariables[i] += x.parametricVariables[i]*multiplier;
+            this.fullParametricVariables[i] += x.fullParametricVariables[i]*multiplier;
         }
         this.isAssigned = true;
     }
@@ -48,24 +51,24 @@ class Parametric {
 
     public void subtract(Parametric x){
         this.c -= x.c;
-        for (int i = 0; i < this.parametricVariables.length; i++)
+        for (int i = 0; i < this.fullParametricVariables.length; i++)
         {
-            this.parametricVariables[i] -= x.parametricVariables[i];
+            this.fullParametricVariables[i] -= x.fullParametricVariables[i];
         }
         this.isAssigned = true;
     }
 
     public void subtract(Parametric x, double multiplier){
-        this.c -= x.c;
-        for (int i = 0; i < this.parametricVariables.length; i++)
+        this.c -= x.c*multiplier;
+        for (int i = 0; i < this.fullParametricVariables.length; i++)
         {
-            this.parametricVariables[i] -= x.parametricVariables[i]*multiplier;
+            this.fullParametricVariables[i] -= x.fullParametricVariables[i]*multiplier;
         }
         this.isAssigned = true;
     }
 
     public void setAsBaseParametric(int x){
-        this.parametricVariables[x] = 1;
+        this.fullParametricVariables[x] = 1;
         this.isAssigned = true;
     }
 
@@ -77,14 +80,14 @@ class Parametric {
         String parametricNames = "abcdefghijklmnopqrstuvwyz";
         if (Utils.isNotEqual(this.c, 0))
         {
-            System.out.printf("%.3f ", this.c);
+            System.out.printf("%.4f ", this.c);
         }
 
-        for (int i = 0; i < parametricVariables.length; i++)
+        for (int i = 0; i < param.length; i++)
         {
-            if (Utils.isNotEqual(parametricVariables[i], 0))
+            if (Utils.isNotEqual(param[i], 0))
             {
-                System.out.printf("%.3f%c ", parametricVariables[i], parametricNames.charAt(i) );
+                System.out.printf("%+.4f%c ", fullParametricVariables[i], parametricNames.charAt(i) );
             }
         }
         System.out.println();
@@ -92,9 +95,9 @@ class Parametric {
     }
 
     public boolean hasParametricVariables() {
-        for (int i = 0; i < parametricVariables.length; i++)
+        for (int i = 0; i < fullParametricVariables.length; i++)
         {
-            if (Utils.isNotEqual(this.parametricVariables[i], 0))
+            if (Utils.isNotEqual(this.fullParametricVariables[i], 0))
             {
                 return true;
             }
@@ -107,29 +110,37 @@ class Parametric {
 
 public class SPL implements Solvable {
 
-    public void init(Matrix matrix) {
+    // Kesepakatan: Ax = B;
+    public double A[][];
+    public Parametric x[];
+    public double B[];
+    public Matrix augmentedMatrix;
+    private Map<Integer, Integer> parametricLinking = new HashMap<Integer, Integer>();
 
+    public void init(Matrix matrix) {
+        this.fromMatrix(matrix);
     }
     public void solve() {
         if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon();
 
         for (int i = this.B.length-1; i >= 0; i--)
         {
-            System.out.printf("solving row: %d", i);
             this.solveRow(i);
         }
+
 
 
         for (int i = 0; i < this.x.length; i++)
         {
             if (!this.x[i].isAssigned) this.x[i].setAsBaseParametric(i);
         }
+
+        this.solve_helper();
     }
 
     public void fromMatrix(Matrix m) {
 
         this.initSPL(m.row, m.col);
-        System.out.println("init passed");
 
         for(int row = 0; row < m.matrix.length; row++)
         {
@@ -147,11 +158,7 @@ public class SPL implements Solvable {
     
     }
 
-    // Kesepakatan: Ax = B;
-    public double A[][];
-    public Parametric x[];
-    public double B[];
-    public Matrix augmentedMatrix;
+    
     
 
     public SPL(int countEq, int countVar) {
@@ -218,7 +225,6 @@ public class SPL implements Solvable {
             }
         }
 
-        System.out.println("get leading done");
 
         /**
          * Jika semua elemen kecuali paling terakhir bernilai 0,
@@ -230,40 +236,88 @@ public class SPL implements Solvable {
 
 
         this.x[leadingOnePosition].c += rowArray[rowArray.length - 1]; 
-        System.out.println(Arrays.toString(rowArray));
-        System.out.print("x length is: ");
-        System.out.println(this.x.length);
-        System.out.println(Arrays.toString(this.x));
+
+
         for (int i = rowArray.length - 2; i > leadingOnePosition; i--)
         {
-            System.out.println(i);
             double multiplier = rowArray[i];
-            System.out.println(this.x[i].c); 
-            System.out.println("parameyric variable length: ");
-            System.out.println(this.x[i].parametricVariables.length);
             if (!this.x[i].isAssigned) this.x[i].setAsBaseParametric(i);
-            System.out.println("we have done set base parametric");
             this.x[leadingOnePosition].subtract(this.x[i], multiplier);
             
         }
         this.x[leadingOnePosition].isAssigned = true;
-        System.out.println(this.x[leadingOnePosition].c);
-        System.out.println(Arrays.toString(this.x[leadingOnePosition].parametricVariables));
-        this.x[leadingOnePosition].showParametric();
     
     }
 
-    public void showSolution(){
-        for (int i = 0; i<this.x.length; i++){
-            System.out.printf("x%d = ", i+1);
-            this.x[i].showParametric();
+    private void solve_helper()
+    {
+
+        // Set the effective used parametric variables.
+        int lengthX = this.x.length;
+        Integer[] usedParametricVariable = new Integer[lengthX];
+        Arrays.fill(usedParametricVariable, 0, lengthX, 0);
+        for (int i = 0; i < lengthX; i++)
+        {
+            Utils.andOrList(usedParametricVariable, this.x[i].fullParametricVariables, false);
         }
+
+
+        // Linking variables;
+        int cnt = 0;
+        for (Integer i = 0; i < lengthX; i++)
+        {
+            if (usedParametricVariable[i] == 0) continue;
+            parametricLinking.put(i, cnt);
+            cnt++;
+        }
+
+        // set the effective variables used in the parametric solution
+        for (Integer i = 0; i < lengthX; i++)
+        {
+            this.x[i].param = new double[cnt];
+            for (Integer j = 0; j < lengthX; j++)
+            {
+                if (this.x[i].fullParametricVariables[j] == 0) continue;
+                this.x[i].param[parametricLinking.get(j)] = this.x[i].fullParametricVariables[j];
+            }
+        }
+
+        // testing output
+        for (int i = 0; i < lengthX; i++)
+        {
+            System.out.println(Arrays.toString(this.x[i].param)); 
+        }
+    }
+
+    public void showSolution(){
+        
+        int lengthX = this.x.length;
+
+        String parametricNaming = "abcdefghijklmnopqrstuvwyz";
+        for (int i = 0; i<lengthX; i++){
+            System.out.printf("x%d = ", i+1);
+            if (Utils.isNotEqual(this.x[i].c, 0 ) || !this.x[i].hasParametricVariables()){
+                System.out.printf("%.4f ", this.x[i].c);
+            }
+            
+            for (int j = 0; j < lengthX; j++)
+            {  
+                if (this.x[i].fullParametricVariables[j] == 0) continue;
+                System.out.printf("%+.4f%c ",this.x[i].fullParametricVariables[j] ,parametricNaming.charAt(parametricLinking.get(j)));
+            }
+            System.out.println();
+        }
+
+        
+
         
     }
 
     public void displayMatrix() {
         this.augmentedMatrix.displayMatrix("augmented");
     }
+
+
 
     
 }

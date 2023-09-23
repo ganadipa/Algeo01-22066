@@ -176,10 +176,10 @@ public class Matrix{
             {
                 if (j == this.col - 1) {
                     if (opt == "augmented") {System.out.print("|");}
-                    System.out.printf(" %.3f", this.matrix[i][j]);
+                    System.out.printf(" %.4f", this.matrix[i][j]);
                     break;
                 }
-                System.out.printf(" %.3f ", this.matrix[i][j]);
+                System.out.printf(" %.4f ", this.matrix[i][j]);
             }
             System.out.print("]");
             System.out.println();
@@ -294,9 +294,6 @@ public class Matrix{
             this.matrix[baris1][i] = this.matrix[baris2][i];
             this.matrix[baris2][i] = tmpBaris[i];
         }
-        
-        
-        this.displayMatrix(null);
     }
 
  
@@ -316,7 +313,7 @@ public class Matrix{
     * @see DeterminantMethod
     */
     public double getDeterminant(DeterminantMethod method) {
-        if(matrix.length != matrix[0].length) throw new Error("Panjang dan lebar matrix harus sama");
+        if(row != col) throw new Error("Panjang baris dan kolom harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
             this.toRowEchelon();
@@ -346,7 +343,6 @@ public class Matrix{
                         else subMatrix.matrix[k][l] = matrix[k][l];
                     }
                 }
-                subMatrix.displayMatrix(null);
 
                 total += Math.pow(-1, j) * matrix[i][j] * subMatrix.getDeterminant(method);
             }
@@ -439,7 +435,6 @@ public class Matrix{
                 Utils.plusMinusList(this.matrix[row], this.matrix[currRow], false, this.matrix[row][leadingOnePosition]);
             }
         }
-
     }
 
     // To normalize matrix, make the -0 to 0.
@@ -455,10 +450,6 @@ public class Matrix{
     }
 
 
-    public Matrix getIdentityBySize() {
-        return null;
-    }
-
     /**
     * Mengembalikan inverse matrix.
     * @return  inverse matrix
@@ -466,6 +457,9 @@ public class Matrix{
     public Matrix getInverse() {
         if(getDeterminant(DeterminantMethod.CofactorExpansion) == 0) {
             throw new Error("Determinan tidak boleh 0");
+        }
+        else if(row != col) {
+            throw new Error("Panjang baris dan kolom harus sama");
         }
 
         // Bikin matrix augmented dengan identitas di kanan
@@ -481,7 +475,6 @@ public class Matrix{
         }
 
         augMatrix.toRowReducedEchelon();
-        augMatrix.displayMatrix(null);
         Matrix inverseMatrix = new Matrix(row, col);
 
         for(int i = 0; i < row; i++) {

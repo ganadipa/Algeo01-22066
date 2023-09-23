@@ -1,8 +1,15 @@
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javax.swing.Action;
+
 import Matrix.Matrix;
+import Matrix.MultipleLinearRegression;
 import Utils.Input;
 import Matrix.Interpolasi;
 
 public class Main {
+
     public static void main(String[] args) {
         System.out.println("[Welcome to Library Matrix]");
         while(true) {
@@ -27,7 +34,7 @@ public class Main {
                 "Masukan harus dalam range 1 sampai 7",
                 (Integer n) -> n >= 1 && n <= 7
             );
-    
+
             switch(chosenMenu) {
                 case 1:
                     System.out.println(
@@ -65,9 +72,11 @@ public class Main {
     
                 case 2:
                     handleDeterminan();
+                    handleCobaLagi(()-> {handleDeterminan();});
                     break;
                 case 3:
                     handleMatrixBalikan();
+                    handleCobaLagi(()-> {handleMatrixBalikan();});
                     break;
                 case 4:
                     handleInterpolasi();
@@ -76,7 +85,8 @@ public class Main {
                     System.out.println("Interpolasi Bicubic Spline");
                     break;
                 case 6:
-                    System.out.println("Regresi linier berganda");
+                    RegresiLinierBerganda();
+                    handleCobaLagi(()-> {RegresiLinierBerganda();});
                     break;
                 case 7:
                     System.out.println("Keluar");
@@ -110,6 +120,29 @@ public class Main {
 
     }
 
+    static void handleCobaLagi(Runnable currentHandler) {
+        
+        System.out.println(
+"""
+    
+Coba lagi ?
+1. Ya
+2. Keluar
+
+Pilih instruksi: """
+        );
+
+        int chosenInstruction = Input.getInt(
+            "Masukan harus dalam range 1 - 2",
+            (Integer n) -> n == 1 || n == 2
+        );
+
+        if(chosenInstruction == 1) {
+            currentHandler.run();
+            return;
+        }
+    }
+
     static void handleDeterminan() {
         System.out.println("\n[Determinan]");
 
@@ -135,31 +168,19 @@ Pilih metode: """
 
         System.out.printf("\nDeterminan: %.3f\n", determinan);
 
-        System.out.println(
-"""
-    
-Coba lagi ?
-1. Ya
-2. Keluar
-
-Pilih instruksi: """
-        );
-
-        int chosenInstruction = Input.getInt(
-            "Masukan harus dalam range 1 - 2",
-            (Integer n) -> n == 1 || n == 2
-        );
-
-        if(chosenInstruction == 1) {
-            handleDeterminan();
-            return;
-        }
     }
 
+    static void RegresiLinierBerganda() {
+        System.out.println("\n[Regresi Linier Berganda]");
+        
+        MultipleLinearRegression mlr = new MultipleLinearRegression();
+        Matrix mat = mlr.getMatrixFromUserInput();
+        mlr.init(mat);
+        mlr.solve();
+    }
 
     static void handleMatrixBalikan() {
         System.out.println("\n[Inverse]");
-
         
         Matrix mat = new Matrix();
         mat.readSquareMatrix();
@@ -168,25 +189,5 @@ Pilih instruksi: """
 
         System.out.println("\nInverse:\n");
         determinan.displayMatrix(null);
-
-        System.out.println(
-"""
-    
-Coba lagi ?
-1. Ya
-2. Keluar
-
-Pilih instruksi: """
-        );
-
-        int chosenInstruction = Input.getInt(
-            "Masukan harus dalam range 1 - 2",
-            (Integer n) -> n == 1 || n == 2
-        );
-
-        if(chosenInstruction == 1) {
-            handleMatrixBalikan();
-            return;
-        }
     }
 }
