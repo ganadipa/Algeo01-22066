@@ -5,7 +5,7 @@ import Utils.*;
 import java.io.*;
 import java.util.*;
 
-public class Matrix {
+public class Matrix{
     private Scanner userInput = new Scanner(System.in);
     
 
@@ -374,7 +374,7 @@ public class Matrix {
 
     /**
     * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
-    * @see getDeterminant
+    * @see getDeterminan
     */
     public void toRowEchelon() {
         // We'll be using gauss elimination
@@ -484,5 +484,67 @@ public class Matrix {
         }
 
         return inverseMatrix;
+    }
+
+    public void readInterpolasi() {
+        System.out.print("Masukkan  banyak titik: ");
+        int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
+
+        this.initMatrix(n, n+1);
+
+        for (int i = 0; i < this.row; i++) {
+            System.out.printf("Masukan titik ke %d: ", i + 1);
+            String input = userInput.nextLine();
+            String[] titik = input.split(" ");
+            double x = Double.parseDouble(titik[0]);
+            double y = Double.parseDouble(titik[1]);
+
+            for (int j = 0; j < this.col; j++) {
+                if (j == this.col - 1) {
+                    matrix[i][j] = y;
+                }else {
+                    matrix[i][j] = Math.pow(x,j);
+                }
+            }
+            //c + bx + ax2 = y
+        }
+    }
+
+    public void readInterpolasiFromFile() {
+        System.out.println("Masukkan nama file beserta ekstensinya.");
+        System.out.print("(dir: test/input): ");
+        String fileName = userInput.next();
+        String fileInputPath = "test/input/" + fileName;
+        List<String> titiks = new LinkedList<>();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
+            for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                titiks.add(line);
+            }
+
+            this.initMatrix(titiks.size(), titiks.size() + 1);
+
+            for (int i = 0; i < this.row; i++) {
+                String[] titik = titiks.get(i).split(" ");
+                double x = Double.parseDouble(titik[0]);
+                double y = Double.parseDouble(titik[1]);
+                for (int j = 0; j < this.col; j++) {
+                    if (j == this.col - 1) {
+                        matrix[i][j] = y;
+                    }else {
+                        matrix[i][j] = Math.pow(x,j);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            System.out.println("File tidak ditemukan.");
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
+        }
     }
 }
