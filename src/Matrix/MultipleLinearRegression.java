@@ -13,7 +13,6 @@ public class MultipleLinearRegression implements Solvable {
         SPL spl = new SPL(matrix.row,matrix.col-1);
         spl.init(matrix);
         spl.solve();
-        matrix.displayMatrix(null);
         System.out.print("f(x) = ");
         System.out.print(spl.x[0].c+"x"+0);
         for(int i = 1; i < spl.x.length; i++) {
