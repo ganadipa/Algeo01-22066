@@ -317,7 +317,7 @@ public class Matrix{
     * @return  determinan matrix
     * @see DeterminantMethod
     */
-    public double getDeterminant(DeterminantMethod method) {
+    public double getDeterminant(DeterminantMethod method) throws Error {
         if(row != col) throw new Error("Panjang baris dan kolom harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
@@ -361,7 +361,7 @@ public class Matrix{
     * @return  determinan matrix
     * @see getDeterminant
     */
-    public double getDeterminant() {
+    public double getDeterminant() throws Error {
         return getDeterminant(DeterminantMethod.CofactorExpansion);
     }
 
@@ -556,7 +556,7 @@ public class Matrix{
                 }
             }
             for(int i = 0; i < row; i++) {
-                augMatrix.matrix[i][i+3] = 1;
+                augMatrix.matrix[i][i+row] = 1;
             }
     
             augMatrix.toReducedRowEchelon();
@@ -580,7 +580,7 @@ public class Matrix{
     * Mengembalikan inverse matrix dengan metode default yaitu gauss jordan.
     * @return  inverse matrix
     */
-    public Matrix getInverse() {
+    public Matrix getInverse() throws Error {
         return getInverse(InverseMethod.GaussJordan);
     }
 

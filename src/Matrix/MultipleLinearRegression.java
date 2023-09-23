@@ -18,9 +18,9 @@ public class MultipleLinearRegression implements Solvable {
     }
     public void display() {
         System.out.print("f(x) = ");
-        System.out.print(spl.x[0].c+"x"+0);
+        System.out.print(spl.x[0].getConstant()+"x"+0);
         for(int i = 1; i < spl.x.length; i++) {
-            System.out.print(" + "+spl.x[i].c+"x"+i);
+            System.out.print(" + "+spl.x[i].getConstant()+"x"+i);
         }
 
         System.out.print("\nEstimate:\n");
@@ -37,7 +37,7 @@ public class MultipleLinearRegression implements Solvable {
     public double getEstimate(double x) {
         double result = 0;
         for(int i = 0; i < spl.x.length; i++) {
-            result += spl.x[i].c * Math.pow(x, i);
+            result += spl.x[i].getConstant() * Math.pow(x, i);
         }
         return result;
     }

@@ -36,12 +36,14 @@ class Parametric {
      * 
      * 
      */
-    public double c = 0 ;
+    private double c = 0 ;
     private double temporaryParametricVariables[];
-    public boolean isAssigned;
+    private boolean isAssigned;
 
     // Effective parametric ordering
-    public double parametricCoefficient[];
+    private double parametricCoefficient[];
+
+
 
     
 
@@ -67,6 +69,36 @@ class Parametric {
 
     public void setTmpParamElmt(int idx, double val) {
         temporaryParametricVariables[idx] = val;
+    }
+
+    public double getConstant() {
+        return this.c;
+    }
+
+    public void setConstant(double val) {
+        this.c = val;
+        setIsAssigned(true);
+    }
+
+    public boolean getIsAssigned() {
+        return this.isAssigned;
+    }
+
+    public void setIsAssigned(boolean val) {
+        this.isAssigned = val;
+    }
+
+    public double getParametricCoefficient(int idx) {
+        return this.parametricCoefficient[idx];
+    }
+
+    public void setParametricCoefficient(int idx, double val) {
+        this.parametricCoefficient[idx] = val;
+        setIsAssigned(true);
+    }
+
+    public void initializeParametricCoefficient(int num) {
+        this.parametricCoefficient = new double[num];
     }
 
     public void add(Parametric x) {
@@ -163,9 +195,9 @@ class Parametric {
 public class SPL implements Solvable {
 
     // Kesepakatan: Ax = B;
-    public double A[][];
+    public Matrix A;
     public Parametric x[];
-    public double B[];
+    public Matrix B;
     public Matrix augmentedMatrix;
     private Map<Integer, Integer> parametricLinking = new HashMap<Integer, Integer>();
 
@@ -201,11 +233,11 @@ public class SPL implements Solvable {
             {
                 this.augmentedMatrix.matrix[row][col] = m.matrix[row][col]; 
                 if (col == m.matrix[0].length-1) {
-                    this.B[row] = m.matrix[row][col];
+                    this.B.matrix[row][0] = m.matrix[row][col];
                     continue;
                 }
 
-                this.A[row][col] = m.matrix[row][col];
+                this.A.matrix[row][col] = m.matrix[row][col];
             }
         }
     
@@ -375,34 +407,222 @@ public class SPL implements Solvable {
 
     private void solveUsingInverse(boolean showProcess){
         Matrix inversedMatrix;
+        if (showProcess) {
+            System.out.println("""
+--> Misal SPL dibentuk ke dalam Ax = B,
+  | dengan A adalah matriks:""");
+            this.A.displayMatrix(null);
+            System.out.println();
 
-        try {
-            inversedMatrix = this.augmentedMatrix.getInverse();
-        } catch (Error e)
-        {
-            System.out.println(e);
-            System.out.println("Program berhenti.");
-            return;
-        }
-
-
-
-        for (int row = 0; row < inversedMatrix.row; row++)
-        {
-            this.x[row].isAssigned = true;
-            for (int col = 0; col < inversedMatrix.col; col++)
+            System.out.println("""
+. | x adalah matriks:""");
+            System.out.println("[");
+            for (int i = 0; i < this.x.length; i++)
             {
-                this.x[row].c += (inversedMatrix.matrix[row][col])*this.B[col];
+                System.out.printf("\t[ x%d ]\n", i+1);
             }
-        }
+            System.out.println("]");
+            System.out.println();
 
-        this.showSolution();
+            System.out.println("""
+. | dan B adalah matriks:""");
+            this.B.displayMatrix(null);
+            System.out.println();
+
+
+            System.out.println("Jika solusinya tunggal (memiliki balikan/inverse), maka berlaku A^(-1)Ax = A^(-1)B <=> x = A^(-1)B \n");
+
+            try {
+                inversedMatrix = this.A.getInverse();
+            } catch (Error e)
+            {
+                System.out.println(e.getMessage());
+                System.out.println("Program berhenti.");
+                return;
+            }
+
+            System.out.println("""
+--> Dapatkan inverse dari matriks A, 
+  | Matriks A^(-1) = """);
+            inversedMatrix.displayMatrix(null);
+            System.out.println("""
+--> Hitung matriks A^(-1)B,
+  | Matriks A^(-1)B = """);
+            inversedMatrix.multiply(this.B);
+            inversedMatrix.displayMatrix(null);
+            System.out.println();
+            System.out.println("""
+--> Simpulkan.""");        
+            for (int row = 0; row < this.B.row; row++)
+            {
+                this.x[row].setConstant(inversedMatrix.matrix[row][0]);
+            }
+
+            this.showSolution();
+        } else {
+            try {
+                inversedMatrix = this.A.getInverse();
+            } catch (Error e)
+            {
+                System.out.println(e.getMessage());
+                System.out.println("Program berhenti.");
+                return;
+            }
+            inversedMatrix.multiply(this.B);
+            for (int row = 0; row < this.B.row; row++)
+            {
+                this.x[row].setConstant(inversedMatrix.matrix[row][0]);
+            }
+
+            this.showSolution();
+        }
+        
         
 
     }
 
     private void solveUsingCramer(boolean showProcess) {
-        if (!this.augmentedMatrix.isSquare()){
+        if (showProcess) {
+            System.out.println("""
+--> Misal SPL dibentuk ke dalam Ax = B,
+  | dengan A adalah matriks:""");
+            this.A.displayMatrix(null);
+            System.out.println();
+
+            System.out.println("""
+. | x adalah matriks:""");
+            System.out.println("[");
+            for (int i = 0; i < this.x.length; i++)
+            {
+                System.out.printf("\t[ x%d ]\n", i+1);
+            }
+            System.out.println("]");
+            System.out.println();
+
+            System.out.println("""
+. | dan B adalah matriks:""");
+            this.B.displayMatrix(null);
+            System.out.println();
+
+
+            System.out.println("""
+--> Metode Cramer adalah salah satu metode untuk menyelesaikan SPL yang memiliki solusi tunggal,
+  | yaitu dengan: """);
+            System.out.printf("  |\txi = |Ai|/|A| untuk setiap i yang terdefinisi.\n");
+            System.out.println("""
+. |
+  | dengan Ai adalah matriks A tetapi setiap elemen pada kolom i diganti menjadi elemen dari B.
+  | Oleh karena itu, nilai dari |A| dan |Ai| untuk setiap i yang terdefinisi haruslah ada,
+  | serta nilai dari |A| tak nol.""");
+            
+            System.out.println("\n--> Hitung nilai |A| ");
+
+            double detA;
+            try {
+                detA = this.A.getDeterminant();
+            } catch (Error e) {
+                System.out.println(e.getMessage());
+                System.out.println("Program berhenti.");
+                return;
+            }
+            System.out.printf("  | Setelah dihitung, nilai |A| = %.4f\n", detA);
+
+            System.out.printf("""
+
+--> Sekarang, untuk setiap i yang terdefinisi, yaitu 1 <= i <= jumlah variabel, yang dalam hal ini
+  | berarti i <= i <= %d.
+  | 
+  """, this.A.row);
+
+
+            for (int i = 0; i < this.A.row; i++)
+            {
+                System.out.printf("  | Untuk i = %d,\n", i+1);
+                System.out.printf("  | Matriks A%d =\n", i+1);
+
+
+
+                // copy matrix
+                Matrix ai = new Matrix(this.A.row, this.A.row);
+                for (int row = 0; row < this.A.row; row++)
+                {
+                    for(int col = 0; col < this.A.row; col++)
+                    {
+                        if (col == i) {
+                            ai.matrix[row][col] = this.B.matrix[row][0]; 
+                            continue;
+                        } else {
+                            ai.matrix[row][col] = this.A.matrix[row][col];
+                        }
+                    }
+                }
+                ai.displayMatrix(null);
+
+                // get det Ai
+                double detAi;
+                try {
+                detAi = ai.getDeterminant();
+                } catch (Error e) {
+                    System.out.println(e.getMessage());
+                    System.out.println("Program berhenti.");
+                    return;
+                }
+
+                System.out.printf("""
+. | yang mana |A%d| = %.4f, sehingga
+  | x%d = |A%d|/|A| = (%.4f)/(%.4f) = %.4f
+  |
+  |
+                """,i+1, detAi, i+1, i+1, detAi, detA, detAi/detA);
+                this.x[i].setConstant(detAi/detA);
+                System.out.println();
+
+            }
+        System.out.println("--> Wrapping up, solusi SPL ini adalah");
+        this.showSolution();
+        } else {
+            double detA;
+            try {
+                detA = this.A.getDeterminant();
+            } catch (Error e) {
+                System.out.println(e.getMessage());
+                System.out.println("Program berhenti.");
+                return;
+            }
+
+
+            for (int i = 0; i < this.A.row; i++)
+            {
+                // copy matrix
+                Matrix ai = new Matrix(this.A.row, this.A.row);
+                for (int row = 0; row < this.A.row; row++)
+                {
+                    for(int col = 0; col < this.A.row; col++)
+                    {
+                        if (col == i) {
+                            ai.matrix[row][col] = this.B.matrix[row][0]; 
+                            continue;
+                        } else {
+                            ai.matrix[row][col] = this.A.matrix[row][col];
+                        }
+                    }
+                }
+
+                // get det Ai
+                double detAi;
+                try {
+                detAi = ai.getDeterminant();
+                } catch (Error e) {
+                    System.out.println(e.getMessage());
+                    System.out.println("Program berhenti.");
+                    return;
+                }
+
+
+                this.x[i].setConstant(detAi/detA);
+
+            }
+        this.showSolution();
 
         }
     }
@@ -415,8 +635,8 @@ public class SPL implements Solvable {
     
 
     public void initSPL(int row, int col) {
-        this.A = new double[row][col-1];
-        this.B = new double[row];
+        this.A = new Matrix(row, col-1);
+        this.B = new Matrix(row, 1);
         this.augmentedMatrix = new Matrix(row, col);
 
 
@@ -432,16 +652,16 @@ public class SPL implements Solvable {
 
     public boolean hasSolution()
     {
-        int[] allZeroRow = new int[this.B.length];
-        int rowLengthInA = this.A.length;
-        int colLengthInA = this.A[0].length;
+        int[] allZeroRow = new int[this.B.row];
+        int rowLengthInA = this.A.row;
+        int colLengthInA = this.A.col;
 
         for (int row = rowLengthInA-1; row >= 0; row--)
         {
             boolean checkRow = true;
             for (int col = 0; col < colLengthInA; col ++)
             {
-                if (Utils.isNotEqual(this.A[row][col], 0.0))
+                if (Utils.isNotEqual(this.A.matrix[row][col], 0.0))
                 {
                     checkRow = false;
                     break;
@@ -452,7 +672,7 @@ public class SPL implements Solvable {
 
         for(int row = 0; row < allZeroRow.length; row++)
         {
-            if (allZeroRow[row] == 1 && Utils.isNotEqual(this.B[row], 0.0 ))
+            if (allZeroRow[row] == 1 && Utils.isNotEqual(this.B.matrix[row][0], 0.0 ))
             {
                 return false;
             }
@@ -485,22 +705,21 @@ public class SPL implements Solvable {
 
         String parametricNaming = "abcdefghijklmnopqrstuvwyz";
 
-
-        this.x[leadingOnePosition].c += rowArray[rowArray.length - 1]; 
+        this.x[leadingOnePosition].setConstant(this.x[leadingOnePosition].getConstant() + rowArray[rowArray.length-1]);
 
 
         if (showProcess) System.out.println(" | Kita dapati:");
         for (int i = rowArray.length - 2; i > leadingOnePosition; i--)
         {
             double multiplier = rowArray[i];
-            if (!this.x[i].isAssigned){
+            if (!this.x[i].getIsAssigned()){
                 this.x[i].setAsBaseParametric(i);
                 if (showProcess) System.out.printf(" | Jadikan x%d sebagai base parametrik, katakanlah %c\n", i+1, parametricNaming.charAt(i) );
             }
             this.x[leadingOnePosition].subtract(this.x[i], multiplier);
             
         }
-        this.x[leadingOnePosition].isAssigned = true;
+        this.x[leadingOnePosition].setIsAssigned(true);
 
         if (showProcess)
         {
@@ -536,11 +755,11 @@ public class SPL implements Solvable {
         // set the effective variables used in the parametric solution
         for (Integer i = 0; i < lengthX; i++)
         {
-            this.x[i].parametricCoefficient = new double[cnt];
+            this.x[i].initializeParametricCoefficient(cnt);
             for (Integer j = 0; j < lengthX; j++)
             {
                 if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0)) continue;
-                this.x[i].parametricCoefficient[parametricLinking.get(j)] = this.x[i].getTmpParamElmt(j);
+                this.x[i].setParametricCoefficient(parametricLinking.get(j), this.x[i].getTmpParamElmt(j));
             }
         }
 
@@ -552,19 +771,27 @@ public class SPL implements Solvable {
 
         String parametricNaming = "abcdefghijklmnopqrstuvwyz";
         for (int i = 0; i<lengthX; i++){
+            int cnt= 0;
             System.out.printf("x%d = ", i+1);
-            if (Utils.isNotEqual(this.x[i].c, 0 ) || !this.x[i].hasParametricVariables()){
-                System.out.printf("%.4f ", this.x[i].c);
+            if (Utils.isNotEqual(this.x[i].getConstant(), 0 ) || !this.x[i].hasParametricVariables()){
+                System.out.printf("%.4f ", this.x[i].getConstant());
+                cnt++;
             }
             
             for (int j = 0; j < lengthX; j++)
             {  
                 if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0)) continue;
-                System.out.printf("%+.4f%c ",this.x[i].getTmpParamElmt(j) ,parametricNaming.charAt(parametricLinking.get(j)));
+                if (cnt > 0) {
+                    System.out.printf("%+.4f%c ",this.x[i].getTmpParamElmt(j) ,parametricNaming.charAt(parametricLinking.get(j)));
+                }
+                else {
+                    System.out.printf("%.4f%c ",this.x[i].getTmpParamElmt(j) ,parametricNaming.charAt(parametricLinking.get(j)));
+                    cnt++;
+                }
             }
             System.out.println();
         }
-
+        
         
 
         
