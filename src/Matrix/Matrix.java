@@ -503,6 +503,7 @@ public class Matrix{
 
 
     }
+
     /**
     * Mengembalikan inverse matrix dengan metode default yaitu gauss jordan.
     * @return  inverse matrix
@@ -511,7 +512,7 @@ public class Matrix{
         return getInverse(InverseMethod.GaussJordan);
     }
 
-    public void readInterpolasi() {
+    public Double readInterpolasi() {
         System.out.print("Masukkan  banyak titik: ");
         int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
 
@@ -533,9 +534,13 @@ public class Matrix{
             }
             //c + bx + ax2 = y
         }
+
+        System.out.print("Masukkan nilai x yang ingin ditafsir nilai f(x) nya: ");
+        int x = Input.getInt("", (num) -> true);
+        return (double) x;
     }
 
-    public void readInterpolasiFromFile() {
+    public Double readInterpolasiFromFile() {
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
         String fileName = userInput.next();
@@ -547,7 +552,7 @@ public class Matrix{
                 titiks.add(line);
             }
 
-            this.initMatrix(titiks.size(), titiks.size() + 1);
+            this.initMatrix(titiks.size() - 1, titiks.size());
 
             for (int i = 0; i < this.row; i++) {
                 String[] titik = titiks.get(i).split(" ");
@@ -561,15 +566,56 @@ public class Matrix{
                     }
                 }
             }
+
+            return Double.parseDouble(titiks.get(titiks.size() - 1));
+
         } catch (IOException e) {
             // Handle case saat file not found atau ada IO error.
             System.out.println("File tidak ditemukan.");
+            return null;
         } catch (NumberFormatException e) {
             // Handle case saat ada nonnumeric di input.
             System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+            return null;
         } catch (IllegalArgumentException e) {
             // Jumlah elemen di setiap baris tidak konsisten.
             System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
+            return null;
+        }
+    }
+
+    public Double[] readBicubicFromFile() {
+        System.out.println("Masukkan nama file beserta ekstensinya.");
+        System.out.print("(dir: test/input): ");
+        String fileName = userInput.next();
+        String fileInputPath = "test/input/" + fileName;
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
+            this.initMatrix(16, 1);
+            int row = 0;
+            for (int i = 0; i < 4; i++) {
+                String[] line = bufferedReader.readLine().split(" ");
+                for (String s : line) {
+                    this.matrix[row++][0] = Double.parseDouble(s);
+                }
+            }
+
+            String[] line = bufferedReader.readLine().split(" ");
+
+            return new Double[]{ Double.parseDouble(line[0]), Double.parseDouble(line[1]) };
+
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            System.out.println("File tidak ditemukan.");
+            return null;
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+            return null;
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
+            return null;
         }
     }
 
@@ -619,5 +665,20 @@ public class Matrix{
             }
         }
         return m;
+    }
+
+    public Matrix multiplyBy(Matrix m) {
+
+        Matrix result = new Matrix(this.row, m.col);
+
+        for (int i = 0; i < result.row; i++) {
+            for(int j = 0; j < result.col; j++) {
+                for (int k = 0; k < this.col; k++) {
+                    result.matrix[i][j] += this.matrix[i][k] * m.matrix[k][j];
+                }
+            }
+        }
+
+        return result;
     }
 }
