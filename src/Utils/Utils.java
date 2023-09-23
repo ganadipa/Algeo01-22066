@@ -77,6 +77,19 @@ public class Utils {
         }
     }
 
+    public static void andOrList(Integer[] l1, double[] l2, boolean and){
+        int length = l1.length;
+        for (int i = 0; i < length; i++)
+        {
+            if (!and)
+            {
+                l1[i] = (l1[i]!=0) || (l2[i]!=0) ? 1: 0;
+            } else {
+                l1[i] = (l1[i]!=0) && (l2[i]!=0) ? 1: 0;
+            }
+        }
+    }
+
 
 
 

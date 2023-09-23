@@ -176,10 +176,10 @@ public class Matrix {
             {
                 if (j == this.col - 1) {
                     if (opt == "augmented") {System.out.print("|");}
-                    System.out.printf(" %.3f", this.matrix[i][j]);
+                    System.out.printf(" %.4f", this.matrix[i][j]);
                     break;
                 }
-                System.out.printf(" %.3f ", this.matrix[i][j]);
+                System.out.printf(" %.4f ", this.matrix[i][j]);
             }
             System.out.print("]");
             System.out.println();
