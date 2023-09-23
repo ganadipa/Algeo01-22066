@@ -22,7 +22,9 @@ public class Gana {
             spl.displayMatrix();
             // spl.solve();
             // spl.showSolution();
-            spl.solveUsingGauss(false);
+            spl.setMethod(SPL.SPLMethod.Inverse);
+            spl.setShowProcess(true);
+            spl.solve();
             // System.out.println("passed");
             // spl.solve();
             // System.out.println("passed");

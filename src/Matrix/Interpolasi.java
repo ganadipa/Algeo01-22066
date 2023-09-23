@@ -12,7 +12,7 @@ public class Interpolasi implements Solvable {
 
 
     public void solve() {
-        this.matrix.toRowReducedEchelon();
+        this.matrix.toReducedRowEchelon();
 
         System.out.print("f(x) = ");
         for (int i = matrix.row - 1; i >=  0; i--) {

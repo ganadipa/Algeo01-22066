@@ -43,6 +43,11 @@ public class Matrix{
 
     }
 
+    public boolean isSquare()
+    {
+        return (this.row == this.col);
+    }
+
     // read Matrix from user input
     public void readMatrix(){
         int row = 0;
@@ -414,7 +419,74 @@ public class Matrix{
         this.normalizeMatrix();
     }
 
-    public void toRowReducedEchelon() {
+    public void multiply(Matrix m)
+    {
+        if (this.col != m.row) {
+            System.out.println("Jumlah kolom matriks pertama tidak sama dengan jumlah baris matriks kedua. Prosedur gagal dijalankan.");
+            return;
+        }
+
+        // Get the result of the multiplied matrix
+        Matrix tmp = new Matrix(this.row, m.col);
+        for (int row = 0; row < tmp.row; row++)
+        {
+            for (int col = 0; col < tmp.col; col++)
+            {
+
+                for (int i = 0; i < tmp.col; i++)
+                {
+                    tmp.matrix[row][col] += this.matrix[row][i]*this.matrix[i][col];
+                }
+            }
+        }
+
+        // copy the result to this matrix
+        this.initMatrix(tmp.row, tmp.col);
+        for (int row = 0; row < this.row; row++)
+        {
+            for(int col = 0; col < this.col; col++)
+            {
+                this.matrix[row][col] = tmp.matrix[row][col];
+            }
+        }
+
+    }
+
+    public void multiply(double[][] m)
+    {
+        if (this.col != m.length) {
+            System.out.println("Jumlah kolom matriks pertama tidak sama dengan jumlah baris matriks kedua. Prosedur gagal dijalankan.");
+            return;
+        }
+
+        // Get the result of the multiplied matrix
+        Matrix tmp = new Matrix(this.row, m.length);
+        for (int row = 0; row < tmp.row; row++)
+        {
+            for (int col = 0; col < tmp.col; col++)
+            {
+
+                for (int i = 0; i < tmp.col; i++)
+                {
+                    tmp.matrix[row][col] += this.matrix[row][i]*this.matrix[i][col];
+                }
+            }
+        }
+
+        // copy the result to this matrix
+        this.initMatrix(tmp.row, tmp.col);
+        for (int row = 0; row < this.row; row++)
+        {
+            for(int col = 0; col < this.col; col++)
+            {
+                this.matrix[row][col] = tmp.matrix[row][col];
+            }
+        }
+
+    }
+
+
+    public void toReducedRowEchelon() {
         this.toRowEchelon();
 
         for( int currRow = 0; currRow < this.row; currRow++)
@@ -454,7 +526,7 @@ public class Matrix{
     * Mengembalikan inverse matrix.
     * @return  inverse matrix
     */
-    public Matrix getInverse() {
+    public Matrix getInverse() throws Error{
         if(getDeterminant(DeterminantMethod.CofactorExpansion) == 0) {
             throw new Error("Determinan tidak boleh 0");
         }
@@ -474,7 +546,7 @@ public class Matrix{
             augMatrix.matrix[i][i+3] = 1;
         }
 
-        augMatrix.toRowReducedEchelon();
+        augMatrix.toReducedRowEchelon();
         Matrix inverseMatrix = new Matrix(row, col);
 
         for(int i = 0; i < row; i++) {
