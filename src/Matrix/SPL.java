@@ -107,11 +107,11 @@ class Parametric {
 
 public class SPL implements Solvable {
 
-    public void init() {
+    public void init(Matrix matrix) {
 
     }
     public void solve() {
-        if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon(null);
+        if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon();
 
         for (int i = this.B.length-1; i >= 0; i--)
         {

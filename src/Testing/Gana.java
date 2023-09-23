@@ -17,6 +17,8 @@ public class Gana {
             SPL spl = new SPL(m2.row, m2.col);
             System.out.println("passed");
             m2.toRowEchelon();
+            m2.displayMatrix(null);
+            m2.toRowReducedEchelon();
             m2.normalizeMatrix();
             spl.fromMatrix(m2);
             spl.displayMatrix();

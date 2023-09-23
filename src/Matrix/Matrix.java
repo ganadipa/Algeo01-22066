@@ -440,9 +440,11 @@ public class Matrix {
             for (int row = 0; row < this.row; row++)
             {
                 if (currRow == row) break;
-                Utils.plusMinusList(this.matrix[], null, false, this.matrix[row][]);
+                Utils.plusMinusList(this.matrix[row], this.matrix[currRow], false, this.matrix[row][leadingOnePosition]);
             }
         }
+
+        this.displayMatrix("augmented");
     }
 
     // To normalize matrix, make the -0 to 0.
@@ -457,4 +459,19 @@ public class Matrix {
         }
     }
 
+
+    public Matrix getIdentityBySize() {
+        return null;
+    }
+
+    /**
+    * Mengembalikan inverse matrix.
+    * @return  inverse matrix
+    */
+    public Matrix getInverse() {
+        // Bikin matrix augmented dengan identitas di kanan
+        Matrix augMatrix = new Matrix(matrix.length, col);
+
+        return null;
+    }
 }
