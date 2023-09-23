@@ -351,6 +351,15 @@ public class Matrix{
         }
     }
 
+    /**
+    * Mengembalikan determinan matrix dengan metode default yaitu CofactorExpansion.
+    * @return  determinan matrix
+    * @see getDeterminant
+    */
+    public double getDeterminant() {
+        return getDeterminant(DeterminantMethod.CofactorExpansion);
+    }
+
     public int getColomnNotEntirelyZero(int startRow, int endRow)
     {
         int idx = -1;
@@ -570,5 +579,17 @@ public class Matrix{
         }
 
         return subMatrix;
+    }
+
+    public Matrix getAdjoin() {
+        Matrix m = new Matrix(row, col);
+
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < row; j++) {
+                m.matrix[i][j] = Math.pow(-1,i+j) * getCofactor(i, j).getDeterminant();
+            }   
+        }
+
+        return m;
     }
 }
