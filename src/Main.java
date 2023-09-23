@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 import javax.swing.Action;
 
 import Matrix.Matrix;
+import Matrix.MultipleLinearRegression;
 import Utils.Input;
 
 public class Main {
@@ -83,7 +84,8 @@ public class Main {
                     System.out.println("Interpolasi Bicubic Spline");
                     break;
                 case 6:
-                    System.out.println("Regresi linier berganda");
+                    RegresiLinierBerganda();
+                    handleCobaLagi(()-> {RegresiLinierBerganda();});
                     break;
                 case 7:
                     System.out.println("Keluar");
@@ -145,9 +147,17 @@ Pilih metode: """
 
     }
 
+    static void RegresiLinierBerganda() {
+        System.out.println("\n[Regresi Linier Berganda]");
+        
+        MultipleLinearRegression mlr = new MultipleLinearRegression();
+        Matrix mat = mlr.getMatrixFromUserInput();
+        mlr.init(mat);
+        mlr.solve();
+    }
+
     static void handleMatrixBalikan() {
         System.out.println("\n[Inverse]");
-
         
         Matrix mat = new Matrix();
         mat.readSquareMatrix();
