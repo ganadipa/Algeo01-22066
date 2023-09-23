@@ -2,6 +2,7 @@ package Matrix;
 
 import java.util.Arrays;
 
+import Interface.Solvable;
 import Utils.Utils;
 
 class Parametric {
@@ -75,7 +76,14 @@ class Parametric {
 
 }
 
-public class SPL {
+public class SPL implements Solvable {
+
+    public void init() {
+
+    }
+    public void solve() {
+
+    }
 
     // Kesepakatan: Ax = B;
     public double A[][];
@@ -93,9 +101,7 @@ public class SPL {
         
     }
 
-    public void solve() {
-
-    }
+    
 
     public boolean hasSolution()
     {
