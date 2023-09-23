@@ -13,6 +13,7 @@ class Parametric {
     // Effective parametric ordering
     public double param[];
 
+    
 
     /**
      * 
@@ -116,11 +117,20 @@ public class SPL implements Solvable {
     public double B[];
     public Matrix augmentedMatrix;
     private Map<Integer, Integer> parametricLinking = new HashMap<Integer, Integer>();
+    private SPLMethod method; 
 
+    enum SPLMethod {
+        Gauss, GaussJordan, Inverse, Cramer
+    }
+
+    public void setMethod(SPLMethod method) {
+        this.method = method;
+    }
     public void init(Matrix matrix) {
         this.fromMatrix(matrix);
     }
     public void solve() {
+
         if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon();
 
         for (int i = this.B.length-1; i >= 0; i--)
@@ -136,6 +146,101 @@ public class SPL implements Solvable {
         }
 
         this.solve_helper();
+    }
+
+    private void showEquation(int row)
+    {
+        int cnt = 0;
+        for(int i = 0 ; i < this.augmentedMatrix.col; i++)
+        {
+            if (cnt == 0) {
+                if (Utils.isEqual(this.augmentedMatrix.matrix[row][i], 0)) continue;
+                System.out.printf("%.4fx%d ", this.augmentedMatrix.matrix[row][i], i+1 );
+                cnt += 1;
+            } else if (i == this.augmentedMatrix.col - 1)
+            {
+                System.out.printf("= %.4f \n", this.augmentedMatrix.matrix[row][i]);
+            } else {
+                if (Utils.isEqual(this.augmentedMatrix.matrix[row][i], 0)) continue; 
+                System.out.printf("%+.4fx%d ", this.augmentedMatrix.matrix[row][i], i+1 );
+            }
+        }
+    }
+    private void showEquations()
+    {
+        for (int row = 0; row < this.augmentedMatrix.row; row++)
+        {
+            showEquation(row);
+        }
+    }   
+
+    public void solveUsingGauss(boolean showProcess) {
+
+
+        // STEP 1
+
+        System.out.println("--> Cek apakah augmented matriks sudah berupa matriks eselon baris.");
+        System.out.println();
+        displayMatrix();
+        System.out.println();
+
+        if (augmentedMatrix.isEchelon()) 
+        {
+            System.out.println("Matriks di atas sudah berupa matriks eselon baris. Lanjut ke step berikutnya");
+        } else {
+            System.out.println("Karena matriks di atas belum merupakan matriks eselon baris, Ubah ke matriks eselon baris.");
+            this.augmentedMatrix.toRowEchelon();
+            displayMatrix();
+            System.out.println();
+        }
+
+
+        // STEP 2
+
+        System.out.println();
+        System.out.println("--> Setelah itu, ubah ke bentuk sistem persamaan linear.");
+        System.out.println();
+        this.showEquations();
+        System.out.println();
+
+
+        // STEP 3
+        System.out.println("""
+        --> Sekarang, selesaikan persamaan satu persatu mulai dari 
+        persamaan yang paling bawah.
+        """);
+
+        for (int row = this.augmentedMatrix.row-1; row >= 0; row--)
+        {
+            System.out.print(" -> dari persamaan :");
+            showEquation(row);
+            solveRow(row);
+        }
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    private void solveUsingGaussJordan() {
+
+    }
+
+    private void solveUsingInverse(){
+
+    }
+
+    private void solveUsingCramer() {
+
     }
 
     public void fromMatrix(Matrix m) {
@@ -237,15 +342,19 @@ public class SPL implements Solvable {
 
         this.x[leadingOnePosition].c += rowArray[rowArray.length - 1]; 
 
-
+        System.out.println("Kita dapati");
         for (int i = rowArray.length - 2; i > leadingOnePosition; i--)
         {
             double multiplier = rowArray[i];
-            if (!this.x[i].isAssigned) this.x[i].setAsBaseParametric(i);
+            if (!this.x[i].isAssigned){
+                this.x[i].setAsBaseParametric(i);
+                System.out.printf("Jadikan x%d sebagai base parametrik.\n", i+1);
+            }
             this.x[leadingOnePosition].subtract(this.x[i], multiplier);
             
         }
         this.x[leadingOnePosition].isAssigned = true;
+        System.out.println();
     
     }
 

@@ -419,7 +419,7 @@ public class Matrix {
             notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
         }
 
-
+        this.normalizeMatrix();
     }
 
     public void toRowReducedEchelon() {
