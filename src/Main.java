@@ -121,27 +121,33 @@ public class Main {
 
     }
 
-    static void handleCobaLagi(Runnable currentHandler) {
+    static void handleCobaLagi(Runnable currentInstruction) {
+
+        boolean isCobaLagi = true;
+        while(isCobaLagi) {
+            System.out.println(
+    """
         
-        System.out.println(
-"""
+    Coba lagi ?
+    1. Ya
+    2. Keluar
     
-Coba lagi ?
-1. Ya
-2. Keluar
+    Pilih instruksi: """
+            );
+    
+            int chosenInstruction = Input.getInt(
+                "Masukan harus dalam range 1 - 2",
+                (Integer n) -> n == 1 || n == 2
+            );
+    
+            if(chosenInstruction == 1) {
+                isCobaLagi = true;
+                currentInstruction.run();
+            }
+            else isCobaLagi = false;
 
-Pilih instruksi: """
-        );
-
-        int chosenInstruction = Input.getInt(
-            "Masukan harus dalam range 1 - 2",
-            (Integer n) -> n == 1 || n == 2
-        );
-
-        if(chosenInstruction == 1) {
-            currentHandler.run();
-            return;
         }
+        
     }
 
     static void handleDeterminan() {
