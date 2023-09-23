@@ -5,7 +5,7 @@ import Utils.*;
 import java.io.*;
 import java.util.*;
 
-public class Matrix {
+public class Matrix{
     private Scanner userInput = new Scanner(System.in);
     
 
@@ -363,7 +363,7 @@ public class Matrix {
 
     /**
     * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
-    * @see getDeterminant
+    * @see getDeterminan
     */
     public void toRowEchelon() {
         for(int j = 0; j < matrix.length-1; j++) {
@@ -390,8 +390,32 @@ public class Matrix {
     */
     public Matrix getInverse() {
         // Bikin matrix augmented dengan identitas di kanan
-        Matrix augMatrix = new Matrix(matrix.length, col)
+        Matrix augMatrix = new Matrix(matrix.length, col);
 
         return null;
+    }
+
+    public void readInterpolasi() {
+
+
+        for (int i = 0; i < this.row; i++) {
+            System.out.printf("Masukan titik ke %d: ", i + 1);
+            String input = userInput.nextLine();
+            String[] titik = input.split(" ");
+            int x = Integer.parseInt(titik[0]);
+            int y = Integer.parseInt(titik[1]);
+
+            for (int j = 0; j < this.col; j++) {
+                if (j == 0) {
+                    matrix[i][j] = 1;
+                } else if (j == this.col - 1) {
+                    matrix[i][j] = y;
+                }else {
+                    matrix[i][j] = Math.pow(x,j);
+                }
+            }
+            //c + bx + ax2 = y
+        }
+
     }
 }

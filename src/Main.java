@@ -1,5 +1,6 @@
 import Matrix.Matrix;
 import Utils.Input;
+import Matrix.Interpolasi;
 
 public class Main {
     public static void main(String[] args) {
@@ -84,6 +85,21 @@ public class Main {
         }
 
         
+
+    }
+
+    static  void handleInterpolasi() {
+        int n;
+
+        System.out.print("Masukkan  banyak titik: ");
+        n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
+
+        Matrix matrix = new Matrix(n, n + 2);
+        Interpolasi interpolasi = new Interpolasi();
+
+        matrix.readInterpolasi();
+
+        interpolasi.init(matrix);
 
     }
 

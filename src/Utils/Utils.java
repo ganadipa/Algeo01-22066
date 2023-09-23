@@ -2,7 +2,7 @@ package Utils;
 
 import java.util.*;
 
-public class Utils {
+public class Utils{
 
     private static double tolerance = 1e-6;
 
