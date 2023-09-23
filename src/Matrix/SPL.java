@@ -2,6 +2,7 @@ package Matrix;
 
 import java.util.Arrays;
 
+import Interface.Solvable;
 import Utils.Utils;
 
 class Parametric {
@@ -104,34 +105,11 @@ class Parametric {
 
 }
 
-public class SPL {
+public class SPL implements Solvable {
 
-    // Kesepakatan: Ax = B;
-    public double A[][];
-    public Parametric x[];
-    public double B[];
-    public Matrix augmentedMatrix;
-    
+    public void init() {
 
-    public SPL(int countEq, int countVar) {
-        this.initSPL(countEq, countVar);
     }
-
-    public void initSPL(int row, int col) {
-        this.A = new double[row][col-1];
-        this.B = new double[row];
-        this.augmentedMatrix = new Matrix(row, col);
-
-
-        this.x = new Parametric[col-1];
-        for (int i = 0; i<col-1; i++)
-        {
-            x[i] = new Parametric(col-1);
-        }
-    }
-    
-    
-
     public void solve() {
         if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon(null);
 
@@ -166,8 +144,35 @@ public class SPL {
                 this.A[row][col] = m.matrix[row][col];
             }
         }
-
+    
     }
+
+    // Kesepakatan: Ax = B;
+    public double A[][];
+    public Parametric x[];
+    public double B[];
+    public Matrix augmentedMatrix;
+    
+
+    public SPL(int countEq, int countVar) {
+        this.initSPL(countEq, countVar);
+    }
+
+    public void initSPL(int row, int col) {
+        this.A = new double[row][col-1];
+        this.B = new double[row];
+        this.augmentedMatrix = new Matrix(row, col);
+
+
+        this.x = new Parametric[col-1];
+        for (int i = 0; i<col-1; i++)
+        {
+            x[i] = new Parametric(col-1);
+        }
+        
+    }
+
+        
 
     public boolean hasSolution()
     {
