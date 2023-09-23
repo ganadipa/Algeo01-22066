@@ -5,6 +5,7 @@ import javax.swing.Action;
 
 import Matrix.Matrix;
 import Matrix.MultipleLinearRegression;
+import Matrix.SPL;
 import Utils.Input;
 
 public class Main {

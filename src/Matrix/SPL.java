@@ -118,7 +118,7 @@ public class SPL implements Solvable {
     private Map<Integer, Integer> parametricLinking = new HashMap<Integer, Integer>();
 
     public void init(Matrix matrix) {
-        this.fromMatrix(matrix);
+
     }
     public void solve() {
         if (!this.augmentedMatrix.isEchelon()) this.augmentedMatrix.toRowEchelon();
