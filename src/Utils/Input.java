@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public class Input {
-    private static Scanner userInput = new Scanner(System.in);
+    public static Scanner userInput = new Scanner(System.in);
     static boolean success = false;
 
     /**
@@ -37,7 +37,7 @@ public class Input {
     }
     
     /**
-    * Input dengan validasi integer error message
+    * Input tanpa validasi integer error message
     *
     * @return      input integer dari user
     */
@@ -57,6 +57,28 @@ public class Input {
 
         return res;
     }
+
+    /**
+    * Input tanpa validasi double error message
+    * @return      input double dari user
+    */
+    public static double getDouble()
+    {
+        success = false;
+        int res = -1;
+        while (!success) {
+            try {
+                res = userInput.nextInt();
+                success = true;
+            } catch (InputMismatchException e) {
+                success = false;
+                System.out.println(mustIntegerMessage);
+            } 
+        }
+
+        return res;
+    }
+
 
     private static final String mustIntegerMessage = "Masukan harus bilangan bulat";
 }

@@ -1,7 +1,15 @@
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javax.swing.Action;
+
 import Matrix.Matrix;
+import Matrix.MultipleLinearRegression;
 import Utils.Input;
+import Matrix.Interpolasi;
 
 public class Main {
+
     public static void main(String[] args) {
         System.out.println("[Welcome to Library Matrix]");
         while(true) {
@@ -26,7 +34,7 @@ public class Main {
                 "Masukan harus dalam range 1 sampai 7",
                 (Integer n) -> n >= 1 && n <= 7
             );
-    
+
             switch(chosenMenu) {
                 case 1:
                     System.out.println(
@@ -64,27 +72,75 @@ public class Main {
     
                 case 2:
                     handleDeterminan();
+                    handleCobaLagi(()-> {handleDeterminan();});
                     break;
                 case 3:
-                    System.out.println("Matriks balikan");
+                    handleMatrixBalikan();
+                    handleCobaLagi(()-> {handleMatrixBalikan();});
                     break;
                 case 4:
-                    System.out.println("Interpolasi Polinom");
+                    handleInterpolasi();
                     break;
                 case 5:
                     System.out.println("Interpolasi Bicubic Spline");
                     break;
                 case 6:
-                    System.out.println("Regresi linier berganda");
+                    RegresiLinierBerganda();
+                    handleCobaLagi(()-> {RegresiLinierBerganda();});
                     break;
                 case 7:
                     System.out.println("Keluar");
                     break;
             }
         }
+    }
 
+    static  void handleInterpolasi() {
+        Interpolasi interpolasi = new Interpolasi();
+        Matrix matrix = new Matrix();
+
+        System.out.println("""
+                Pilih cara input
+                1. Keyboard
+                2. File
+                """);
+
+        System.out.print("Masukkan pilihan: ");
+        int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
+
+        if (input == 1) {
+            matrix.readInterpolasi();
+        } else {
+            matrix.readInterpolasiFromFile();
+        }
+
+        interpolasi.init(matrix);
+
+        interpolasi.solve();
+
+    }
+
+    static void handleCobaLagi(Runnable currentHandler) {
         
+        System.out.println(
+"""
+    
+Coba lagi ?
+1. Ya
+2. Keluar
 
+Pilih instruksi: """
+        );
+
+        int chosenInstruction = Input.getInt(
+            "Masukan harus dalam range 1 - 2",
+            (Integer n) -> n == 1 || n == 2
+        );
+
+        if(chosenInstruction == 1) {
+            currentHandler.run();
+            return;
+        }
     }
 
     static void handleDeterminan() {
@@ -104,49 +160,34 @@ Pilih metode: """
             (Integer n) -> n == 1 || n == 2
         );
 
-        System.out.println("\nMasukkan panjang baris dan kolom: ");
-
-        int N = Input.getInt(
-            "Masukan harus positif",
-            (Integer n) -> n >= 1
-        );
-        Matrix mat = new Matrix(N, N);
-
-                System.out.println("\nMasukkan matrix "+N+"x"+N+": ");
-        boolean isMatrixValid = false;
-        while(!isMatrixValid) {
-            try {
-                mat.readMatrixFromUserInput();
-                isMatrixValid = true;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                isMatrixValid = false;
-            }
-        }
-
+        
+        Matrix mat = new Matrix();
+        mat.readSquareMatrix();
 
         double determinan = mat.getDeterminant(chosenMethod == 1 ? Matrix.DeterminantMethod.RowReduction : Matrix.DeterminantMethod.CofactorExpansion);
 
         System.out.printf("\nDeterminan: %.3f\n", determinan);
 
-        System.out.println(
-"""
-    
-Coba lagi ?
-1. Ya
-2. Keluar
+    }
 
-Pilih instruksi: """
-        );
+    static void RegresiLinierBerganda() {
+        System.out.println("\n[Regresi Linier Berganda]");
+        
+        MultipleLinearRegression mlr = new MultipleLinearRegression();
+        Matrix mat = mlr.getMatrixFromUserInput();
+        mlr.init(mat);
+        mlr.solve();
+    }
 
-        int chosenInstruction = Input.getInt(
-            "Masukan harus dalam range 1 - 2",
-            (Integer n) -> n == 1 || n == 2
-        );
+    static void handleMatrixBalikan() {
+        System.out.println("\n[Inverse]");
+        
+        Matrix mat = new Matrix();
+        mat.readSquareMatrix();
 
-        if(chosenInstruction == 1) {
-            handleDeterminan();
-            return;
-        }
+        Matrix determinan = mat.getInverse();
+
+        System.out.println("\nInverse:\n");
+        determinan.displayMatrix(null);
     }
 }
