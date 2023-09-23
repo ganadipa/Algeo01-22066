@@ -547,4 +547,28 @@ public class Matrix{
             System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
         }
     }
+
+    /**
+    * Mengembalikan matrix kofaktor.
+    * @param row baris
+    * @param col kolom
+    * @return  kofaktor matrix
+    */
+    public Matrix getCofactor(int row, int col) {
+        if(matrix.length <= 2) {
+            throw new Error("Panjang baris dan kolom minimal 3"); 
+        }
+
+        Matrix subMatrix = new Matrix(matrix.length-1, matrix.length-1);
+        for(int k = 0; k < subMatrix.matrix.length; k++) {
+            for(int l = 0; l < subMatrix.matrix.length; l++) {
+                if(k >= row && l >= col) subMatrix.matrix[k][l] = matrix[k+1][l+1];
+                else if(k >= row) subMatrix.matrix[k][l] = matrix[k+1][l];
+                else if(l >= col) subMatrix.matrix[k][l] = matrix[k][l+1];
+                else subMatrix.matrix[k][l] = matrix[k][l];
+            }
+        }
+
+        return subMatrix;
+    }
 }
