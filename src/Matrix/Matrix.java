@@ -80,29 +80,25 @@ public class Matrix {
 
      // read Matrix from user input
     public void readSquareMatrix(){
-        int row = 0;
 
-        System.out.println("Membuat matriks persegi berukuran n x n...\n");
+        System.out.println("\nMasukkan panjang baris dan kolom: ");
 
-        // Dapatkan jumlah panjang matriks yang valid dari user.
-        do {
-            row = Utils.getIntInput("Masukkan jumlah baris (n): ", "Tipe masukkan diharapkan berupa integer.");
-            if (row < 0) {
-            System.out.println("Masukkanlah jumlah baris yang nonnegatif.");
+        int N = Input.getInt(
+            "Masukan harus positif",
+            (Integer n) -> n >= 1
+        );
+        initMatrix(N, N);
+
+        System.out.println("\nMasukkan matrix "+N+"x"+N+": ");
+        boolean isMatrixValid = false;
+        while(!isMatrixValid) {
+            try {
+                readMatrixFromUserInput();
+                isMatrixValid = true;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                isMatrixValid = false;
             }
-        } while (row < 0);
-
-        // Early return untuk matriks yang berukuran salah satu baris/kolom adalah nol.
-        if (row == 0) return;
-
-        // Menyiapkan baris dan kolom matriks.
-        this.initMatrix(row, row);
-        
-        System.out.println("Input Matriks: ");
-        try {
-            this.readMatrixFromUserInput();
-        } catch (Exception e) {
-            System.out.println("Terjadi suatu kesalahan, gagal membaca matriks.");
         }
     }
 
@@ -469,9 +465,32 @@ public class Matrix {
     * @return  inverse matrix
     */
     public Matrix getInverse() {
-        // Bikin matrix augmented dengan identitas di kanan
-        Matrix augMatrix = new Matrix(matrix.length, col);
+        if(getDeterminant(DeterminantMethod.CofactorExpansion) == 0) {
+            throw new Error("Determinan tidak boleh 0");
+        }
 
-        return null;
+        // Bikin matrix augmented dengan identitas di kanan
+        Matrix augMatrix = new Matrix(row, col*2);
+        
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                augMatrix.matrix[i][j] = matrix[i][j];
+            }
+        }
+        for(int i = 0; i < row; i++) {
+            augMatrix.matrix[i][i+3] = 1;
+        }
+
+        augMatrix.toRowReducedEchelon();
+        augMatrix.displayMatrix(null);
+        Matrix inverseMatrix = new Matrix(row, col);
+
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                inverseMatrix.matrix[i][j] = augMatrix.matrix[i][j+col];
+            }
+        }
+
+        return inverseMatrix;
     }
 }

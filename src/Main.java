@@ -66,7 +66,7 @@ public class Main {
                     handleDeterminan();
                     break;
                 case 3:
-                    System.out.println("Matriks balikan");
+                    handleMatrixBalikan();
                     break;
                 case 4:
                     System.out.println("Interpolasi Polinom");
@@ -104,26 +104,9 @@ Pilih metode: """
             (Integer n) -> n == 1 || n == 2
         );
 
-        System.out.println("\nMasukkan panjang baris dan kolom: ");
-
-        int N = Input.getInt(
-            "Masukan harus positif",
-            (Integer n) -> n >= 1
-        );
-        Matrix mat = new Matrix(N, N);
-
-                System.out.println("\nMasukkan matrix "+N+"x"+N+": ");
-        boolean isMatrixValid = false;
-        while(!isMatrixValid) {
-            try {
-                mat.readMatrixFromUserInput();
-                isMatrixValid = true;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                isMatrixValid = false;
-            }
-        }
-
+        
+        Matrix mat = new Matrix();
+        mat.readSquareMatrix();
 
         double determinan = mat.getDeterminant(chosenMethod == 1 ? Matrix.DeterminantMethod.RowReduction : Matrix.DeterminantMethod.CofactorExpansion);
 
@@ -146,6 +129,40 @@ Pilih instruksi: """
 
         if(chosenInstruction == 1) {
             handleDeterminan();
+            return;
+        }
+    }
+
+
+    static void handleMatrixBalikan() {
+        System.out.println("\n[Inverse]");
+
+        
+        Matrix mat = new Matrix();
+        mat.readSquareMatrix();
+
+        Matrix determinan = mat.getInverse();
+
+        System.out.println("\nInverse:\n");
+        determinan.displayMatrix(null);
+
+        System.out.println(
+"""
+    
+Coba lagi ?
+1. Ya
+2. Keluar
+
+Pilih instruksi: """
+        );
+
+        int chosenInstruction = Input.getInt(
+            "Masukan harus dalam range 1 - 2",
+            (Integer n) -> n == 1 || n == 2
+        );
+
+        if(chosenInstruction == 1) {
+            handleMatrixBalikan();
             return;
         }
     }
