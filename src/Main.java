@@ -39,38 +39,8 @@ public class Main {
 
             switch(chosenMenu) {
                 case 1:
-                    System.out.println(
-            """
-    
-    SUBMENU Sistem Persamaaan Linier
-    1. Metode eliminasi Gauss
-    2. Metode eliminasi Gauss-Jordan
-    3. Metode matriks balikan
-    4. Kaidah Cramer
-            """
-                    );
-                    chosenMenu = Input.getInt(
-                        "Masukan harus dalam range 1 sampai 4",
-                        (Integer n) -> n >= 1 && n <= 4
-                    );
-    
-                    switch(chosenMenu) {
-                        case 1:
-                            System.out.println("Metode eliminasi Gauss");
-                            break;
-                        case 2:
-                            System.out.println("Metode eliminasi Gauss-Jordan");
-                            break;
-                        case 3:
-                            System.out.println("Metode matriks balikan");
-                            break;
-                        case 4:
-                            System.out.println("Kaidah Cramer");
-                            break;
-                    }
-                    
-    
-                    break;
+                    handleSPL();
+                    handleCobaLagi(() -> {handleSPL();});
     
                 case 2:
                     handleDeterminan();
@@ -222,6 +192,11 @@ Pilih metode: """
         Matrix determinan = mat.getInverse();
 
         System.out.println("\nInverse:\n");
-        determinan.displayMatrix(null);
+        determinan.displayMatrix();
+    }
+
+    static void handleSPL()
+    {
+
     }
 }
