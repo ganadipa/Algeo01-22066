@@ -172,7 +172,7 @@ public class Matrix{
 
 
     // print matriks dengan opsi tertentu (opsi belum dibuat)
-    public void displayMatrix(String opt) {
+    public void displayMatrix() {
         System.out.println("[");
         for (int i = 0; i < this.row; i++)
         {
@@ -180,7 +180,28 @@ public class Matrix{
             for (int j = 0; j < this.col; j++)
             {
                 if (j == this.col - 1) {
-                    if (opt == "augmented") {System.out.print("|");}
+                    System.out.printf(" %.4f", this.matrix[i][j]);
+                    break;
+                }
+                System.out.printf(" %.4f ", this.matrix[i][j]);
+            }
+            System.out.print("]");
+            System.out.println();
+        }
+        System.out.println("]");
+    }
+
+    public void displayAugmentedMatrix(int afterCol) {
+        afterCol += this.col;
+        afterCol %= this.col;
+        System.out.println("[");
+        for (int i = 0; i < this.row; i++)
+        {
+            System.out.print("    [");
+            for (int j = 0; j < this.col; j++)
+            {
+                if (j == afterCol + 1) {
+                    System.out.print("|");
                     System.out.printf(" %.4f", this.matrix[i][j]);
                     break;
                 }

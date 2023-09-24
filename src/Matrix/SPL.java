@@ -243,6 +243,22 @@ public class SPL implements Solvable {
     
     }
 
+    public SPL getCopySPL(){
+        // Copy matrix and turn it into row echelon form
+        Matrix tmp = new Matrix(this.augmentedMatrix.row, this.augmentedMatrix.col);
+        for (int row = 0; row < tmp.row; row++)
+        {
+            for (int col = 0; col < tmp.col; col++)
+            {
+                tmp.matrix[row][col] = this.augmentedMatrix.matrix[row][col];
+            }
+        } 
+
+        SPL tmpSPL = new SPL(this.augmentedMatrix.row, this.augmentedMatrix.col-1);
+        tmpSPL.fromMatrix(tmp);
+        return tmpSPL;
+    }
+
 
     public void solve() {
         if (this.method == SPLMethod.Gauss) {solveUsingGauss(this.showProcess);}
@@ -251,12 +267,28 @@ public class SPL implements Solvable {
         else if (this.method == SPLMethod.Cramer) {solveUsingCramer(this.showProcess);}
     }
 
+    public void solve(boolean stay) {
+        if (!stay) this.solve();
+
+        SPL tmpSPL = getCopySPL();
+        tmpSPL.setMethod(this.method);
+        tmpSPL.setShowProcess(this.showProcess);
+        tmpSPL.solve();
+    }
+
     private void showEquation(int row)
     {
+        System.out.printf("(%d) . . .   ", row+1);
         int cnt = 0;
         for(int i = 0 ; i < this.augmentedMatrix.col; i++)
         {
+            
             if (cnt == 0) {
+                if (i == this.augmentedMatrix.col - 1)
+                {
+                    System.out.printf("0.0000 = %.4f\n", this.augmentedMatrix.matrix[row][i]);
+                    break;
+                }
                 if (Utils.isEqual(this.augmentedMatrix.matrix[row][i], 0)) continue;
                 System.out.printf("%.4fx%d ", this.augmentedMatrix.matrix[row][i], i+1 );
                 cnt += 1;
@@ -271,7 +303,8 @@ public class SPL implements Solvable {
     }
 
 
-    private void showEquations()
+
+    public void showEquations()
     {
         for (int row = 0; row < this.augmentedMatrix.row; row++)
         {
@@ -286,7 +319,7 @@ public class SPL implements Solvable {
 
             System.out.println("--> Cek apakah augmented matriks sudah berupa matriks eselon baris.");
             System.out.println();
-            displayMatrix();
+            this.displayAugmentedMatrix();
             System.out.println();
 
             if (augmentedMatrix.isEchelon()) 
@@ -295,7 +328,7 @@ public class SPL implements Solvable {
             } else {
                 System.out.println("Karena matriks di atas belum merupakan matriks eselon baris, Ubah ke matriks eselon baris.");
                 this.augmentedMatrix.toRowEchelon();
-                displayMatrix();
+                this.displayAugmentedMatrix();
                 System.out.println();
             }
 
@@ -308,8 +341,15 @@ public class SPL implements Solvable {
             this.showEquations();
             System.out.println();
 
-
             // STEP 3
+            System.out.println("--> Cek apakah ada suatu persamaan yang tidak konsisten.");
+            if(!this.hasSolution()){
+                System.out.println("\n--> Kesimpulannya, SPL tersebut tidak memiliki solusi.");
+                System.out.println("Program selesai.");
+                return;
+            }
+
+            // STEP 4
             System.out.println("""
             --> Sekarang, selesaikan persamaan satu persatu mulai dari 
             persamaan yang paling bawah.
@@ -333,6 +373,11 @@ public class SPL implements Solvable {
             this.showSolution();
         } else {
             this.augmentedMatrix.toRowEchelon();
+            if (this.hasSolution()) {
+                System.out.println("SPL ini tidak memiliki solusi.");
+                System.out.println("Program selesai.");
+                return;
+            }
             for (int i = this.augmentedMatrix.row-1; i >= 0; i--)
             {
                 this.solveRow(i, false);
@@ -349,7 +394,7 @@ public class SPL implements Solvable {
 
             System.out.println("--> Cek apakah augmented matriks sudah berupa matriks eselon baris tereduksi.");
             System.out.println();
-            displayMatrix();
+            this.displayAugmentedMatrix();
             System.out.println();
 
             if (augmentedMatrix.isReducedEchelon()) 
@@ -358,7 +403,7 @@ public class SPL implements Solvable {
             } else {
                 System.out.println("Karena matriks di atas belum merupakan matriks eselon baris tereduksi, Ubah ke matriks eselon baris.");
                 this.augmentedMatrix.toReducedRowEchelon();
-                displayMatrix();
+                this.displayAugmentedMatrix();
                 System.out.println();
             }
 
@@ -371,6 +416,14 @@ public class SPL implements Solvable {
             this.showEquations();
             System.out.println();
 
+
+            // STEP 3
+            System.out.println("--> Cek apakah ada suatu persamaan yang tidak konsisten.");
+            if(!this.hasSolution()){
+                System.out.println("\n--> Kesimpulannya, SPL tersebut tidak memiliki solusi.");
+                System.out.println("Program selesai.");
+                return;
+            }
 
             // STEP 3
             System.out.println("""
@@ -396,6 +449,11 @@ public class SPL implements Solvable {
             this.showSolution();
         } else {
             this.augmentedMatrix.toReducedRowEchelon();
+            if (this.hasSolution()) {
+                System.out.println("SPL ini tidak memiliki solusi.");
+                System.out.println("Program selesai.");
+                return;
+            }
             for (int i = this.augmentedMatrix.row-1; i >= 0; i--)
             {
                 this.solveRow(i, false);
@@ -411,7 +469,7 @@ public class SPL implements Solvable {
             System.out.println("""
 --> Misal SPL dibentuk ke dalam Ax = B,
   | dengan A adalah matriks:""");
-            this.A.displayMatrix(null);
+            this.A.displayMatrix();
             System.out.println();
 
             System.out.println("""
@@ -426,7 +484,7 @@ public class SPL implements Solvable {
 
             System.out.println("""
 . | dan B adalah matriks:""");
-            this.B.displayMatrix(null);
+            this.B.displayMatrix();
             System.out.println();
 
 
@@ -436,7 +494,9 @@ public class SPL implements Solvable {
                 inversedMatrix = this.A.getInverse();
             } catch (Error e)
             {
+                System.out.printf("***) Untuk menggunakan metode ini: ");
                 System.out.println(e.getMessage());
+                System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
                 System.out.println("Program berhenti.");
                 return;
             }
@@ -444,12 +504,12 @@ public class SPL implements Solvable {
             System.out.println("""
 --> Dapatkan inverse dari matriks A, 
   | Matriks A^(-1) = """);
-            inversedMatrix.displayMatrix(null);
+            inversedMatrix.displayMatrix();
             System.out.println("""
 --> Hitung matriks A^(-1)B,
   | Matriks A^(-1)B = """);
             inversedMatrix.multiply(this.B);
-            inversedMatrix.displayMatrix(null);
+            inversedMatrix.displayMatrix();
             System.out.println();
             System.out.println("""
 --> Simpulkan.""");        
@@ -464,7 +524,9 @@ public class SPL implements Solvable {
                 inversedMatrix = this.A.getInverse();
             } catch (Error e)
             {
+                System.out.printf("***) Untuk menggunakan metode ini: ");
                 System.out.println(e.getMessage());
+                System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
                 System.out.println("Program berhenti.");
                 return;
             }
@@ -486,7 +548,7 @@ public class SPL implements Solvable {
             System.out.println("""
 --> Misal SPL dibentuk ke dalam Ax = B,
   | dengan A adalah matriks:""");
-            this.A.displayMatrix(null);
+            this.A.displayMatrix();
             System.out.println();
 
             System.out.println("""
@@ -501,7 +563,7 @@ public class SPL implements Solvable {
 
             System.out.println("""
 . | dan B adalah matriks:""");
-            this.B.displayMatrix(null);
+            this.B.displayMatrix();
             System.out.println();
 
 
@@ -521,10 +583,22 @@ public class SPL implements Solvable {
             try {
                 detA = this.A.getDeterminant();
             } catch (Error e) {
+                System.out.printf("***) Untuk menggunakan metode ini: ");
                 System.out.println(e.getMessage());
+                System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
                 System.out.println("Program berhenti.");
                 return;
             }
+
+            if (Utils.isEqual(detA, 0)) {
+                System.out.println("SPL tidak mendapati kesimpulan melalui metode cramer karena determinan matrika A bernilai 0.");
+                System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
+
+                System.out.println("Program selesai.");
+                return;
+            }
+
+
             System.out.printf("  | Setelah dihitung, nilai |A| = %.4f\n", detA);
 
             System.out.printf("""
@@ -556,14 +630,16 @@ public class SPL implements Solvable {
                         }
                     }
                 }
-                ai.displayMatrix(null);
+                ai.displayMatrix();
 
                 // get det Ai
                 double detAi;
                 try {
                 detAi = ai.getDeterminant();
                 } catch (Error e) {
+                    System.out.printf("***) Untuk menggunakan metode ini: ");
                     System.out.println(e.getMessage());
+                    System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
                     System.out.println("Program berhenti.");
                     return;
                 }
@@ -585,8 +661,19 @@ public class SPL implements Solvable {
             try {
                 detA = this.A.getDeterminant();
             } catch (Error e) {
+                System.out.printf("***) Untuk menggunakan metode ini: ");
                 System.out.println(e.getMessage());
+                System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
                 System.out.println("Program berhenti.");
+                return;
+            }
+
+            if (Utils.isEqual(detA, 0)) {
+                System.out.println("SPL tidak mendapati kesimpulan melalui metode cramer karena determinan matrika A bernilai 0.");
+                System.out.println("Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan");
+                System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
+
+                System.out.println("Program selesai.");
                 return;
             }
 
@@ -613,7 +700,10 @@ public class SPL implements Solvable {
                 try {
                 detAi = ai.getDeterminant();
                 } catch (Error e) {
+                    System.out.printf("***) Untuk menggunakan metode ini: ");
                     System.out.println(e.getMessage());
+                    System.out.println("***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
+
                     System.out.println("Program berhenti.");
                     return;
                 }
@@ -648,10 +738,20 @@ public class SPL implements Solvable {
         
     }
 
-        
+    public boolean hasSolution(boolean stay){
+        if (!stay) return hasSolution();
+        else {
+            SPL tmpSPL = getCopySPL();
+            tmpSPL.augmentedMatrix.toRowEchelon();
+            return (tmpSPL.hasSolution());
+        }
+    }
 
     public boolean hasSolution()
     {
+        if (!this.augmentedMatrix.isEchelon()) {
+            return hasSolution(true);
+        }
         int[] allZeroRow = new int[this.B.row];
         int rowLengthInA = this.A.row;
         int colLengthInA = this.A.col;
@@ -674,6 +774,10 @@ public class SPL implements Solvable {
         {
             if (allZeroRow[row] == 1 && Utils.isNotEqual(this.B.matrix[row][0], 0.0 ))
             {
+                if (showProcess)
+                {
+                    System.out.printf("***) Dapat dilihat bahwa persamaan ke-%d tak konsisten, karena tidak akan ada \n***) nilai variabel yang memenuhi persamaan tsb.\n\n", row+1);
+                }
                 return false;
             }
         }
@@ -681,7 +785,7 @@ public class SPL implements Solvable {
         return true;
     } 
 
-    public void solveRow(int row, boolean showProcess)
+    private void solveRow(int row, boolean showProcess)
     {
         double[] rowArray = this.augmentedMatrix.matrix[row];
         int leadingOnePosition = -1;
@@ -765,7 +869,14 @@ public class SPL implements Solvable {
 
     }
 
+
+
     public void showSolution(){
+        for (int i = 0; i < this.x.length; i++)
+        {
+            // If there is a not-assigned-variables, then it is not yet solved.
+            if (!this.x[i].getIsAssigned()) this.solve(true);
+        }
         
         int lengthX = this.x.length;
 
@@ -791,14 +902,10 @@ public class SPL implements Solvable {
             }
             System.out.println();
         }
-        
-        
-
-        
     }
 
-    public void displayMatrix() {
-        this.augmentedMatrix.displayMatrix("augmented");
+    public void displayAugmentedMatrix() {
+        this.augmentedMatrix.displayAugmentedMatrix(-1);
     }
 
 }
