@@ -1,11 +1,17 @@
 package Testing;
 
 import Matrix.BicubicSplineInterpolation;
+import Matrix.Matrix;
 
 public class Mesach {
 
     public static void main(String[] args) {
-        BicubicSplineInterpolation bicubic = new BicubicSplineInterpolation();
-        bicubic.solve();
+        Matrix matrix = new Matrix();
+        matrix.readSquareMatrix();
+
+        matrix.displayMatrix(null);
+
+        System.out.println(matrix.getDeterminant(Matrix.DeterminantMethod.RowReduction));
+
     }
 }
