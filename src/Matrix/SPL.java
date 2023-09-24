@@ -4,6 +4,7 @@ import java.util.*;
 
 import Interface.Solvable;
 import Matrix.Parametric.SolutionStatus;
+import Utils.Input;
 import Utils.Utils;
 
 class Parametric {
@@ -243,6 +244,64 @@ public class SPL implements Solvable {
     
     }
 
+    public void readFromUserInput() throws Exception{
+        System.out.println("Masukkan jumlah baris atau jumlah persamaan dalam SPL tersebut (m): ");
+        int m = Input.getInt("Masukkan harus berupa angka positif saja.", (Integer t) -> (t > 0));
+
+        System.out.println("Masukkan jumlah variabel yang ditambah satu atau jumlah kolom dalam SPL tersebut (n): ");
+        int n = Input.getInt("Masukkan harus berupa angka positif saja.", (Integer t) -> (t > 0));
+
+        System.out.println("Jika SPL tersebut dibentuk ke dalam persamaan Ax = B, dengan A, x, dan B adalah matriks,");
+        System.out.println("Silakan input matriks A: ");
+
+        this.A = new Matrix(m, n-1);
+        this.A.displayMatrix();
+        try {
+            this.A.readMatrixFromUserInput();
+        } catch (Exception e) {
+            System.out.println("Terjadi suatu kesalahan, gagal membaca matriks, program berhenti.");
+            throw new Exception("Program berhenti");
+        }
+
+        System.out.println("Silakan input matriks B: ");
+        this.B = new Matrix(m, 1);
+        this.B.displayMatrix();
+        try {
+            this.B.readMatrixFromUserInput();
+        } catch (Exception e) {
+            System.out.println("Terjadi suatu kesalahan, gagal membaca matriks, program berhenti.");
+            throw new Exception("Program berhenti");
+        }
+
+        this.augmentedMatrix.initMatrix(m, n);
+        for (int row = 0; row < m; row++)
+        {
+            for (int col = 0; col < n; col++)
+            {
+                this.augmentedMatrix.displayMatrix();
+                if (col == n-1) {
+                    System.out.println("in b");
+                    this.augmentedMatrix.matrix[row][col] = this.B.matrix[row][0]; 
+
+                    
+                    continue;
+                }
+                System.out.println("in a");
+                this.augmentedMatrix.matrix[row][col] = this.A.matrix[row][col];
+            }
+        }
+
+        System.out.println("begin loop param");
+        
+        this.x = new Parametric[n-1];
+        for (int i = 0; i<n-1; i++)
+        {
+            x[i] = new Parametric(n-1);
+        }
+
+
+    }
+
     public SPL getCopySPL(){
         // Copy matrix and turn it into row echelon form
         Matrix tmp = new Matrix(this.augmentedMatrix.row, this.augmentedMatrix.col);
@@ -341,6 +400,7 @@ public class SPL implements Solvable {
             this.showEquations();
             System.out.println();
 
+
             // STEP 3
             System.out.println("--> Cek apakah ada suatu persamaan yang tidak konsisten.");
             if(!this.hasSolution()){
@@ -372,8 +432,10 @@ public class SPL implements Solvable {
             this.solve_helper();
             this.showSolution();
         } else {
+
             this.augmentedMatrix.toRowEchelon();
-            if (this.hasSolution()) {
+
+            if (!this.hasSolution()) {
                 System.out.println("SPL ini tidak memiliki solusi.");
                 System.out.println("Program selesai.");
                 return;
@@ -449,7 +511,7 @@ public class SPL implements Solvable {
             this.showSolution();
         } else {
             this.augmentedMatrix.toReducedRowEchelon();
-            if (this.hasSolution()) {
+            if (!this.hasSolution()) {
                 System.out.println("SPL ini tidak memiliki solusi.");
                 System.out.println("Program selesai.");
                 return;
@@ -869,13 +931,18 @@ public class SPL implements Solvable {
 
     }
 
+    public void showSolution(boolean stay) {
+        SPL tmpSPL = getCopySPL();
+        tmpSPL.solve();
+        tmpSPL.showSolution();
+    }
 
 
     public void showSolution(){
         for (int i = 0; i < this.x.length; i++)
         {
             // If there is a not-assigned-variables, then it is not yet solved.
-            if (!this.x[i].getIsAssigned()) this.solve(true);
+            if (!this.x[i].getIsAssigned()) this.showSolution(true);
         }
         
         int lengthX = this.x.length;
@@ -905,7 +972,7 @@ public class SPL implements Solvable {
     }
 
     public void displayAugmentedMatrix() {
-        this.augmentedMatrix.displayAugmentedMatrix(-1);
+        this.augmentedMatrix.displayAugmentedMatrix(-2);
     }
 
 }

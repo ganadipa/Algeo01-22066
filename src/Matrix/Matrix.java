@@ -528,7 +528,7 @@ public class Matrix{
             }
 
             // Sudah berada di row yang isinya 0 semua, jadi ga perlu lanjut proses lagi.
-            if (leadingOnePosition == -1) break;
+            if (leadingOnePosition == -1 || leadingOnePosition == 3) break;
 
             // the other row in the colomn make it to zero.
             for (int row = 0; row < this.row; row++)

@@ -1,6 +1,7 @@
 package Testing;
 
 import Matrix.*;
+import Matrix.SPL.SPLMethod;
 import Utils.Utils;
 
 public class Gana {
@@ -19,20 +20,11 @@ public class Gana {
             m2.displayMatrix();
             m2.normalizeMatrix();
             spl.fromMatrix(m2);
+            // spl.readFromUserInput();
+            spl.setMethod(SPLMethod.GaussJordan);
+            spl.setShowProcess(false);
+            spl.solve(true);
             spl.displayAugmentedMatrix();
-            // spl.solve();
-            // spl.showSolution();
-            spl.showSolution();
-            // System.out.println("passed");
-            // spl.solve();
-            // System.out.println("passed");
-            // spl.showSolution();
-            // m2.readMatrixFromFile();
-            // m2.displayMatrix("augmented");
-            // m2.toRowEchelon(null);
-            // m2.displayMatrix("augmented");
-            // m2.normalizeMatrix();
-            // m2.displayMatrix("augmented");
 
 
 
