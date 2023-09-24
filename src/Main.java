@@ -101,12 +101,9 @@ public class Main {
         System.out.println("\n[Interpolasi Bicubic Spline]");
         BicubicSplineInterpolation bicubic = new BicubicSplineInterpolation();
         Matrix matrixF = new Matrix();
-
-        Double[] ab = matrixF.readBicubicFromFile();
         bicubic.init(matrixF);
-        bicubic.setA(ab[0]);
-        bicubic.setB(ab[1]);
 
+        bicubic.readFromFile();
         bicubic.solve();
     }
 
@@ -115,6 +112,7 @@ public class Main {
 
         Interpolasi interpolasi = new Interpolasi();
         Matrix matrix = new Matrix();
+        interpolasi.init(matrix);
 
         System.out.println("""
                 Pilih cara input
@@ -124,15 +122,11 @@ public class Main {
 
         System.out.print("Masukkan pilihan: ");
         int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
-        double x = 0;
         if (input == 1) {
-            x = matrix.readInterpolasi();
+            interpolasi.readFromUserInput();
         } else {
-            x = matrix.readInterpolasiFromFile();
+            interpolasi.readFromFile();
         }
-
-        interpolasi.init(matrix);
-        interpolasi.setX(x);
 
         interpolasi.solve();
 

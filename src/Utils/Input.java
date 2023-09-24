@@ -35,7 +35,28 @@ public class Input {
 
         return num;
     }
-    
+
+    public static double getDouble(String errorMessage, Function<Double,Boolean> validator)
+    {
+        success = false;
+        double num = -1;
+        while (!success) {
+            try {
+                num = userInput.nextDouble();
+                success = validator.apply(num);
+                if(!success) {
+                    System.out.println(errorMessage);
+                }
+            } catch (InputMismatchException e) {
+                success = false;
+                System.out.println(mustIntegerMessage);
+                userInput.next();
+            }
+        }
+
+        return num;
+    }
+
     /**
     * Input tanpa validasi integer error message
     *
