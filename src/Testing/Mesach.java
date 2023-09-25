@@ -9,7 +9,7 @@ public class Mesach {
         Matrix matrix = new Matrix();
         matrix.readSquareMatrix();
 
-        matrix.displayMatrix(null);
+        matrix.displayMatrix();
 
         System.out.println(matrix.getDeterminant(Matrix.DeterminantMethod.RowReduction));
 

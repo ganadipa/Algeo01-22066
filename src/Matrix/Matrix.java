@@ -107,7 +107,7 @@ public class Matrix{
         }
     }
 
-    public void readMatrixFromFile() throws Exception {
+    public void readMatrixFromFile() {
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
         String fileName = userInput.next();
@@ -156,7 +156,7 @@ public class Matrix{
 
     }
 
-    public void readMatrixFromUserInput() throws Exception {
+    public void readMatrixFromUserInput() {
         // Input matriks dilakukan baris per baris (BELUM HANDLE ERROR SPESIFIK).
         for (int i = 0; i < this.row; i++)
         {
@@ -167,6 +167,23 @@ public class Matrix{
             {
                 this.matrix[i][j] = Double.parseDouble(elmts[j]);
             }
+        }
+    }
+
+    public void chooseReadMatrixMethodFromUserInput() {
+        System.out.println("""
+
+Cara input
+1. Keyboard
+2. File
+
+Pilih cara input:
+        """);
+        int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
+        if (input == 1) {
+            readSquareMatrix();
+        } else {
+            readMatrixFromFile();
         }
     }
 

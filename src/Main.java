@@ -15,6 +15,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("[Welcome to Library Matrix]");
         while(true) {
+
             System.out.println(
             """
     
@@ -41,7 +42,6 @@ public class Main {
                 case 1:
                     handleSPL();
                     handleCobaLagi(() -> {handleSPL();});
-    
                 case 2:
                     handleDeterminan();
                     handleCobaLagi(()-> {handleDeterminan();});
@@ -52,9 +52,11 @@ public class Main {
                     break;
                 case 4:
                     handleInterpolasi();
+                    handleCobaLagi(()-> {handleInterpolasi();});
                     break;
                 case 5:
                     handleBicubic();
+                    handleCobaLagi(()-> {handleBicubic();});
                     break;
                 case 6:
                     RegresiLinierBerganda();
@@ -62,46 +64,10 @@ public class Main {
                     break;
                 case 7:
                     System.out.println("Keluar");
-                    break;
+                    return;
             }
         }
     }
-
-    static void handleBicubic() {
-        System.out.println("\n[Interpolasi Bicubic Spline]");
-        BicubicSplineInterpolation bicubic = new BicubicSplineInterpolation();
-        Matrix matrixF = new Matrix();
-        bicubic.init(matrixF);
-
-        bicubic.readFromFile();
-        bicubic.solve();
-    }
-
-    static  void handleInterpolasi() {
-        System.out.println("\n[Interpolasi polinom]");
-
-        Interpolasi interpolasi = new Interpolasi();
-        Matrix matrix = new Matrix();
-        interpolasi.init(matrix);
-
-        System.out.println("""
-                Pilih cara input
-                1. Keyboard
-                2. File
-                """);
-
-        System.out.print("Masukkan pilihan: ");
-        int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
-        if (input == 1) {
-            interpolasi.readFromUserInput();
-        } else {
-            interpolasi.readFromFile();
-        }
-
-        interpolasi.solve();
-
-    }
-
     static void handleCobaLagi(Runnable currentInstruction) {
 
         boolean isCobaLagi = true;
@@ -131,6 +97,22 @@ public class Main {
         
     }
 
+    static void handleBicubic() {
+        System.out.println("\n[Interpolasi Bicubic Spline]");
+        BicubicSplineInterpolation bicubic = new BicubicSplineInterpolation();
+        bicubic.chooseReadVariablesMethodFromUserInput();
+        bicubic.solve();
+    }
+
+    static void handleInterpolasi() {
+        System.out.println("\n[Interpolasi polinom]");
+
+        Interpolasi interpolasi = new Interpolasi();
+        interpolasi.chooseReadVariablesMethodFromUserInput();
+        interpolasi.solve();
+
+    }
+
     static void handleDeterminan() {
         System.out.println("\n[Determinan]");
 
@@ -148,24 +130,13 @@ public class Main {
             (Integer n) -> n == 1 || n == 2
         );
 
-        
         Matrix mat = new Matrix();
-        mat.readSquareMatrix();
+        mat.chooseReadMatrixMethodFromUserInput();
 
         double determinan = mat.getDeterminant(chosenMethod == 1 ? Matrix.DeterminantMethod.RowReduction : Matrix.DeterminantMethod.CofactorExpansion);
 
         System.out.printf("\nDeterminan: %.3f\n", determinan);
 
-    }
-
-    static void RegresiLinierBerganda() {
-        System.out.println("\n[Regresi Linier Berganda]");
-        
-        MultipleLinearRegression mlr = new MultipleLinearRegression();
-        Matrix mat = mlr.getMatrixFromUserInput();
-        mlr.init(mat);
-        mlr.solve();
-        mlr.display();
     }
 
     static void handleMatrixBalikan() {
@@ -184,19 +155,50 @@ Pilih metode: """
             "Masukan harus dalam range 1 - 2",
             (Integer n) -> n == 1 || n == 2
         );
-
-        
         Matrix mat = new Matrix();
-        mat.readSquareMatrix();
+        mat.chooseReadMatrixMethodFromUserInput();
 
-        Matrix determinan = mat.getInverse();
+        Matrix determinan = mat.getInverse(chosenMethod == 1 ? Matrix.InverseMethod.GaussJordan : Matrix.InverseMethod.Adjoin);
 
         System.out.println("\nInverse:\n");
         determinan.displayMatrix();
     }
 
+    static void RegresiLinierBerganda() {
+        System.out.println("\n[Regresi Linier Berganda]");
+        
+        MultipleLinearRegression mlr = new MultipleLinearRegression();
+        mlr.chooseReadVariablesMethodFromUserInput();
+        mlr.solve();
+        mlr.display();
+    }
+
     static void handleSPL()
     {
+        System.out.println(
+            """
+    
+    MENU
+    1. Metode eliminasi Gauss
+    2. Metode eliminasi Gauss-Jordan
+    3. Metode matriks balikan
+    4. Kaidah Cramer
+            """
+        );
+    
+        System.out.println("Pilih menu (Angka): ");
+
+        int chosenMenu = Input.getInt(
+            "Masukan harus dalam range 1 sampai 7",
+            (Integer n) -> n >= 1 && n <= 4
+        );
+
+        Matrix mat = new Matrix();
+        mat.chooseReadMatrixMethodFromUserInput();
+        SPL spl = new SPL(0, 0);
+        spl.setMethod(chosenMenu == 1 ? SPL.SPLMethod.Gauss : chosenMenu == 2 ? SPL.SPLMethod.GaussJordan : chosenMenu == 3 ? SPL.SPLMethod.Inverse : SPL.SPLMethod.Cramer);
+        spl.solve();
+        handleCobaLagi(() -> {handleSPL();});
         
     }
 }

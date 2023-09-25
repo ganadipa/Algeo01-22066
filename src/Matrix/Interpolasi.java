@@ -10,15 +10,40 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Interpolasi implements Solvable {
-    Matrix matrix;
+public class Interpolasi extends Solvable {
+    Matrix matrix = new Matrix();
     double x;
+    SPL spl;
 
-    public void init(Matrix matrix) {
-        this.matrix = matrix;
+    @Override
+    public void readVariablesFromUserInput() {
+        System.out.print("Masukkan  banyak titik: ");
+        int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
+        Input.userInput.nextLine(); // clear
+
+        this.matrix.initMatrix(n, n+1);
+
+        for (int i = 0; i < this.matrix.row; i++) {
+            System.out.printf("Masukan titik ke %d (x,y): ", i + 1);
+            String input = Input.userInput.nextLine();
+            String[] titik = input.split(" ");
+            double x = Double.parseDouble(titik[0]);
+            double y = Double.parseDouble(titik[1]);
+
+            for (int j = 0; j < this.matrix.col; j++) {
+                if (j == this.matrix.col - 1) {
+                    this.matrix.matrix[i][j] = y;
+                }else {
+                    this.matrix.matrix[i][j] = Math.pow(x,j);
+                }
+            }
+        }
+
+        System.out.print("Masukkan nilai x yang ingin ditafsir nilai f(x) nya: ");
+        this.x = Input.getDouble();
     }
-
-    public void readFromFile() {
+    @Override
+    public void readVariablesFromTextFile() {
         Scanner userInput = new Scanner(System.in);
 
         System.out.println("Masukkan nama file beserta ekstensinya.");
@@ -62,41 +87,22 @@ public class Interpolasi implements Solvable {
 
         userInput.close();
     }
-
-    public void readFromUserInput() {
-        Scanner userInput = new Scanner(System.in);
-        System.out.print("Masukkan  banyak titik: ");
-        int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
-
-        this.matrix.initMatrix(n, n+1);
-
-        for (int i = 0; i < this.matrix.row; i++) {
-            System.out.printf("Masukan titik ke %d: ", i + 1);
-            String input = userInput.nextLine();
-            String[] titik = input.split(" ");
-            double x = Double.parseDouble(titik[0]);
-            double y = Double.parseDouble(titik[1]);
-
-            for (int j = 0; j < this.matrix.col; j++) {
-                if (j == this.matrix.col - 1) {
-                    this.matrix.matrix[i][j] = y;
-                }else {
-                    this.matrix.matrix[i][j] = Math.pow(x,j);
-                }
-            }
-        }
-
-        System.out.print("Masukkan nilai x yang ingin ditafsir nilai f(x) nya: ");
-        this.x = Input.getDouble();
-        userInput.close();
-    }
-
+    @Override
     public void solve() {
+        spl = new SPL(matrix.row, matrix.col);
+        spl.setMatrix(matrix)
+            .setMethod(SPL.SPLMethod.GaussJordan)
+            .setShowProcess(false)
+            .solve();
+        setState(State.Solved);
+    }
+    @Override
+    public void displaySolution() {
         double result = 0;
-        SPL spl = new SPL(matrix.row, matrix.col);
-        spl.init(matrix);
-        spl.setMethod(SPL.SPLMethod.GaussJordan);
-        spl.setShowProcess(true);
+        spl = new SPL(matrix.row, matrix.col);
+        spl.setMatrix(matrix)
+            .setMethod(SPL.SPLMethod.GaussJordan)
+            .setShowProcess(true);
         System.out.printf("--> Bentuk persamaan interpolasi yang akan terbentuk dari %d titik adalah sebagai berikut\n\n", spl.augmentedMatrix.row);
         System.out.print("f(x) = ");
         for (int i = spl.augmentedMatrix.row - 1; i >=  0; i--) {
@@ -152,6 +158,7 @@ public class Interpolasi implements Solvable {
         System.out.println("--> Penyelesaiannya adalah sebagai berikut\n");
 
         spl.solve();
+        setState(State.Solved);
 
         System.out.println("\n--> Setelah didapat solusi dari SPL diatas maka bisa dibangun persamaan interpolasi sebagai berikut");
 
@@ -223,5 +230,10 @@ public class Interpolasi implements Solvable {
         System.out.println("");
 
         System.out.printf("f(%.4f) = %.4f\n", this.x, result);
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix = matrix;
+        setState(State.Unsolved);
     }
 }

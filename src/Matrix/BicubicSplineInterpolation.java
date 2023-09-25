@@ -1,25 +1,31 @@
 package Matrix;
 
 import Interface.Solvable;
+import Utils.Input;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class BicubicSplineInterpolation implements Solvable{
+public class BicubicSplineInterpolation extends Solvable{
     private Matrix matrixX;
     private Matrix matrixF;
     private Matrix matrixA;
     private double a;
     private double b;
 
-    public void readFromFile() {
-        Scanner userInput = new Scanner(System.in);
+    @Override
+    public void readVariablesFromUserInput() {
 
+    }
+    @Override
+    public void readVariablesFromTextFile() {
+        Matrix mF = new Matrix();
+        setMatrix(mF);
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
-        String fileName = userInput.next();
+        String fileName = Input.userInput.next();
         String fileInputPath = "test/input/" + fileName;
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
@@ -48,48 +54,25 @@ public class BicubicSplineInterpolation implements Solvable{
             System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
         }
     }
-
-    public void init(Matrix m) {
-        this.matrixF = m;
-        matrixX = new Matrix(16, 16);
-        matrixA = new Matrix(16, 1);
-
-        int row = 0;
-        for (int y = 0; y < 2; y++) {
-            for (int x = 0; x < 2; x++) {
-                int col = 0;
-                for (int j = 0; j < 4; j++){
-                    for (int i = 0; i < 4; i++) {
-                        matrixX.matrix[row][col] = Math.pow(x, i) * Math.pow(y, j);
-                        matrixX.matrix[row + 4][col] = (i == 0) ? 0 : i * Math.pow(x, i - 1) * Math.pow(y, j);
-                        matrixX.matrix[row + 8][col] = (j == 0) ? 0 : j * Math.pow(x, i) * Math.pow(y, j - 1);
-                        matrixX.matrix[row + 12][col] = (i == 0 || j == 0) ? 0 : i * j * Math.pow(x, i - 1) * Math.pow(y, j - 1);
-                        col++;
-                    }
-                }
-                row++;
-            }
-        }
-    }
-
+    @Override
     public void solve() {
         System.out.println("\n--> Input yang anda masukan akan diubah menjadi matrix Y sebagai berikut\n");
-        this.matrixF.displayMatrix(null);
+        this.matrixF.displayMatrix();
 
         System.out.println("\n--> Kemudian akan dicari matrix X melalui persamaan bicubic spline interpolation yang telah diberikan");
         System.out.println("--> Akan didapat matrix X sebagi berikut\n");
 
-        this.matrixX.displayMatrix(null);
+        this.matrixX.displayMatrix();
 
         System.out.println("\n--> Persamaan matrix bicubic spline interpolation adalah y = Xa");
         System.out.println("--> Pada fungsi ini akan dicari nilai matrix a dengan cara mengubah persamaan diatas menjadi a = (X^-1)y");
         System.out.println("--> Akan dicari matrix balikan dari matrix X sebagai berikut\n");
         Matrix inverseX = this.matrixX.getInverse();
-        inverseX.displayMatrix(null);
+        inverseX.displayMatrix();
 
         System.out.println("\n--> Setelah didapat X^-1 akan dicari nilai matrix a dengan mengkalikan matrix balikan X dengan matrix y dan akan diperoleh hasil sebagai berikut");
         matrixA = inverseX.multiplyBy(matrixF);
-        matrixA.displayMatrix(null);
+        matrixA.displayMatrix();
 
         System.out.println("\n--> Matrix a diatas sebenarnya merepresentasikan konstanta aij dimana 0 <= i, j <= 3.");
         System.out.println("--> Nilai dari masing-masing konstanta a akan dituliskan di bawah ini\n");
@@ -149,4 +132,32 @@ public class BicubicSplineInterpolation implements Solvable{
 
         System.out.printf("\nf(%.4f, %.4f) = %.4f\n", this.a, this.b, result);
     }
+    @Override
+    public void displaySolution() {
+
+    }
+
+    public void setMatrix(Matrix m) {
+        this.matrixF = m;
+        matrixX = new Matrix(16, 16);
+        matrixA = new Matrix(16, 1);
+
+        int row = 0;
+        for (int y = 0; y < 2; y++) {
+            for (int x = 0; x < 2; x++) {
+                int col = 0;
+                for (int j = 0; j < 4; j++){
+                    for (int i = 0; i < 4; i++) {
+                        matrixX.matrix[row][col] = Math.pow(x, i) * Math.pow(y, j);
+                        matrixX.matrix[row + 4][col] = (i == 0) ? 0 : i * Math.pow(x, i - 1) * Math.pow(y, j);
+                        matrixX.matrix[row + 8][col] = (j == 0) ? 0 : j * Math.pow(x, i) * Math.pow(y, j - 1);
+                        matrixX.matrix[row + 12][col] = (i == 0 || j == 0) ? 0 : i * j * Math.pow(x, i - 1) * Math.pow(y, j - 1);
+                        col++;
+                    }
+                }
+                row++;
+            }
+        }
+    }
+
 }

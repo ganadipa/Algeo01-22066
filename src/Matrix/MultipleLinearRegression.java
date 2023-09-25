@@ -2,52 +2,15 @@ package Matrix;
 import java.util.Scanner;
 
 import Interface.Solvable;
+import Matrix.SPL.SPLMethod;
 import Utils.Input;
 
-public class MultipleLinearRegression implements Solvable {
+public class MultipleLinearRegression extends Solvable {
     Matrix matrix;
     SPL spl;
     double x[];
-    public void init(Matrix matrix) {
-        this.matrix = matrix;
-    }
-    public void solve() {
-        this.spl = new SPL(matrix.row,matrix.col-1);
-        spl.init(matrix);
-        spl.solve();
-    }
-    public void display() {
-        System.out.print("f(x) = ");
-        System.out.print(spl.x[0].getConstant()+"x"+0);
-        for(int i = 1; i < spl.x.length; i++) {
-            System.out.print(" + "+spl.x[i].getConstant()+"x"+i);
-        }
-
-        System.out.print("\nEstimate:\n");
-        for (int i = 0; i < x.length; i++)
-        {
-            System.out.println("f("+x[i]+") = "+ getEstimate(x[i]));
-        }
-    }
-
-    public void setX(double[] x) {
-        this.x = x;
-    }
-
-    public double getEstimate(double x) {
-        double result = 0;
-        for(int i = 0; i < spl.x.length; i++) {
-            result += spl.x[i].getConstant() * Math.pow(x, i);
-        }
-        return result;
-    }
- 
-
-    public MultipleLinearRegression() {
-
-    }
-
-    public Matrix getMatrixFromUserInput() {
+    @Override
+    public void readVariablesFromUserInput() {
         System.out.println("Data point amount:");
         int dataPointAmount = Input.getInt();
 
@@ -79,8 +42,56 @@ public class MultipleLinearRegression implements Solvable {
         {
             x[i] = Double.parseDouble(elmts[i]);
         }
+        setMatrix(m);
+    }
+    @Override
+    public void readVariablesFromTextFile() {
 
-        return m;
+    }
+    @Override
+    public void solve() {
+        this.spl = new SPL(matrix.row,matrix.col-1);
+        spl.setMatrix(matrix)
+            .solve();
+    }
+    @Override
+    public void displaySolution() {
+
+    }
+
+    public void init(Matrix matrix) {
+        this.matrix = matrix;
+    }
+    
+    public void display() {
+        System.out.print("f(x) = ");
+        System.out.print(spl.x[0].getConstant()+"x"+0);
+        for(int i = 1; i < spl.x.length; i++) {
+            System.out.print(" + "+spl.x[i].getConstant()+"x"+i);
+        }
+
+        System.out.print("\nEstimate:\n");
+        for (int i = 0; i < x.length; i++)
+        {
+            System.out.println("f("+x[i]+") = "+ getEstimate(x[i]));
+        }
+    }
+
+    public void setX(double[] x) {
+        this.x = x;
+    }
+
+    public double getEstimate(double x) {
+        double result = 0;
+        for(int i = 0; i < spl.x.length; i++) {
+            result += spl.x[i].getConstant() * Math.pow(x, i);
+        }
+        return result;
+    }
+ 
+
+    public void setMatrix(Matrix m) {
+        this.matrix = m;
     }
 
     
