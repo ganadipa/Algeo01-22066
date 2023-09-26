@@ -1,8 +1,3 @@
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import javax.swing.Action;
-
 import Matrix.Matrix;
 import Matrix.MultipleLinearRegression;
 import Matrix.SPL;
