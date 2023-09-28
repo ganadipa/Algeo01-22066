@@ -190,7 +190,7 @@ Pilih metode: """
 
         Matrix mat = new Matrix();
         mat.chooseReadMatrixMethodFromUserInput();
-        SPL spl = new SPL(0, 0);
+        SPL spl = new SPL(mat.row, mat.col-1);
         spl.setMethod(chosenMenu == 1 ? SPL.SPLMethod.Gauss : chosenMenu == 2 ? SPL.SPLMethod.GaussJordan : chosenMenu == 3 ? SPL.SPLMethod.Inverse : SPL.SPLMethod.Cramer);
         spl.solve();
         handleCobaLagi(() -> {handleSPL();});
