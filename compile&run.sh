@@ -1,7 +1,6 @@
 cd ../src
 javac -d ../bin Main.java
-javac -d ../bin Utils/Input.java
-javac -d ../bin Matrix/Matrix.java
-javac -d ../bin Matrix/MultipleLinearRegression.java
+javac -d ../bin GUI/Main.java
 cd ../bin
+java GUI/Main
 java Main

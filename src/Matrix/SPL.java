@@ -193,7 +193,7 @@ class Parametric {
 
 }
 
-public class SPL implements Solvable {
+public class SPL extends Solvable {
 
     // Kesepakatan: Ax = B;
     public Matrix A;
@@ -205,46 +205,8 @@ public class SPL implements Solvable {
     private SPLMethod method = SPLMethod.Gauss;
     private boolean showProcess = false;  
 
-    public enum SPLMethod {
-        Gauss, GaussJordan, Inverse, Cramer
-    }
-
-    public void setMethod(SPLMethod method) {
-        this.method = method;
-    }
-
-    public void setShowProcess(boolean showProcess) {
-        this.showProcess = showProcess;
-    }
-    public void init(Matrix matrix) {
-        this.fromMatrix(matrix);
-    }
-
-    public SPL(int countEquations, int countVariables) {
-        this.initSPL(countEquations, countVariables);
-    }
-
-    public void fromMatrix(Matrix m) {
-
-        this.initSPL(m.row, m.col);
-
-        for(int row = 0; row < m.matrix.length; row++)
-        {
-            for (int col = 0; col < m.matrix[0].length; col++)
-            {
-                this.augmentedMatrix.matrix[row][col] = m.matrix[row][col]; 
-                if (col == m.matrix[0].length-1) {
-                    this.B.matrix[row][0] = m.matrix[row][col];
-                    continue;
-                }
-
-                this.A.matrix[row][col] = m.matrix[row][col];
-            }
-        }
-    
-    }
-
-    public void readFromUserInput() throws Exception{
+    @Override
+    public void readVariablesFromUserInput() {
         System.out.println("Masukkan jumlah baris atau jumlah persamaan dalam SPL tersebut (m): ");
         int m = Input.getInt("Masukkan harus berupa angka positif saja.", (Integer t) -> (t > 0));
 
@@ -260,7 +222,7 @@ public class SPL implements Solvable {
             this.A.readMatrixFromUserInput();
         } catch (Exception e) {
             System.out.println("Terjadi suatu kesalahan, gagal membaca matriks, program berhenti.");
-            throw new Exception("Program berhenti");
+            throw new Error("Program berhenti");
         }
 
         System.out.println("Silakan input matriks B: ");
@@ -270,7 +232,7 @@ public class SPL implements Solvable {
             this.B.readMatrixFromUserInput();
         } catch (Exception e) {
             System.out.println("Terjadi suatu kesalahan, gagal membaca matriks, program berhenti.");
-            throw new Exception("Program berhenti");
+            throw new Error("Program berhenti");
         }
 
         this.augmentedMatrix.initMatrix(m, n);
@@ -302,6 +264,97 @@ public class SPL implements Solvable {
 
     }
 
+    @Override
+    public void readVariablesFromTextFile() {
+
+    }
+    @Override
+    public void solve() {
+        if (this.method == SPLMethod.Gauss) {solveUsingGauss(this.showProcess);}
+        else if (this.method == SPLMethod.GaussJordan) {solveUsingGaussJordan(this.showProcess);}
+        else if (this.method == SPLMethod.Inverse) {solveUsingInverse(this.showProcess);}
+        else if (this.method == SPLMethod.Cramer) {solveUsingCramer(this.showProcess);}
+    }
+    @Override
+    public void displaySolution(){
+        for (int i = 0; i < this.x.length; i++)
+        {
+            // If there is a not-assigned-variables, then it is not yet solved.
+            if (!this.x[i].getIsAssigned()) this.showSolution(true);
+        }
+        
+        int lengthX = this.x.length;
+
+        String parametricNaming = "abcdefghijklmnopqrstuvwyz";
+        for (int i = 0; i<lengthX; i++){
+            int cnt= 0;
+            System.out.printf("x%d = ", i+1);
+            if (Utils.isNotEqual(this.x[i].getConstant(), 0 ) || !this.x[i].hasParametricVariables()){
+                System.out.printf("%.4f ", this.x[i].getConstant());
+                cnt++;
+            }
+            
+            for (int j = 0; j < lengthX; j++)
+            {  
+                if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0)) continue;
+                if (cnt > 0) {
+                    System.out.printf("%+.4f%c ",this.x[i].getTmpParamElmt(j) ,parametricNaming.charAt(parametricLinking.get(j)));
+                }
+                else {
+                    System.out.printf("%.4f%c ",this.x[i].getTmpParamElmt(j) ,parametricNaming.charAt(parametricLinking.get(j)));
+                    cnt++;
+                }
+            }
+            System.out.println();
+        }
+    }
+    
+
+
+
+    public enum SPLMethod {
+        Gauss, GaussJordan, Inverse, Cramer
+    }
+
+    public SPL setMethod(SPLMethod method) {
+        this.method = method;
+        return this;
+    }
+
+    public SPL setShowProcess(boolean showProcess) {
+        this.showProcess = showProcess;
+        return this;
+    }
+    public SPL setMatrix(Matrix matrix) {
+        this.fromMatrix(matrix);
+        return this;
+    }
+
+    public SPL(int countEquations, int countVariables) {
+        this.initSPL(countEquations, countVariables);
+    }
+
+    public void fromMatrix(Matrix m) {
+
+        this.initSPL(m.row, m.col);
+
+        for(int row = 0; row < m.matrix.length; row++)
+        {
+            for (int col = 0; col < m.matrix[0].length; col++)
+            {
+                this.augmentedMatrix.matrix[row][col] = m.matrix[row][col]; 
+                if (col == m.matrix[0].length-1) {
+                    this.B.matrix[row][0] = m.matrix[row][col];
+                    continue;
+                }
+
+                this.A.matrix[row][col] = m.matrix[row][col];
+            }
+        }
+    
+    }
+
+
     public SPL getCopySPL(){
         // Copy matrix and turn it into row echelon form
         Matrix tmp = new Matrix(this.augmentedMatrix.row, this.augmentedMatrix.col);
@@ -319,12 +372,7 @@ public class SPL implements Solvable {
     }
 
 
-    public void solve() {
-        if (this.method == SPLMethod.Gauss) {solveUsingGauss(this.showProcess);}
-        else if (this.method == SPLMethod.GaussJordan) {solveUsingGaussJordan(this.showProcess);}
-        else if (this.method == SPLMethod.Inverse) {solveUsingInverse(this.showProcess);}
-        else if (this.method == SPLMethod.Cramer) {solveUsingCramer(this.showProcess);}
-    }
+    
 
     public void solve(boolean stay) {
         if (!stay) this.solve();
@@ -431,7 +479,7 @@ public class SPL implements Solvable {
                     """);
             
             this.solve_helper();
-            this.showSolution();
+            this.displaySolution();
         } else {
 
             this.augmentedMatrix.toRowEchelon();
@@ -446,7 +494,7 @@ public class SPL implements Solvable {
                 this.solveRow(i, false);
             }
             this.solve_helper();
-            this.showSolution();
+            this.displaySolution();
         }
 
     }
@@ -512,7 +560,7 @@ public class SPL implements Solvable {
                     """);
             
             this.solve_helper();
-            this.showSolution();
+            this.displaySolution();
         } else {
             this.augmentedMatrix.toReducedRowEchelon();
             if (!this.hasSolution()) {
@@ -525,7 +573,7 @@ public class SPL implements Solvable {
                 this.solveRow(i, false);
             }
             this.solve_helper();
-            this.showSolution();
+            this.displaySolution();
         }
     }
 
@@ -584,7 +632,7 @@ public class SPL implements Solvable {
                 this.x[row].setConstant(inversedMatrix.matrix[row][0]);
             }
 
-            this.showSolution();
+            this.displaySolution();
         } else {
             try {
                 inversedMatrix = this.A.getInverse();
@@ -602,7 +650,7 @@ public class SPL implements Solvable {
                 this.x[row].setConstant(inversedMatrix.matrix[row][0]);
             }
 
-            this.showSolution();
+            this.displaySolution();
         }
         
         
@@ -721,7 +769,7 @@ public class SPL implements Solvable {
 
             }
         System.out.println("--> Wrapping up, solusi SPL ini adalah");
-        this.showSolution();
+        this.displaySolution();
         } else {
             double detA;
             try {
@@ -778,7 +826,7 @@ public class SPL implements Solvable {
                 this.x[i].setConstant(detAi/detA);
 
             }
-        this.showSolution();
+        this.displaySolution();
 
         }
     }
@@ -938,42 +986,11 @@ public class SPL implements Solvable {
     public void showSolution(boolean stay) {
         SPL tmpSPL = getCopySPL();
         tmpSPL.solve();
-        tmpSPL.showSolution();
+        tmpSPL.displaySolution();
     }
 
 
-    public void showSolution(){
-        for (int i = 0; i < this.x.length; i++)
-        {
-            // If there is a not-assigned-variables, then it is not yet solved.
-            if (!this.x[i].getIsAssigned()) this.showSolution(true);
-        }
-        
-        int lengthX = this.x.length;
-
-        String parametricNaming = "abcdefghijklmnopqrstuvwyz";
-        for (int i = 0; i<lengthX; i++){
-            int cnt= 0;
-            System.out.printf("x%d = ", i+1);
-            if (Utils.isNotEqual(this.x[i].getConstant(), 0 ) || !this.x[i].hasParametricVariables()){
-                System.out.printf("%.4f ", this.x[i].getConstant());
-                cnt++;
-            }
-            
-            for (int j = 0; j < lengthX; j++)
-            {  
-                if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0)) continue;
-                if (cnt > 0) {
-                    System.out.printf("%+.4f%c ",this.x[i].getTmpParamElmt(j) ,parametricNaming.charAt(parametricLinking.get(j)));
-                }
-                else {
-                    System.out.printf("%.4f%c ",this.x[i].getTmpParamElmt(j) ,parametricNaming.charAt(parametricLinking.get(j)));
-                    cnt++;
-                }
-            }
-            System.out.println();
-        }
-    }
+    
 
     public void displayAugmentedMatrix() {
         this.augmentedMatrix.displayAugmentedMatrix(-2);

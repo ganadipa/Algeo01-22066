@@ -107,7 +107,7 @@ public class Matrix{
         }
     }
 
-    public void readMatrixFromFile() throws Exception {
+    public void readMatrixFromFile() {
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
         String fileName = userInput.next();
@@ -156,7 +156,7 @@ public class Matrix{
 
     }
 
-    public void readMatrixFromUserInput() throws Exception {
+    public void readMatrixFromUserInput() {
         // Input matriks dilakukan baris per baris (BELUM HANDLE ERROR SPESIFIK).
         for (int i = 0; i < this.row; i++)
         {
@@ -167,6 +167,23 @@ public class Matrix{
             {
                 this.matrix[i][j] = Double.parseDouble(elmts[j]);
             }
+        }
+    }
+
+    public void chooseReadMatrixMethodFromUserInput() {
+        System.out.println("""
+
+Cara input
+1. Keyboard
+2. File
+
+Pilih cara input:
+        """);
+        int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
+        if (input == 1) {
+            readSquareMatrix();
+        } else {
+            readMatrixFromFile();
         }
     }
 
@@ -207,7 +224,7 @@ public class Matrix{
                 }
                 System.out.printf(" %.4f ", this.matrix[i][j]);
             }
-            System.out.print("]");
+            System.out.print(" ]");
             System.out.println();
         }
         System.out.println("]");
@@ -310,9 +327,7 @@ public class Matrix{
             System.out.println("Input baris tidak berada di dalam range baris yang valid.");
         }
 
-        
-
-        double tmpBaris[];
+        double[] tmpBaris;
         tmpBaris = new double[this.col];
         for (int i = 0; i < this.col; i++)
         {
@@ -322,10 +337,28 @@ public class Matrix{
         }
     }
 
- 
+    public int toMatrixSegitiga() {
+         int swap = 0;
+         for (int i = 0; i < this.col; i++) {
+             if (this.matrix[i][i] == 0) {
+                 for (int l = i + 1; l < this.row; l++) {
+                     if (this.matrix[l][i] != 0) {
+                         this.swapRow(i, l);
+                         swap++;
+                         break;
+                     }
+                 }
+             }
 
-
-
+             for (int j = i + 1; j < this.row; j++) {
+                 double rasio = this.matrix[j][i] / this.matrix[i][i];
+                 for (int k = i; k < this.col; k++) {
+                     this.matrix[j][k] -= rasio * this.matrix[i][k];
+                 }
+             }
+         }
+         return swap;
+    }
 
     // Metode yang digunakan untuk mendapatkan determinan
     public enum DeterminantMethod {
@@ -342,38 +375,32 @@ public class Matrix{
         if(row != col) throw new Error("Panjang baris dan kolom harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
-            this.toRowEchelon();
-            double total = 1;
+            int swap = this.toMatrixSegitiga();
+            double total = (swap % 2 != 0) ? -1 : 1;
             for(int i = 0; i < matrix.length; i++) {
                 total *= matrix[i][i];
             }
             return total;
         }
         else { // (method == DeterminantMethod.CofactorExpansion)
-
-            if(matrix.length == 2) {
-                return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0];
-            }
-
-            double total = 0;
-            int i = 0;
-            for(int j = 0; j < matrix.length; j++) {
-                
-                // Bikin matrix kecilnya
-                Matrix subMatrix = new Matrix(matrix.length-1, matrix.length-1);
-                for(int k = 0; k < subMatrix.matrix.length; k++) {
-                    for(int l = 0; l < subMatrix.matrix.length; l++) {
-                        if(k >= i && l >= j) subMatrix.matrix[k][l] = matrix[k+1][l+1];
-                        else if(k >= i) subMatrix.matrix[k][l] = matrix[k+1][l];
-                        else if(l >= j) subMatrix.matrix[k][l] = matrix[k][l+1];
-                        else subMatrix.matrix[k][l] = matrix[k][l];
+            if(this.matrix.length == 2) {
+                return this.matrix[0][0]*matrix[1][1] - this.matrix[0][1]*matrix[1][0];
+            } else {
+                double total = 0;
+                int i = 0;
+                for(int j = 0; j < this.matrix.length; j++) {
+                    // Bikin matrix kecilnya
+                    Matrix subMatrix = new Matrix(this.matrix.length-1, this.matrix.length-1);
+                    for(int k = 0; k < subMatrix.matrix.length; k++) {
+                        for(int l = 0; l < subMatrix.matrix.length; l++) {
+                            if(l >= j) subMatrix.matrix[k][l] = this.matrix[k+1][l+1];
+                            else subMatrix.matrix[k][l] = this.matrix[k+1][l];
+                        }
                     }
+                    total += Math.pow(-1, j) * matrix[i][j] * subMatrix.getDeterminant(method);
                 }
-
-                total += Math.pow(-1, j) * matrix[i][j] * subMatrix.getDeterminant(method);
+                return total;
             }
-
-            return total;
         }
     }
 
@@ -605,113 +632,6 @@ public class Matrix{
     */
     public Matrix getInverse() throws Error {
         return getInverse(InverseMethod.GaussJordan);
-    }
-
-    public Double readInterpolasi() {
-        System.out.print("Masukkan  banyak titik: ");
-        int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
-
-        this.initMatrix(n, n+1);
-
-        for (int i = 0; i < this.row; i++) {
-            System.out.printf("Masukan titik ke %d: ", i + 1);
-            String input = userInput.nextLine();
-            String[] titik = input.split(" ");
-            double x = Double.parseDouble(titik[0]);
-            double y = Double.parseDouble(titik[1]);
-
-            for (int j = 0; j < this.col; j++) {
-                if (j == this.col - 1) {
-                    matrix[i][j] = y;
-                }else {
-                    matrix[i][j] = Math.pow(x,j);
-                }
-            }
-            //c + bx + ax2 = y
-        }
-
-        System.out.print("Masukkan nilai x yang ingin ditafsir nilai f(x) nya: ");
-        int x = Input.getInt("", (num) -> true);
-        return (double) x;
-    }
-
-    public Double readInterpolasiFromFile() {
-        System.out.println("Masukkan nama file beserta ekstensinya.");
-        System.out.print("(dir: test/input): ");
-        String fileName = userInput.next();
-        String fileInputPath = "test/input/" + fileName;
-        List<String> titiks = new LinkedList<>();
-
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
-            for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
-                titiks.add(line);
-            }
-
-            this.initMatrix(titiks.size() - 1, titiks.size());
-
-            for (int i = 0; i < this.row; i++) {
-                String[] titik = titiks.get(i).split(" ");
-                double x = Double.parseDouble(titik[0]);
-                double y = Double.parseDouble(titik[1]);
-                for (int j = 0; j < this.col; j++) {
-                    if (j == this.col - 1) {
-                        matrix[i][j] = y;
-                    }else {
-                        matrix[i][j] = Math.pow(x,j);
-                    }
-                }
-            }
-
-            return Double.parseDouble(titiks.get(titiks.size() - 1));
-
-        } catch (IOException e) {
-            // Handle case saat file not found atau ada IO error.
-            System.out.println("File tidak ditemukan.");
-            return null;
-        } catch (NumberFormatException e) {
-            // Handle case saat ada nonnumeric di input.
-            System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
-            return null;
-        } catch (IllegalArgumentException e) {
-            // Jumlah elemen di setiap baris tidak konsisten.
-            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
-            return null;
-        }
-    }
-
-    public Double[] readBicubicFromFile() {
-        System.out.println("Masukkan nama file beserta ekstensinya.");
-        System.out.print("(dir: test/input): ");
-        String fileName = userInput.next();
-        String fileInputPath = "test/input/" + fileName;
-
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
-            this.initMatrix(16, 1);
-            int row = 0;
-            for (int i = 0; i < 4; i++) {
-                String[] line = bufferedReader.readLine().split(" ");
-                for (String s : line) {
-                    this.matrix[row++][0] = Double.parseDouble(s);
-                }
-            }
-
-            String[] line = bufferedReader.readLine().split(" ");
-
-            return new Double[]{ Double.parseDouble(line[0]), Double.parseDouble(line[1]) };
-
-        } catch (IOException e) {
-            // Handle case saat file not found atau ada IO error.
-            System.out.println("File tidak ditemukan.");
-            return null;
-        } catch (NumberFormatException e) {
-            // Handle case saat ada nonnumeric di input.
-            System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
-            return null;
-        } catch (IllegalArgumentException e) {
-            // Jumlah elemen di setiap baris tidak konsisten.
-            System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
-            return null;
-        }
     }
 
     /**
