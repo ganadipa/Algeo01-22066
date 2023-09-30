@@ -150,7 +150,7 @@ class Parametric {
 
     public void showParametric(SolutionStatus status){
         if (!this.hasParametricVariables()) {
-            System.out.println(this.c);
+            System.out.printf("%.4f\n", this.c);
             return;
         }
         String parametricNames = "abcdefghijklmnopqrstuvwyz";
@@ -408,6 +408,7 @@ public class SPL implements Solvable {
                 System.out.println("Program selesai.");
                 return;
             }
+            System.out.println("  | Semua persamaan konsisten, lanjut ke step berikutnya.\n");
 
             // STEP 4
             System.out.println("""
@@ -486,6 +487,9 @@ public class SPL implements Solvable {
                 System.out.println("Program selesai.");
                 return;
             }
+
+            System.out.println("  | Semua persamaan konsisten, lanjut ke step berikutnya.\n");
+
 
             // STEP 3
             System.out.println("""
@@ -874,13 +878,13 @@ public class SPL implements Solvable {
         this.x[leadingOnePosition].setConstant(this.x[leadingOnePosition].getConstant() + rowArray[rowArray.length-1]);
 
 
-        if (showProcess) System.out.println(" | Kita dapati:");
+        if (showProcess) System.out.println("  | Kita dapati:");
         for (int i = rowArray.length - 2; i > leadingOnePosition; i--)
         {
             double multiplier = rowArray[i];
             if (!this.x[i].getIsAssigned()){
                 this.x[i].setAsBaseParametric(i);
-                if (showProcess) System.out.printf(" | Jadikan x%d sebagai base parametrik, katakanlah %c\n", i+1, parametricNaming.charAt(i) );
+                if (showProcess) System.out.printf("  | Jadikan x%d sebagai base parametrik, katakanlah %c <=>  x%d = %c untuk setiap %c bilangan riil\n", i+1, parametricNaming.charAt(i), i+1, parametricNaming.charAt(i), parametricNaming.charAt(i)  );
             }
             this.x[leadingOnePosition].subtract(this.x[i], multiplier);
             
@@ -889,7 +893,7 @@ public class SPL implements Solvable {
 
         if (showProcess)
         {
-            System.out.printf(" | x%d = ", leadingOnePosition+1);
+            System.out.printf("  | x%d = ", leadingOnePosition+1);
             this.x[leadingOnePosition].showParametric(SolutionStatus.NotReady);
             System.out.println();
         }

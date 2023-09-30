@@ -537,6 +537,8 @@ public class Matrix{
                 Utils.plusMinusList(this.matrix[row], this.matrix[currRow], false, this.matrix[row][leadingOnePosition]);
             }
         }
+
+        this.normalizeMatrix();
     }
 
     // To normalize matrix, make the -0 to 0.
