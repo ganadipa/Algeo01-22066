@@ -290,7 +290,10 @@ public class SimpleImage {
         // RAPIHIN !!!
         setMatrixX();
         setMatrixD();
+        this.matrixX.displayMatrix();
         this.matrixXInv = this.matrixX.getInverse();
+        this.matrixXInv.displayMatrix();
+        System.exit(0);
     }
 
     public void setMatrixF(int row, int col) {

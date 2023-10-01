@@ -199,7 +199,7 @@ Pilih cara input:
         """);
         int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
         if (input == 1) {
-            readSquareMatrix();
+            readMatrix();
         } else {
             readMatrixFromFile();
         }

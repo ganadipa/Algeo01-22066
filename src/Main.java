@@ -231,12 +231,11 @@ public class Main {
         System.out.println("Pilih menu (Angka): ");
 
         int chosenMenu = Input.getInt(
-                "Masukan harus dalam range 1 sampai 7",
+                "Masukan harus dalam range 1 sampai 4",
                 (Integer n) -> n >= 1 && n <= 4);
 
-        Matrix mat = new Matrix();
-        mat.chooseReadMatrixMethodFromUserInput();
-        SPL spl = new SPL(mat.row, mat.col - 1);
+        SPL spl = new SPL(mat.row, mat.col);
+        spl.chooseReadVariablesMethodFromUserInput();
         spl.setMethod(chosenMenu == 1 ? SPL.SPLMethod.Gauss
                 : chosenMenu == 2 ? SPL.SPLMethod.GaussJordan
                         : chosenMenu == 3 ? SPL.SPLMethod.Inverse : SPL.SPLMethod.Cramer);
