@@ -19,9 +19,11 @@ public class MatrixAugmentedInput extends MatrixInput  {
         super.paintChildren(grphcs);
         // setBackground(Colors.transparent);
         Graphics2D g2 = (Graphics2D) grphcs;
-        int lineWidth = 4;
-        int upMargin = 35;
-        int leftPush = 2;
-        g2.fillRect((getWidth() * (col-1)/col)-leftPush, upMargin, lineWidth, getHeight()-upMargin);
+        int lineWidth = 2;
+        int upMargin = 42;
+        g2.setColor(Colors.indigo400);
+        int a = (getWidth() + hGap)/col;
+        int posX = getWidth() - a;
+        g2.fillRect(posX, upMargin, lineWidth, getHeight()-upMargin);
     }
 }
