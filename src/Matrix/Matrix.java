@@ -685,6 +685,17 @@ Pilih cara input:
             }   
         }
 
+        return m.transpose();
+    }
+
+    public Matrix transpose() {
+        Matrix m = new Matrix(col, row);
+
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                m.matrix[j][i] = matrix[i][j];
+            }
+        }
         return m;
     }
 
