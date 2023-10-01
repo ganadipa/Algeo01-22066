@@ -175,6 +175,10 @@ public class ListInput extends JPanel {
 
     }
     
+    public void hideMatrixSizeField() {
+        inputPanel.setVisible(false);
+    }
+
     public static void main(String[] args) {
         JFrame jf = new JFrame();
 

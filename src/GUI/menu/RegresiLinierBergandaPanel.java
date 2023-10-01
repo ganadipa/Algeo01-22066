@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import GUI.component.ListInput;
 import GUI.component.MatrixRegresiLinearBergandaInput;
 import GUI.theme.Colors;
-import Matrix.Matrix;
 import Matrix.MultipleLinearRegression;
 
 public class RegresiLinierBergandaPanel extends Menu {

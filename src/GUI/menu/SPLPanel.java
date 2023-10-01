@@ -8,6 +8,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import GUI.component.MatrixAugmentedInput;
 import GUI.component.MatrixInput;
 import GUI.component.RadioButton;
 import GUI.theme.Colors;
@@ -20,7 +21,7 @@ public class SPLPanel extends Menu {
 
     JLabel answerLabel;
 
-    MatrixInput matrixInput;
+    MatrixAugmentedInput matrixInput;
     SPL spl;
     SPLMethod splMethod = SPLMethod.GaussJordan;
 
@@ -30,7 +31,7 @@ public class SPLPanel extends Menu {
 
         addBigText("Sistem Persamaan Linear");
 
-        matrixInput = new MatrixInput(3,3, false);
+        matrixInput = new MatrixAugmentedInput(3,3);
         add(matrixInput);
 
         // File chooser
