@@ -10,9 +10,6 @@ import Utils.Utils;
 
 public class Gana {
     public static void main(String[] args) {
-        // Matrix m1 = new Matrix(5, 5);
-        // m1.readSquareMatrix();
-        // m1.displayMatrix("augmented");
         Matrix m2 = new Matrix(3, 3);
         try {
             m2.readMatrixFromFile();
@@ -24,17 +21,18 @@ public class Gana {
             // m2.displayMatrix();
             m2.normalizeMatrix();
             spl.fromMatrix(m2);
+            spl.displayAugmentedMatrix();
             // spl.readFromUserInput();
             spl.setMethod(SPLMethod.GaussJordan);
             spl.setShowProcess(true);
-            spl.solve(true);
-
-
-
-        } catch (Exception e)
-        {
-            System.out.println(e.getMessage());
+            spl.displaySolution();
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
         // try {
         //     SimpleImage img = new SimpleImage("gana.png");
         //     img.setOptions(SimpleImage.ColorOptions.NORMAL);
@@ -42,6 +40,6 @@ public class Gana {
         // } catch (IOException e) {
         //     e.getStackTrace();
         // }
-
+        
     }
 }

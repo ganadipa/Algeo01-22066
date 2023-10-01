@@ -261,7 +261,9 @@ public class SPL extends Solvable {
             fromMatrix(m2);
     } catch (Exception e) {
         e.printStackTrace();
+        
     }
+
 }
 
     public SPL() {
@@ -439,7 +441,6 @@ public class SPL extends Solvable {
         System.out.printf("(%d) . . .   ", row + 1);
         int cnt = 0;
         for (int i = 0; i < this.augmentedMatrix.col; i++) {
-
             if (cnt == 0) {
                 if (i == this.augmentedMatrix.col - 1) {
                     System.out.printf("0.0000 = %.4f\n", this.augmentedMatrix.matrix[row][i]);
@@ -520,7 +521,7 @@ public class SPL extends Solvable {
                     """);
 
             this.solve_helper();
-            // this.displaySolution();
+            // this.displaySolution();/
         } else {
 
             this.augmentedMatrix.toRowEchelon();
@@ -918,6 +919,7 @@ public class SPL extends Solvable {
         this.augmentedMatrix = new Matrix(row, col);
         
         this.x = new Parametric[col - 1];
+        System.out.println(this.x.length);
         for (int i = 0; i < col - 1; i++) {
             x[i] = new Parametric(col - 1);
         }
