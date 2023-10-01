@@ -97,6 +97,8 @@ public class BicubicSplineInterpolation extends Solvable {
         System.out.println("--> Akan didapat matrix X sebagi berikut\n");
 
         this.matrixX.displayMatrix();
+        this.matrixX.toReducedRowEchelon();
+        this.matrixX.displayMatrix();
 
         System.out.println("\n--> Persamaan matrix bicubic spline interpolation adalah y = Xa");
         System.out.println(

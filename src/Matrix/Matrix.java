@@ -409,10 +409,11 @@ Pilih cara input:
         if(row != col) throw new Error("Panjang baris dan kolom harus sama");
 
         if(method == DeterminantMethod.RowReduction) {
-            int swap = this.toMatrixSegitiga();
+            Matrix copy = this.getCopyMatrix();
+            int swap = copy.toMatrixSegitiga();
             double total = (swap % 2 != 0) ? -1 : 1;
-            for(int i = 0; i < matrix.length; i++) {
-                total *= matrix[i][i];
+            for(int i = 0; i < copy.matrix.length; i++) {
+                total *= copy.matrix[i][i];
             }
             return total;
         }
@@ -607,7 +608,7 @@ Pilih cara input:
             }
 
             // Sudah berada di row yang isinya 0 semua, jadi ga perlu lanjut proses lagi.
-            if (leadingOnePosition == -1 || leadingOnePosition == 3) break;
+            if (leadingOnePosition == -1 || leadingOnePosition == this.col) break;
 
             // the other row in the colomn make it to zero.
             for (int row = 0; row < this.row; row++)
