@@ -1,5 +1,9 @@
 package Utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Utils{
@@ -91,11 +95,12 @@ public class Utils{
     }
 
 
-
-
-
     
-
-    // 
-
+    public static void printFile(String s, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, null, false))) {
+            writer.write(s);
+        } catch (IOException e) {
+            System.out.println("Terjadi kesalahan dalam menulis jawaban ke File");
+        }
+    }
 }

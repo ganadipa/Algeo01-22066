@@ -57,6 +57,7 @@ public class Input {
         return num;
     }
 
+
     /**
     * Input tanpa validasi integer error message
     *

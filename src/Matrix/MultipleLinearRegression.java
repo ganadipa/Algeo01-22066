@@ -1,12 +1,18 @@
 package Matrix;
 import Interface.Solvable;
 import Utils.Input;
+import Utils.Utils;
 
 public class MultipleLinearRegression extends Solvable {
-    Matrix matrix; // input
-    Matrix mlrMatrix; // bentuk regresi
-    SPL spl;
-    double x[]; // nilai yang ingin diestimasi
+    private Matrix matrix; // input
+    private Matrix mlrMatrix; // bentuk regresi
+    private SPL spl;
+    private double x[]; // nilai yang ingin diestimasi
+    private String persamaan = "";
+    private String solution = "";
+    private double result = 0;
+    private boolean isPrintFile = false;
+
     @Override
     public void readVariablesFromUserInput() {
         System.out.println("Banyak sampel data:"); // Jumlah data point
@@ -40,6 +46,7 @@ public class MultipleLinearRegression extends Solvable {
         {
             x[i] = Double.parseDouble(elmts[i]);
         }
+        readOutputFileYesOrNo();
         setMatrix(m);
         setState(State.Unsolved);
         setupMlrMatrix();
@@ -52,15 +59,58 @@ public class MultipleLinearRegression extends Solvable {
     public void solve() {
         this.spl = new SPL(mlrMatrix.row,mlrMatrix.col-1);
         spl.setMatrix(mlrMatrix)
+            .setShowProcess(false)
             .solve();
+
+        persamaan += "f(x) = ";
+        persamaan += String.format("%.3f", spl.x[0].getConstant());
+        for(int i = 1; i < spl.x.length; i++) {
+            if (spl.x[i].getConstant() > 0){
+                persamaan += String.format(" + %.3fx^%d", spl.x[i].getConstant(), i);
+            } else if (spl.x[i].getConstant() < 0){
+                persamaan += String.format(" - %.3fx^%d", spl.x[i].getConstant(), i);
+            }
+        }
+
+        result = getEstimate();
+
+        String s = "";
+
+        s += "\nEstimate:\n";
+        s += "f(";
+        s += String.format("%.3f", x[0]);
+        for (int i = 1; i < x.length; i++)
+        {
+            s += String.format(",%.3f", x[i]);
+        }
+        s += (") = ");
+        s += String.format("%.3f\n", result);
+
+        solution += String.format("%s\n%s", persamaan, s);
+        setState(State.Solved);
     }
+
     @Override
     public void displaySolution() {
-
+        if (!isPrintFile){
+            this.displaySolutionToTerminal();
+        } else {
+            this.displaySolutionToFile();
+        }
     }
 
     public void init(Matrix matrix) {
         this.matrix = matrix;
+    }
+
+    public void displaySolutionToFile() {
+        this.solve();
+        Utils.printFile(solution, "outputRegresi.txt");
+    }
+
+    public void displaySolutionToTerminal() {
+        this.solve();
+        System.out.println(solution);
     }
     
     public void display() {
@@ -98,6 +148,9 @@ public class MultipleLinearRegression extends Solvable {
         return result;
     }
  
+    public void setIsPrintFile(boolean b){
+        this.isPrintFile = b;
+    }
 
     public void setMatrix(Matrix m) {
         this.matrix = m;

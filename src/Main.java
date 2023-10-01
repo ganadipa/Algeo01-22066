@@ -14,14 +14,14 @@ public class Main {
             System.out.println(
             """
     
-    MENU
-    1. Sistem Persamaaan Linier
-    2. Determinan
-    3. Matriks balikan
-    4. Interpolasi Polinom
-    5. Interpolasi Bicubic Spline
-    6. Regresi linier berganda
-    7. Keluar
+            MENU
+            1. Sistem Persamaaan Linier
+            2. Determinan
+            3. Matriks balikan
+            4. Interpolasi Polinom
+            5. Interpolasi Bicubic Spline
+            6. Regresi linier berganda
+            7. Keluar
             """
             );
     
@@ -68,13 +68,13 @@ public class Main {
         boolean isCobaLagi = true;
         while(isCobaLagi) {
             System.out.println(
-    """
-        
-    Coba lagi ?
-    1. Ya
-    2. Keluar
-    
-    Pilih instruksi: """
+            """
+
+            Coba lagi ?
+            1. Ya
+            2. Keluar
+
+            Pilih instruksi: """
             );
     
             int chosenInstruction = Input.getInt(
@@ -96,7 +96,7 @@ public class Main {
         System.out.println("\n[Interpolasi Bicubic Spline]");
         BicubicSplineInterpolation bicubic = new BicubicSplineInterpolation();
         bicubic.chooseReadVariablesMethodFromUserInput();
-        bicubic.solve();
+        bicubic.displaySolution();
     }
 
     static void handleInterpolasi() {
@@ -104,7 +104,7 @@ public class Main {
 
         Interpolasi interpolasi = new Interpolasi();
         interpolasi.chooseReadVariablesMethodFromUserInput();
-        interpolasi.solve();
+        interpolasi.displaySolution();
 
     }
 
@@ -138,13 +138,13 @@ public class Main {
         System.out.println("\n[Matrix Balikan]");
 
         System.out.println(
-"""
-    
-Metode
-1. Metode Gauss Jordan
-2. Metode Adjoin
+            """
 
-Pilih metode: """
+            Metode
+            1. Metode Gauss Jordan
+            2. Metode Adjoin
+
+            Pilih metode: """
         );
         int chosenMethod = Input.getInt(
             "Masukan harus dalam range 1 - 2",
@@ -164,20 +164,18 @@ Pilih metode: """
         
         MultipleLinearRegression mlr = new MultipleLinearRegression();
         mlr.chooseReadVariablesMethodFromUserInput();
-        mlr.solve();
-        mlr.display();
+        mlr.displaySolution();
     }
 
     static void handleSPL()
     {
         System.out.println(
             """
-    
-    MENU
-    1. Metode eliminasi Gauss
-    2. Metode eliminasi Gauss-Jordan
-    3. Metode matriks balikan
-    4. Kaidah Cramer
+                MENU
+                1. Metode eliminasi Gauss
+                2. Metode eliminasi Gauss-Jordan
+                3. Metode matriks balikan
+                4. Kaidah Cramer
             """
         );
     

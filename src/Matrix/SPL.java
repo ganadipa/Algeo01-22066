@@ -268,6 +268,7 @@ public class SPL extends Solvable {
     public void readVariablesFromTextFile() {
 
     }
+
     @Override
     public void solve() {
         if (this.method == SPLMethod.Gauss) {solveUsingGauss(this.showProcess);}
