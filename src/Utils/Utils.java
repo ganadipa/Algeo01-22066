@@ -31,6 +31,10 @@ public class Utils{
         return res;
     }
 
+    public static double getTolerance(){
+        return tolerance;
+    }
+
     public static boolean isEqual(double val1, double val2)
     {
         return (Math.abs(val1-val2) < tolerance);
@@ -100,7 +104,8 @@ public class Utils{
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, null, false))) {
             writer.write(s);
         } catch (IOException e) {
-            System.out.println("Terjadi kesalahan dalam menulis jawaban ke File");
+            // System.out.println("Terjadi kesalahan dalam menulis jawaban ke File");
+            System.out.println(e.getMessage());
         }
     }
 }
