@@ -5,9 +5,16 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public class Input {
-    public static Scanner userInput = new Scanner(System.in);
-    static boolean success = false;
+    private static Scanner userInput = new Scanner(System.in);
+    private static boolean success = false;
 
+    public static void closeScanner(){
+        userInput.close();
+    }
+
+    public static Scanner getScanner() {
+        return userInput;
+    }
     /**
     * Input dengan validasi integer sekalian validator ekstra dengan error message ekstranya.
     *
@@ -56,6 +63,7 @@ public class Input {
 
         return num;
     }
+
 
     /**
     * Input tanpa validasi integer error message

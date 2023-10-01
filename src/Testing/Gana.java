@@ -38,6 +38,7 @@ public class Gana {
         // }
         try {
             SimpleImage img = new SimpleImage("gana.png");
+            img.setOptions(SimpleImage.ColorOptions.NORMAL);
             img.EnlargeImage();
         } catch (IOException e) {
             e.getStackTrace();

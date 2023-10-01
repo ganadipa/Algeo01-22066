@@ -9,6 +9,8 @@ import Utils.Utils;
 import java.awt.image.BufferedImage;
 
 
+
+
 public class SimpleImage {
     private Matrix RGBMatrix[];
     private Matrix grayScaleMatrix;
@@ -20,19 +22,20 @@ public class SimpleImage {
     private int height;
     private Matrix matrixXInv;
     private Matrix matrixD;
-    private colorOptions color;
+    private ColorOptions color;
 
-    enum colorOptions {
+    public enum ColorOptions {
         RED, GREEN, BLUE, GRAYSCALE, NORMAL
     }
+    
 
 
 
 
     public SimpleImage (String fileName) throws IOException {
-        this.color = colorOptions.RED;
+        this.color = ColorOptions.GREEN;
         
-        BufferedImage img = ImageIO.read(new File("test/input/"+ "250.png"));
+        BufferedImage img = ImageIO.read(new File("test/input/"+ "gana.png"));
         this.width = img.getWidth();
         this.height = img.getHeight();
 
@@ -83,7 +86,7 @@ public class SimpleImage {
 
     }
 
-    public void setOptions(colorOptions color) {
+    public void setOptions(ColorOptions color) {
         this.color = color;
     }
 
@@ -104,11 +107,11 @@ public class SimpleImage {
     }
 
     public void saveImage(Matrix m) throws IOException {
-        BufferedImage theImage = new BufferedImage(m.col, m.row, color == colorOptions.GRAYSCALE ? BufferedImage.TYPE_BYTE_GRAY :BufferedImage.TYPE_INT_RGB );
+        BufferedImage theImage = new BufferedImage(m.col, m.row, color == ColorOptions.GRAYSCALE ? BufferedImage.TYPE_BYTE_GRAY :BufferedImage.TYPE_INT_RGB );
         
         int numshift = 0;
-        if (color == colorOptions.RED) numshift = 16;
-        else if (color == colorOptions.GREEN) numshift = 8;
+        if (color == ColorOptions.RED) numshift = 16;
+        else if (color == ColorOptions.GREEN) numshift = 8;
 
         for(int y = 0; y<m.row; y++){
             for(int x = 0; x<m.col; x++){
@@ -180,46 +183,97 @@ public class SimpleImage {
 
     public void EnlargeImage() throws IOException{
         int factor = 2;
-        Matrix enlargedMatrix = EnlargedMatrix(RGBMatrix[1], factor);
-        BufferedImage theImage = new BufferedImage(enlargedMatrix.col, enlargedMatrix.row, BufferedImage.TYPE_INT_RGB);
+        Matrix enlargedMatrix = EnlargedMatrix(RGBMatrix[0], factor);
+        int numshift = 0;
+
+
+
+        if (this.color == ColorOptions.GRAYSCALE) {
+            enlargedMatrix= EnlargedMatrix(grayScaleMatrix, factor);
+        } else if (this.color == ColorOptions.RED) {
+            enlargedMatrix= EnlargedMatrix(RGBMatrix[0], factor);
+            numshift = 16;
+        } else if (this.color == ColorOptions.GREEN) {
+            enlargedMatrix= EnlargedMatrix(RGBMatrix[1], factor);
+            numshift = 8;
+        } else if (this.color == ColorOptions.BLUE) {
+            enlargedMatrix= EnlargedMatrix(RGBMatrix[2], factor);
+        } else {
+            Matrix enlargedMatrixR= EnlargedMatrix(RGBMatrix[0], factor);
+            Matrix enlargedMatrixG= EnlargedMatrix(RGBMatrix[1], factor);
+            Matrix enlargedMatrixB= EnlargedMatrix(RGBMatrix[2], factor);
+
+            enlargedMatrix = new Matrix(enlargedMatrixB.row, enlargedMatrixB.col);
+
+            for (int row = 0; row < enlargedMatrixB.row; row++)
+            {
+                for (int col = 0; col < enlargedMatrixB.col; col++)
+                {
+                    
+                    enlargedMatrix.matrix[row][col] = (Math.round(enlargedMatrixR.matrix[row][col]) << 16) + 
+                                (Math.round(enlargedMatrixG.matrix[row][col]) << 8) 
+                                + (Math.round(enlargedMatrixB.matrix[row][col]));
+                }
+            }
+
+        }
+
+        System.out.println("NOW OUTPUT file");
+
+        BufferedImage theImage;
+        if (color == ColorOptions.GRAYSCALE) {
+            theImage = new BufferedImage(enlargedMatrix.col, enlargedMatrix.row, BufferedImage.TYPE_BYTE_GRAY);
         for(int y = 0; y<enlargedMatrix.row; y++){
             for(int x = 0; x<enlargedMatrix.col; x++){
-                theImage.setRGB(x, y, (int) enlargedMatrix.matrix[y][x] << 8);
+                theImage.setRGB(x, y, (int) Math.round(enlargedMatrix.matrix[y][x]));
             }
         }
+
+        } else {
+            theImage = new BufferedImage(enlargedMatrix.col, enlargedMatrix.row, BufferedImage.TYPE_INT_RGB);
+            for(int y = 0; y<enlargedMatrix.row; y++){
+                for(int x = 0; x<enlargedMatrix.col; x++){
+                    theImage.setRGB(x, y, (int) Math.round(enlargedMatrix.matrix[y][x]) << numshift);
+                }
+        }
+        }
+    
+        
         File outputfile = new File("test/output/gana.png");
         ImageIO.write(theImage, "png", outputfile);
     }
 
     private Matrix EnlargedMatrix(Matrix m, int factor) {
         Matrix resultMatrix = new Matrix(m.row*factor,m.col*factor );
-
+        
+        
         double incCol= (m.col-1)/(double )(resultMatrix.col-1);
         double incRow = (m.row-1)/ (double )(resultMatrix.row-1);
-        System.out.printf("incCol: %.4f\n",incCol);
+        System.out.println(incCol);
         int usingX = 0;
         int usingY = 0;
 
         Matrix a = getMatrixA(usingX, usingY, color);
         int i = 0;
-        for (double row = 0; row <= m.row-2; row += incRow)
+        for (double row = 0; row <= m.row-2 + Utils.getTolerance(); row += incRow)
         {
             int j = 0;
-            for (double col = 0; col <= m.col -2; col += incCol)
+            for (double col = 0; col <= m.col -2 + Utils.getTolerance(); col += incCol)
             {
                 int roundedRow = (int) Math.floor(row);
                 int roundedCol = (int) Math.floor(col);
 
-                if ((usingX != (roundedCol)) || (usingY != (roundedRow))) {
-                    usingX = roundedCol;
-                    usingY = roundedRow;
-                    a = getMatrixA(roundedRow, roundedCol, color);
-                }
+                // if ((usingX != (roundedCol)) || (usingY != (roundedRow))) {
+                //     usingX = roundedCol;
+                //     usingY = roundedRow;
+                //     a = getMatrixA(roundedRow, roundedCol, color);
+                // }
 
-                double color = interpolate(col-usingX, row-usingY, a);
+                double color;
+                if ((Math.abs(col - roundedCol) < 10e-3 )|| (Math.abs(row - roundedRow) < 10e-3)) color = m.matrix[(int)Math.round(row)][(int)Math.round(col)];
+                else color = interpolate(col-usingX, row-usingY, a);
 
-                if (Utils.isEqual(color - Math.floor(color), 0)) color = (int) Math.floor(color);
-                else resultMatrix.matrix[i][j] = color;
+                resultMatrix.matrix[i][j] = color;
                 // System.out.printf("currenly in %d %d and color is %.4f \n", i, j, color);
                 j++;
             }
@@ -293,7 +347,7 @@ public class SimpleImage {
 
     }
 
-    private Matrix getMatrixA(int tlx, int tly, colorOptions color){
+    private Matrix getMatrixA(int tlx, int tly, ColorOptions color){
         // TLX, TLY WILL BE 0 <= tlx, tly <= (width, height) -2
         Matrix i = new Matrix(16, 1);
 
@@ -302,14 +356,15 @@ public class SimpleImage {
         {
             for (int x = -1; x < 3; x++)
             {
-                if (color == colorOptions.RED)  i.matrix[cnt][0] = this.RGBMatrixHandleSides[0].matrix[tly+y+1][tlx+x+1];
-                if (color == colorOptions.GREEN)  i.matrix[cnt][0] = this.RGBMatrixHandleSides[1].matrix[tly+y+1][tlx+x+1];
-                if (color == colorOptions.BLUE)  i.matrix[cnt][0] = this.RGBMatrixHandleSides[2].matrix[tly+y+1][tlx+x+1];
-                if (color == colorOptions.GRAYSCALE)  i.matrix[cnt][0] = this.grayScaleMatrixHandleSides.matrix[tly+y+1][tlx+x+1];
+                if (color == ColorOptions.RED)  i.matrix[cnt][0] = this.RGBMatrixHandleSides[0].matrix[tly+y+1][tlx+x+1];
+                if (color == ColorOptions.GREEN)  i.matrix[cnt][0] = this.RGBMatrixHandleSides[1].matrix[tly+y+1][tlx+x+1];
+                if (color == ColorOptions.BLUE)  i.matrix[cnt][0] = this.RGBMatrixHandleSides[2].matrix[tly+y+1][tlx+x+1];
+                if (color == ColorOptions.GRAYSCALE)  i.matrix[cnt][0] = this.grayScaleMatrixHandleSides.matrix[tly+y+1][tlx+x+1];
             }
             cnt++;
         }
 
+        
 
         Matrix a = matrixXInv.multiplyBy(this.matrixD).multiplyBy(i);
         return a;
@@ -324,9 +379,11 @@ public class SimpleImage {
             {
                 // System.out.printf("x is %.4f\n", x);
                 // System.out.printf("y is %.4f\n", y);
-                res += a.matrix[j*4 + i][0]*Math.pow(x, i)*Math.pow(y, j);
+                res += a.matrix[j*4 + i][0]*Math.pow(1-x, i)*Math.pow(1-y, j);
             }
         }
+        // System.out.println(res);
+        // a.displayMatrix();
         return res;
     }
 

@@ -1,21 +1,18 @@
 package GUI.menu;
 
-import java.awt.Color;
-
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 
 import GUI.component.MatrixInput;
 import GUI.theme.Colors;
 
-public class InterpolasiPolinomPanel extends Menu {
+public class InterpolasiBicubicSplinePanel extends Menu {
     MatrixInput matrixInput;
 
-    public InterpolasiPolinomPanel() {
+    public InterpolasiBicubicSplinePanel() {
         setBackground(Colors.transparent);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        addBigText("Interpolasi Polinom");
+        addBigText("Interpolasi Bicubic Spline");
 
         matrixInput = new MatrixInput(3,3, true);
         add(matrixInput);

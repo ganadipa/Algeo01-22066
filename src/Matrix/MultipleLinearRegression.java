@@ -1,12 +1,22 @@
 package Matrix;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import Interface.Solvable;
 import Utils.Input;
+import Utils.Utils;
 
 public class MultipleLinearRegression extends Solvable {
-    Matrix matrix; // input
-    Matrix mlrMatrix; // bentuk regresi
-    SPL spl;
-    double x[]; // nilai yang ingin diestimasi
+    public Matrix matrix; // input
+    private Matrix mlrMatrix; // bentuk regresi
+    private SPL spl;
+    private double x[]; // nilai yang ingin diestimasi
+    private String persamaan = "";
+    private double result = 0;
+    private boolean isPrintFile = false;
+
     @Override
     public void readVariablesFromUserInput() {
         System.out.println("Banyak sampel data:"); // Jumlah data point
@@ -33,13 +43,14 @@ public class MultipleLinearRegression extends Solvable {
         System.out.println("Nilai yang akan ditaksir:");
         for(int i = 0; i < predictorAmount; i++) System.out.print("x"+(i+1)+" ");
         System.out.println("");
-        Input.userInput.nextLine();
-        String ln = Input.userInput.nextLine();
+        Input.getScanner().nextLine();
+        String ln = Input.getScanner().nextLine();
         String[] elmts = ln.split(" ");
         for (int i = 0; i < predictorAmount; i++)
         {
             x[i] = Double.parseDouble(elmts[i]);
         }
+        readOutputFileYesOrNo();
         setMatrix(m);
         setState(State.Unsolved);
         setupMlrMatrix();
@@ -50,17 +61,64 @@ public class MultipleLinearRegression extends Solvable {
     }
     @Override
     public void solve() {
+        solution = ""; // reset biar kalau solve lagi ga numpuk
+        persamaan = "";
         this.spl = new SPL(mlrMatrix.row,mlrMatrix.col-1);
         spl.setMatrix(mlrMatrix)
+            .setShowProcess(false)
             .solve();
+
+        persamaan += "f(x) = ";
+        persamaan += String.format("%.3f", spl.x[0].getConstant());
+        for(int i = 1; i < spl.x.length; i++) {
+            if (spl.x[i].getConstant() > 0){
+                persamaan += String.format(" + %.3fx^%d", spl.x[i].getConstant(), i);
+            } else if (spl.x[i].getConstant() < 0){
+                persamaan += String.format(" - %.3fx^%d", spl.x[i].getConstant(), i);
+            }
+        }
+
+        result = getEstimate();
+
+        String s = "";
+
+        s += "\nEstimate:\n";
+        s += "f(";
+        s += String.format("%.3f", x[0]);
+        for (int i = 1; i < x.length; i++)
+        {
+            s += String.format(",%.3f", x[i]);
+        }
+        s += (") = ");
+        s += String.format("%.3f\n", result);
+
+        solution += String.format("%s\n%s", persamaan, s);
+        setState(State.Solved);
     }
+
     @Override
     public void displaySolution() {
-
+        if (!isPrintFile){
+            this.displaySolutionToTerminal();
+        } else {
+            this.displaySolutionToFile();
+        }
     }
 
     public void init(Matrix matrix) {
         this.matrix = matrix;
+    }
+
+    public void displaySolutionToFile() {
+        this.solve();
+        Utils.printFile(solution, "outputRegresi.txt");
+        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputRegresi.txt'");
+
+    }
+
+    public void displaySolutionToTerminal() {
+        this.solve();
+        System.out.println(solution);
     }
     
     public void display() {
@@ -85,6 +143,9 @@ public class MultipleLinearRegression extends Solvable {
     public void setX(double[] x) {
         this.x = x;
     }
+    public double[] getX() {
+        return this.x;
+    }
 
     public double getEstimate() {
         double result = 0;
@@ -98,11 +159,14 @@ public class MultipleLinearRegression extends Solvable {
         return result;
     }
  
+    public void setIsPrintFile(boolean b){
+        this.isPrintFile = b;
+    }
 
     public void setMatrix(Matrix m) {
         this.matrix = m;
     }
-    void setupMlrMatrix() {
+    public void setupMlrMatrix() {
         if(getState() == State.UninitializedVariable) throw new Error("Variable not initialized");
         
         this.mlrMatrix = new Matrix(this.matrix.col, this.matrix.col+1);
@@ -129,6 +193,65 @@ public class MultipleLinearRegression extends Solvable {
             }
         }
     }
+    public void setVariablesFromFile(File file) throws Exception {
 
-    
+        Matrix matrix = new Matrix();
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
+            bufferedReader.mark(1000);
+            int row = 0, col = 0;
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {   
+                int tmpCol = line.split(" ").length;
+                if (tmpCol < col) {
+                    continue;
+                }
+                col = Math.max(tmpCol, col);
+                row += 1;
+            }
+
+            matrix.initMatrix(row, col);
+            bufferedReader.reset();
+
+
+            int i = 0;
+            while((line = bufferedReader.readLine()) != null) {
+                String[] elmts = line.split(" ");
+                if (elmts.length == 0) continue;
+                if (elmts.length < matrix.col) {
+                    // kemungkinan baris terakhir
+                    String[] elmtsLastLine = line.split(" ");
+                    x = new double[elmtsLastLine.length];
+                    for (int j = 0; j < elmtsLastLine.length; j++)
+                    {
+                        x[j] = Double.parseDouble(elmtsLastLine[j]);
+                    }
+                    break;
+                }
+                for (int j = 0; j < elmts.length; j++)
+                {
+                    matrix.matrix[i][j] = Double.parseDouble(elmts[j]);
+                }
+                i++;
+            }
+
+            setMatrix(matrix);
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            throw new Exception("File tidak ditemukan.");
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            throw new Exception("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            throw new Exception("Jumlah elemen pada setiap baris tidak konsisten.");
+        } catch (Exception e) {
+            throw e;
+        }
+        setupMlrMatrix();
+    }
+
+    public String getSolutionString() {
+        return solution;
+    }
 }

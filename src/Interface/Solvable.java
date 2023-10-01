@@ -3,14 +3,40 @@ package Interface;
 import Utils.Input;
 
 public class Solvable {
+    protected String solution;
+    public String getSolutionString() {
+        return solution;
+    }
+
+    private boolean isPrintFile = false;
+
+    public void readOutputFileYesOrNo() {
+        System.out.println("""
+                \nApakah hasil mau dikeluarkan di File atau tidak?
+                1. Ya
+                2. Tidak
+                """);
+        int isFile = Input.getInt("Masukan harus berupa integer 1 atau 2", (Integer num) -> num == 1 || num == 2);
+        
+        setIsPrintFile(isFile == 1);
+    }
+
+    public void setIsPrintFile(boolean b) {
+        this.isPrintFile = b;
+    }
+
+    public boolean getIsPrintFile() {
+        return this.isPrintFile;
+    }
+
     public void chooseReadVariablesMethodFromUserInput(){
         System.out.println("""
 
-Cara input
-1. Keyboard
-2. File
-
-Pilih cara input:
+        Cara input
+        1. Keyboard
+        2. File
+            
+        Pilih cara input:
         """);
         int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
         if (input == 1) {

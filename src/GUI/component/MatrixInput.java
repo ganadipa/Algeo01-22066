@@ -2,6 +2,7 @@ package GUI.component;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,17 +14,19 @@ import javax.swing.event.DocumentListener;
 import GUI.theme.Colors;
 import Matrix.Matrix;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.awt.GridLayout;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 public class MatrixInput extends JPanel {
     public int row = 3;
     public int col = 3;
-    boolean isMatrixSquare = false;
+    public boolean isMatrixSquare = false;
 
     public int hGap = 5;
     public int vGap = 3;
@@ -36,10 +39,10 @@ public class MatrixInput extends JPanel {
 
     public Runnable onValueChanged;
 
-    List<InputField> inputFieldList = new java.util.ArrayList<InputField>();
+    List<InputField> inputFieldList = new ArrayList<InputField>();
     
-
-    public MatrixInput(int row, int col) {
+    public MatrixInput(int row, int col, boolean isMatrixSquare) {
+        this.isMatrixSquare = isMatrixSquare;
         setBackground(Colors.slate950);
         matrixPanel.setBackground(Colors.slate950);
         inputPanel.setBackground(Colors.slate950);
@@ -48,15 +51,10 @@ public class MatrixInput extends JPanel {
         
         initMatrix();
 
-        if(!isMatrixSquare) initMatrixSquareInput();
+        if(isMatrixSquare) initMatrixSquareInput();
         else initInput();
         
         initPanel();
-    }
-
-    public MatrixInput(int row, int col, boolean isMatrixSquare) {
-        this(row, col);
-        this.isMatrixSquare = isMatrixSquare;
     }
 
     void setMatrixSize(int newRow, int newCol) {
@@ -218,11 +216,86 @@ public class MatrixInput extends JPanel {
         }
         return matrix;
     }
-    
+    public void setMatrix(Matrix matrix) {
+        this.row = matrix.row;
+        this.col = matrix.col;
+        
+        // Update text field for matrix sizw
+        if(isMatrixSquare) {
+            textFieldRow.setText(this.row + "");
+            textFieldRow.repaint();
+            textFieldRow.revalidate();
+        }
+        else {
+            textFieldRow.setText(this.row + "");
+            textFieldCol.setText(this.col + "");
+            textFieldRow.repaint();
+            textFieldRow.revalidate();
+            textFieldCol.repaint();
+            textFieldCol.revalidate();  
+        }
+
+        matrixPanel.removeAll();
+        initMatrix();
+        for (int i = 0; i < row*col; i++) {
+            inputFieldList.get(i).setText(matrix.matrix[i/col][i%col] + "");
+        }
+        matrixPanel.repaint();
+        matrixPanel.revalidate();
+
+    }
+    public void importMatrixFromFile(File file) throws Exception {
+        Matrix matrix = new Matrix();
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
+            bufferedReader.mark(1000);
+            int row = 0, col = 0;
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {   
+                int tmpCol = line.split(" ").length;
+                if (tmpCol < col) {
+                    continue;
+                }
+                col = Math.max(tmpCol, col);
+                row += 1;
+            }
+            if(isMatrixSquare && (row != col)) throw new Exception("Matrix harus berbentuk persegi.");
+
+            matrix.initMatrix(row, col);
+            bufferedReader.reset();
+
+
+            int i = 0;
+            while((line = bufferedReader.readLine()) != null) {
+                String[] elmts = line.split(" ");
+                if (elmts.length == 0) continue;
+                if (elmts.length < matrix.col) throw new IllegalArgumentException();
+                for (int j = 0; j < elmts.length; j++)
+                {
+                    matrix.matrix[i][j] = Double.parseDouble(elmts[j]);
+                }
+                i++;
+            }
+
+            setMatrix(matrix);
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            throw new Exception("File tidak ditemukan.");
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            throw new Exception("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            throw new Exception("Jumlah elemen pada setiap baris tidak konsisten.");
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
     public static void main(String[] args) {
         JFrame jf = new JFrame();
 
-        MatrixInput mi = new MatrixInput(3, 3);
+        MatrixInput mi = new MatrixInput(3, 3, false);
         jf.add(mi);
 
         jf.pack();
