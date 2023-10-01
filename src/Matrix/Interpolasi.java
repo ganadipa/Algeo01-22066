@@ -60,6 +60,7 @@ public class Interpolasi extends Solvable {
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
         String fileName = userInput.next();
+        userInput.nextLine();
         readOutputFileYesOrNo();
         String fileInputPath = "test/input/" + fileName;
         List<String> titiks = new LinkedList<>();
@@ -150,7 +151,7 @@ public class Interpolasi extends Solvable {
 
     public void displaySolutionToFile() {
         this.solve();
-        Utils.printFile(solution, "test/output/outputInterpolasi.txt");
+        Utils.printFile(solution, "outputInterpolasi.txt");
         System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputInterpolasi.txt'");
 
     }

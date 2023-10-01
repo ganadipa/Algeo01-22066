@@ -101,7 +101,7 @@ public class Utils{
 
     
     public static void printFile(String s, String fileName) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, null, false))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(String.format("test/output/%s", fileName))))) {
             writer.write(s);
         } catch (IOException e) {
             // System.out.println("Terjadi kesalahan dalam menulis jawaban ke File");

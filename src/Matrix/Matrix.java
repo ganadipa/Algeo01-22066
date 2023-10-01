@@ -215,7 +215,7 @@ Pilih cara input:
         """);
         int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
         if (input == 1) {
-            readMatrix();
+            readSquareMatrix();
         } else {
             readMatrixFromFile();
         }
@@ -468,6 +468,20 @@ Pilih cara input:
         return idx;
     }
 
+
+    public Matrix getCopyMatrix() {
+        Matrix tmp = new Matrix(this.row, this.col);
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                tmp.matrix[i][j]=  this.matrix[row][col];
+            }
+        }
+
+        return tmp;
+    }
+
     /**
     * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
     * @see getDeterminan
@@ -627,7 +641,7 @@ Pilih cara input:
     * @return  inverse matrix
     */
     public Matrix getInverse(InverseMethod method) throws Error{
-        if(getDeterminant(DeterminantMethod.RowReduction) == 0) {
+        if(getDeterminant() == 0) {
             throw new Error("Determinan tidak boleh 0");
         }
         else if(row != col) {
@@ -700,11 +714,22 @@ Pilih cara input:
         Matrix m = new Matrix(row, col);
 
         for(int i = 0; i < row; i++) {
-            for(int j = 0; j < row; j++) {
+            for(int j = 0; j < col; j++) {
                 m.matrix[i][j] = Math.pow(-1,i+j) * getCofactor(i, j).getDeterminant();
             }   
         }
 
+        return m.transpose();
+    }
+
+    public Matrix transpose() {
+        Matrix m = new Matrix(col, row);
+
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                m.matrix[j][i] = matrix[i][j];
+            }
+        }
         return m;
     }
 

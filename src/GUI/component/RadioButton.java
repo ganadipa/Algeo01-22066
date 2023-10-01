@@ -34,9 +34,14 @@ public class RadioButton extends JRadioButton {
             } else {
                 g2.setColor(Colors.indigo400);
             }
-            g2.fillOval(1, ly, 16, 16);
             g2.setColor(Colors.indigo400);
-            g2.fillOval(2, ly+1, 14, 14);
+            g2.fillOval(1, ly, 16, 16);
+
+            g2.setColor(Colors.slate950);
+            g2.fillOval(3, ly+2, 12, 12);
+            
+            g2.setColor(Colors.indigo400);
+            g2.fillOval(6, ly+5, 6, 6);
 
         } else {
             if(isFocusOwner()) {

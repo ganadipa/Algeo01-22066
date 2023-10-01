@@ -38,6 +38,7 @@ public class Main {
                     handleCobaLagi(() -> {
                         handleSPL();
                     });
+                    break;
                 case 2:
                     handleDeterminan();
                     handleCobaLagi(() -> {
@@ -134,6 +135,14 @@ public class Main {
                 "Masukan harus dalam range 1 - 2",
                 (Integer n) -> n == 1 || n == 2);
 
+        
+
+        Matrix mat = new Matrix();
+        mat.chooseReadMatrixMethodFromUserInput();
+
+        double determinan = mat.getDeterminant(
+                chosenMethod == 1 ? Matrix.DeterminantMethod.RowReduction : Matrix.DeterminantMethod.CofactorExpansion);
+        
         System.out.println("""
                 \nApakah hasil mau dikeluarkan di File atau tidak?
                 1. Ya
@@ -141,16 +150,10 @@ public class Main {
                 """);
         int isFile = Input.getInt("Masukan harus berupa integer 1 atau 2", (Integer num) -> num == 1 || num == 2);
 
-        Matrix mat = new Matrix();
-        mat.chooseReadMatrixMethodFromUserInput();
-
-        double determinan = mat.getDeterminant(
-                chosenMethod == 1 ? Matrix.DeterminantMethod.RowReduction : Matrix.DeterminantMethod.CofactorExpansion);
-
         if (isFile == 2) {
             System.out.printf("\nDeterminan: %.3f\n", determinan);
         } else {
-            Utils.printFile(String.format("Determinan: %.3f", determinan), "/output/outputDeterminan.txt");
+            Utils.printFile(String.format("Determinan: %.3f", determinan), "outputDeterminan.txt");
             System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputDeterminan.txt'");
 
         }
@@ -205,7 +208,7 @@ public class Main {
             }
             s += "]";
 
-            Utils.printFile(s, "/output/outputInverse.txt");
+            Utils.printFile(s, "outputInverse.txt");
             System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputInverse.txt'");
         }
     }

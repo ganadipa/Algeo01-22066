@@ -292,6 +292,7 @@ public class SimpleImage {
         setMatrixD();
         this.matrixX.displayMatrix();
         this.matrixXInv = this.matrixX.getInverse();
+        System.out.println(this.matrixXInv.getDeterminant());
         this.matrixXInv.displayMatrix();
         System.exit(0);
     }

@@ -15,6 +15,7 @@ import GUI.theme.Colors;
 import Matrix.Matrix;
 
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.awt.GridLayout;
 import java.io.BufferedReader;
@@ -290,6 +291,15 @@ public class MatrixInput extends JPanel {
         } catch (Exception e) {
             throw e;
         }
+    }
+    
+    public void hideListSizeField() {
+        inputPanel.setVisible(false);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
     }
 
     public static void main(String[] args) {
