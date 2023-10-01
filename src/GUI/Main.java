@@ -9,15 +9,22 @@ import GUI.theme.Colors;
 import GUI.component.SideBar;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.util.concurrent.Flow;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.Border;
+import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 
 
 public class Main {
@@ -65,12 +72,21 @@ public class Main {
         mainPanel.setBackground(Colors.slate950);
 
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        
+
         f.add(menu, BorderLayout.WEST);
-        f.add(mainPanel, BorderLayout.CENTER);
+
+
+        // Add scroll when overflow
+        JScrollPane scrollPane = new JScrollPane(mainPanel);
+
+        scrollPane.getVerticalScrollBar().setUnitIncrement(8);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        f.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
 
         f.setSize(1280, 720);
+
         f.setVisible(true);
     }
     

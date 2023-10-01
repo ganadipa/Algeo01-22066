@@ -6,6 +6,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import java.awt.Cursor;
 
 import GUI.theme.Colors;
 
