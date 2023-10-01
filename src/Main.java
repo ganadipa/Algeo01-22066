@@ -134,18 +134,20 @@ public class Main {
                 "Masukan harus dalam range 1 - 2",
                 (Integer n) -> n == 1 || n == 2);
 
-        System.out.println("""
-                \nApakah hasil mau dikeluarkan di File atau tidak?
-                1. Ya
-                2. Tidak
-                """);
-        int isFile = Input.getInt("Masukan harus berupa integer 1 atau 2", (Integer num) -> num == 1 || num == 2);
+        
 
         Matrix mat = new Matrix();
         mat.chooseReadMatrixMethodFromUserInput();
 
         double determinan = mat.getDeterminant(
                 chosenMethod == 1 ? Matrix.DeterminantMethod.RowReduction : Matrix.DeterminantMethod.CofactorExpansion);
+        
+        System.out.println("""
+                \nApakah hasil mau dikeluarkan di File atau tidak?
+                1. Ya
+                2. Tidak
+                """);
+        int isFile = Input.getInt("Masukan harus berupa integer 1 atau 2", (Integer num) -> num == 1 || num == 2);
 
         if (isFile == 2) {
             System.out.printf("\nDeterminan: %.3f\n", determinan);
