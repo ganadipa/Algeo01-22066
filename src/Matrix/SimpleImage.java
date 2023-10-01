@@ -291,7 +291,9 @@ public class SimpleImage {
         setMatrixX();
         setMatrixD();
         this.matrixX.displayMatrix();
-        this.matrixXInv = this.matrixX.getInverse();
+        Matrix cpy = this.matrixX.getCopyMatrix();
+        this.matrixXInv = cpy.getInverse();
+        System.out.println(this.matrixXInv.getDeterminant());
         this.matrixXInv.displayMatrix();
         System.exit(0);
     }

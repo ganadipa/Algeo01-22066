@@ -132,12 +132,19 @@ public class Matrix{
         String fileInputPath = "test/input/" + fileName;
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))){
-            bufferedReader.mark(1000);
+            bufferedReader.mark(10000);
             int row = 0, col = 0;
             String line;
+            
             while ((line = bufferedReader.readLine()) != null)
             {   
-                int tmpCol = line.split(" ").length;
+                String[] elmts = line.split(" ");
+                int tmpCol = elmts.length;
+                int k = tmpCol;
+                for (int i = 0; i < k; i ++)
+                {
+                    if (elmts[i].length() == 0) tmpCol--;
+                }
                 if (tmpCol < col) {
                     continue;
                 }
@@ -152,25 +159,34 @@ public class Matrix{
 
             int i = 0;
             while((line = bufferedReader.readLine()) != null) {
+                int j = 0;
                 String[] elmts = line.split(" ");
-                if (elmts.length == 0) continue;
                 if (elmts.length < this.col) throw new IllegalArgumentException();
-                for (int j = 0; j < elmts.length; j++)
+                System.out.println(Arrays.toString(elmts));
+                for (int k = 0; k < elmts.length; k++)
                 {
-                    this.matrix[i][j] = Double.parseDouble(elmts[j]);
+                    if (elmts[k].length() == 0) continue;
+                    this.matrix[i][j] = Double.parseDouble(elmts[k]);
+                    j++;
+
                 }
                 i++;
             }
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             // Handle case saat file not found atau ada IO error.
             System.out.println("File tidak ditemukan.");
+            System.exit(0);
         } catch (NumberFormatException e) {
             // Handle case saat ada nonnumeric di input.
             System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+            System.exit(0);
         } catch (IllegalArgumentException e) {
             // Jumlah elemen di setiap baris tidak konsisten.
             System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
+            System.exit(0);
         }
+
 
     }
 
@@ -452,6 +468,20 @@ Pilih cara input:
         return idx;
     }
 
+
+    public Matrix getCopyMatrix() {
+        Matrix tmp = new Matrix(this.row, this.col);
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                tmp.matrix[i][j]=  this.matrix[i][j];
+            }
+        }
+
+        return tmp;
+    }
+
     /**
     * Mengubah matrix menjadi matrix eselon. Digunakan pada determinan. Belum handle kasus kalau matrix[i-1][j] nya 0. Cara handlenya bikin swapRow dulu. Trus kalau ketemu 0, swap ke paling bawah semua
     * @see getDeterminan
@@ -462,9 +492,9 @@ Pilih cara input:
         // 1. get the first left most non zero colomn
         int currRow = 0;
         int notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
-
         while (notZeroColomn != -1 && currRow < this.row)
         {
+
             int row;
             for (row = currRow; row < this.row; row++)
             {
@@ -489,9 +519,13 @@ Pilih cara input:
             // do it again but with the next row
             currRow += 1;
             notZeroColomn = getColomnNotEntirelyZero(currRow, this.row);
+
+
         }
 
         this.normalizeMatrix();
+
+        
     }
 
     public void multiply(Matrix m)
@@ -680,11 +714,22 @@ Pilih cara input:
         Matrix m = new Matrix(row, col);
 
         for(int i = 0; i < row; i++) {
-            for(int j = 0; j < row; j++) {
+            for(int j = 0; j < col; j++) {
                 m.matrix[i][j] = Math.pow(-1,i+j) * getCofactor(i, j).getDeterminant();
             }   
         }
 
+        return m.transpose();
+    }
+
+    public Matrix transpose() {
+        Matrix m = new Matrix(col, row);
+
+        for(int i = 0; i < row; i++) {
+            for(int j = 0; j < col; j++) {
+                m.matrix[j][i] = matrix[i][j];
+            }
+        }
         return m;
     }
 
