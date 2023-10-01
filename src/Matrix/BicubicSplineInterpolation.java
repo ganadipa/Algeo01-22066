@@ -30,8 +30,9 @@ public class BicubicSplineInterpolation extends Solvable {
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
         String fileName = Input.getScanner().next();
-        System.out.println("");
+        Input.getScanner().nextLine();
         this.readOutputFileYesOrNo();
+        // this.setIsPrintFile(false);
         String fileInputPath = "test/input/" + fileName;
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))) {
@@ -59,6 +60,7 @@ public class BicubicSplineInterpolation extends Solvable {
             // Jumlah elemen di setiap baris tidak konsisten.
             System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
         }
+
     }
 
     @Override
@@ -66,6 +68,8 @@ public class BicubicSplineInterpolation extends Solvable {
         solution = "";
         inverseX = this.matrixX.getInverse();
         matrixA = inverseX.multiplyBy(matrixF);
+        // inverseX.displayMatrix();
+        // matrixF.displayMatrix();
         int rowA = 0;
         result = 0;
         for (int j = 0; j < 4; j++) {
@@ -79,7 +83,7 @@ public class BicubicSplineInterpolation extends Solvable {
 
     public void displaySolutionToFile() {
         this.solve();
-        Utils.printFile(solution, "/output/outputBicubic.txt");
+        Utils.printFile(solution, "outputBicubic.txt");
         System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputBicubic.txt'");
     }
 
