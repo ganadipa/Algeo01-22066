@@ -76,9 +76,10 @@ public class NormalButton extends JButton {
 
         int width = getWidth();
         int height = getHeight();
+        int moveDown = 2;
 
         // Create rounded rectangle with specified corner radius
-        RoundRectangle2D roundedRectangle = new RoundRectangle2D.Float(0, 0, width - 1, height - 1, cornerRadius, cornerRadius);
+        RoundRectangle2D roundedRectangle = new RoundRectangle2D.Float(0, moveDown, width - 1, height - 1 - moveDown, cornerRadius, cornerRadius);
 
         // Paint the background
         g2d.setColor(getBackground());

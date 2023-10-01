@@ -221,9 +221,9 @@ public class SPL extends Solvable {
             throw new Error("Program berhenti");
         }
 
-        readOutputFileYesOrNo();
+        this.readOutputFileYesOrNo();
 
-        this.augmentedMatrix.initMatrix(m, n);
+        this.augmentedMatrix = new Matrix(m, n);
         for (int row = 0; row < m; row++) {
             for (int col = 0; col < n; col++) {
                 this.augmentedMatrix.displayMatrix();
@@ -247,10 +247,26 @@ public class SPL extends Solvable {
 
     @Override
     public void readVariablesFromTextFile() {
+        Matrix m2 = new Matrix(3, 3);
+        try {
+            m2.readMatrixFromFile();
+            // m2.displayMatrix();
+            // if (m2.isEchelon()) System.out.println("Check isEchelon passed!");
+            // if (m2.isReducedEchelon()) System.out.println("Check isReducedEchelon passed!");
+
+            initSPL(m2.row, m2.col);
+            // System.out.println("passed");
+            // m2.displayMatrix();
+            m2.normalizeMatrix();
+            fromMatrix(m2);
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+    public SPL() {
 
     }
-
-    
 
     @Override
     public void solve() {
@@ -268,81 +284,83 @@ public class SPL extends Solvable {
     }
 
     public void displaySolutionToFile() {
-       this.solve();
-       Utils.printFile(solution, "/output/outputSPL.txt");
-       System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputSPL.txt'");
+        this.solve();
+        Utils.printFile(solution, "/output/outputSPL.txt");
+        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputSPL.txt'");
     }
 
     public void displaySolutionToTerminal() {
         this.solve();
-        for (int i = 0; i < this.x.length; i++) {
-            // If there is a not-assigned-variables, then it is not yet solved.
-            if (!this.x[i].getIsAssigned())
-                this.showSolution(true);
-        }
-
-        System.out.println(solution);
-        // int lengthX = this.x.length;
-
-        // String parametricNaming = "abcdefghijklmnopqrstuvwyz";
-        // for (int i = 0; i < lengthX; i++) {
-        //     int cnt = 0;
-        //     System.out.printf("x%d = ", i + 1);
-        //     if (Utils.isNotEqual(this.x[i].getConstant(), 0) || !this.x[i].hasParametricVariables()) {
-        //         System.out.printf("%.4f ", this.x[i].getConstant());
-        //         cnt++;
-        //     }
-
-        //     for (int j = 0; j < lengthX; j++) {
-        //         if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0))
-        //             continue;
-        //         if (cnt > 0) {
-        //             System.out.printf("%+.4f%c ", this.x[i].getTmpParamElmt(j),
-        //                     parametricNaming.charAt(parametricLinking.get(j)));
-        //         } else {
-        //             System.out.printf("%.4f%c ", this.x[i].getTmpParamElmt(j),
-        //                     parametricNaming.charAt(parametricLinking.get(j)));
-        //             cnt++;
-        //         }
-        //     }
-        //     System.out.println();
-        // }
-    }
-
-    @Override
-    public void displaySolution() {
         // for (int i = 0; i < this.x.length; i++) {
         //     // If there is a not-assigned-variables, then it is not yet solved.
         //     if (!this.x[i].getIsAssigned())
         //         this.showSolution(true);
         // }
 
+        System.out.println(solution);
         // int lengthX = this.x.length;
 
         // String parametricNaming = "abcdefghijklmnopqrstuvwyz";
         // for (int i = 0; i < lengthX; i++) {
-        //     int cnt = 0;
-        //     System.out.printf("x%d = ", i + 1);
-        //     if (Utils.isNotEqual(this.x[i].getConstant(), 0) || !this.x[i].hasParametricVariables()) {
-        //         System.out.printf("%.4f ", this.x[i].getConstant());
-        //         cnt++;
-        //     }
-
-        //     for (int j = 0; j < lengthX; j++) {
-        //         if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0))
-        //             continue;
-        //         if (cnt > 0) {
-        //             System.out.printf("%+.4f%c ", this.x[i].getTmpParamElmt(j),
-        //                     parametricNaming.charAt(parametricLinking.get(j)));
-        //         } else {
-        //             System.out.printf("%.4f%c ", this.x[i].getTmpParamElmt(j),
-        //                     parametricNaming.charAt(parametricLinking.get(j)));
-        //             cnt++;
-        //         }
-        //     }
-        //     System.out.println();
+        // int cnt = 0;
+        // System.out.printf("x%d = ", i + 1);
+        // if (Utils.isNotEqual(this.x[i].getConstant(), 0) ||
+        // !this.x[i].hasParametricVariables()) {
+        // System.out.printf("%.4f ", this.x[i].getConstant());
+        // cnt++;
         // }
-        if (!getIsPrintFile()){
+
+        // for (int j = 0; j < lengthX; j++) {
+        // if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0))
+        // continue;
+        // if (cnt > 0) {
+        // System.out.printf("%+.4f%c ", this.x[i].getTmpParamElmt(j),
+        // parametricNaming.charAt(parametricLinking.get(j)));
+        // } else {
+        // System.out.printf("%.4f%c ", this.x[i].getTmpParamElmt(j),
+        // parametricNaming.charAt(parametricLinking.get(j)));
+        // cnt++;
+        // }
+        // }
+        // System.out.println();
+        // }
+    }
+
+    @Override
+    public void displaySolution() {
+        // for (int i = 0; i < this.x.length; i++) {
+        // // If there is a not-assigned-variables, then it is not yet solved.
+        // if (!this.x[i].getIsAssigned())
+        // this.showSolution(true);
+        // }
+
+        // int lengthX = this.x.length;
+
+        // String parametricNaming = "abcdefghijklmnopqrstuvwyz";
+        // for (int i = 0; i < lengthX; i++) {
+        // int cnt = 0;
+        // System.out.printf("x%d = ", i + 1);
+        // if (Utils.isNotEqual(this.x[i].getConstant(), 0) ||
+        // !this.x[i].hasParametricVariables()) {
+        // System.out.printf("%.4f ", this.x[i].getConstant());
+        // cnt++;
+        // }
+
+        // for (int j = 0; j < lengthX; j++) {
+        // if (Utils.isEqual(this.x[i].getTmpParamElmt(j), 0))
+        // continue;
+        // if (cnt > 0) {
+        // System.out.printf("%+.4f%c ", this.x[i].getTmpParamElmt(j),
+        // parametricNaming.charAt(parametricLinking.get(j)));
+        // } else {
+        // System.out.printf("%.4f%c ", this.x[i].getTmpParamElmt(j),
+        // parametricNaming.charAt(parametricLinking.get(j)));
+        // cnt++;
+        // }
+        // }
+        // System.out.println();
+        // }
+        if (!getIsPrintFile()) {
             displaySolutionToTerminal();
         } else {
             displaySolutionToFile();
@@ -376,7 +394,6 @@ public class SPL extends Solvable {
 
 
     public void fromMatrix(Matrix m) {
-
         this.initSPL(m.row, m.col);
 
         for (int row = 0; row < m.matrix.length; row++) {
@@ -524,7 +541,7 @@ public class SPL extends Solvable {
 
     }
 
-    public void setSolution(){
+    public void setSolution() {
         this.setSolution(true, "");
     }
 
@@ -539,7 +556,7 @@ public class SPL extends Solvable {
                 int cnt = 0;
                 solution += String.format("x%d = ", i + 1);
                 if (Utils.isNotEqual(this.x[i].getConstant(), 0) || !this.x[i].hasParametricVariables()) {
-                    solution += String.format("%.4f ", this.x[i].getConstant());
+                    solution += String.format("%.4f", this.x[i].getConstant());
                     cnt++;
                 }
 
@@ -555,6 +572,7 @@ public class SPL extends Solvable {
                         cnt++;
                     }
                 }
+                solution += "\n";
             }
         } else {
             solution = error;
@@ -701,9 +719,9 @@ public class SPL extends Solvable {
                         "***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
                 System.out.println("Program berhenti.");
                 this.setSolution(false, String.format("""
-                    Untuk menggunakan metode ini: %s
-                    Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan
-                """, e.getMessage()));
+                            Untuk menggunakan metode ini: %s
+                            Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan
+                        """, e.getMessage()));
                 return;
             }
             inversedMatrix.multiply(this.B);
@@ -836,9 +854,9 @@ public class SPL extends Solvable {
                         "***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
                 System.out.println("Program berhenti.");
                 this.setSolution(false, String.format("""
-                        Untuk menggunakan metode ini: %s
-                        Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan
-                    """, e.getMessage()));
+                            Untuk menggunakan metode ini: %s
+                            Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan
+                        """, e.getMessage()));
                 return;
             }
 
@@ -849,7 +867,8 @@ public class SPL extends Solvable {
                         "***) Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan\n");
 
                 System.out.println("Program selesai.");
-                this.setSolution(false, "SPL tidak mendapati kesimpulan melalui metode cramer karena determinan matrika A bernilai 0.\nSilakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan");
+                this.setSolution(false,
+                        "SPL tidak mendapati kesimpulan melalui metode cramer karena determinan matrika A bernilai 0.\nSilakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan");
                 return;
             }
 
@@ -879,9 +898,9 @@ public class SPL extends Solvable {
 
                     System.out.println("Program berhenti.");
                     this.setSolution(false, String.format("""
-                        Untuk menggunakan metode ini: %s
-                        Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan
-                    """, e.getMessage()));
+                                Untuk menggunakan metode ini: %s
+                                Silakan coba menyelesaikan SPL ini menggunakan metode eliminasi Gauss atau Gauss-Jordan
+                            """, e.getMessage()));
                     return;
                 }
 
@@ -894,16 +913,15 @@ public class SPL extends Solvable {
     }
 
     public void initSPL(int row, int col) {
-        updateMatrix();
         this.A = new Matrix(row, col - 1);
         this.B = new Matrix(row, 1);
         this.augmentedMatrix = new Matrix(row, col);
-
+        
         this.x = new Parametric[col - 1];
         for (int i = 0; i < col - 1; i++) {
             x[i] = new Parametric(col - 1);
         }
-
+        
     }
 
     public boolean hasSolution(boolean stay) {

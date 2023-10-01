@@ -80,6 +80,7 @@ public class Main {
         mainPanel.setBackground(Colors.slate950);
 
         mainPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 
         f.add(menu, BorderLayout.WEST);
 
@@ -93,7 +94,7 @@ public class Main {
         f.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
 
-        f.setSize(1280, 720);
+        f.setSize(960, 540);
 
         f.setVisible(true);
     }

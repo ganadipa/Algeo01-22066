@@ -34,7 +34,7 @@ public class MatrixInput extends JPanel {
 
     JPanel inputPanel = new JPanel();
     JPanel matrixPanel = new JPanel();
-    InputField textFieldRow = new InputField(5);
+    InputField textFieldLength = new InputField(5);
     InputField textFieldCol = new InputField(5);
 
     public Runnable onValueChanged;
@@ -112,11 +112,11 @@ public class MatrixInput extends JPanel {
     
     
     void initInput() {
-        textFieldRow.setText(this.row + "");
+        textFieldLength.setText(this.row + "");
         textFieldCol.setText(this.col + "");
 
-        textFieldRow.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
-        textFieldRow.getDocument().addDocumentListener(new DocumentListener() {
+        textFieldLength.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
+        textFieldLength.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent evt) {
                 updateValue();
             }
@@ -128,7 +128,7 @@ public class MatrixInput extends JPanel {
             }
             void updateValue() {
                 try {
-                    int newRow = Integer.parseInt(textFieldRow.getText());
+                    int newRow = Integer.parseInt(textFieldLength.getText());
                     setMatrixSize(newRow, col);
                     onValueChanged.run();
                 }
@@ -169,16 +169,16 @@ public class MatrixInput extends JPanel {
         colLabel.setForeground(Colors.slate100);
 
         inputPanel.add(rowLabel);
-        inputPanel.add(textFieldRow);
+        inputPanel.add(textFieldLength);
         inputPanel.add(colLabel);
         inputPanel.add(textFieldCol);
     }
     
     void initMatrixSquareInput() {
-        textFieldRow.setText(this.row + "");
+        textFieldLength.setText(this.row + "");
 
-        textFieldRow.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
-        textFieldRow.getDocument().addDocumentListener(new DocumentListener() {
+        textFieldLength.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
+        textFieldLength.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent evt) {
                 updateValue();
             }
@@ -190,7 +190,7 @@ public class MatrixInput extends JPanel {
             }
             void updateValue() {
                 try {
-                    int newRowCol = Integer.parseInt(textFieldRow.getText());
+                    int newRowCol = Integer.parseInt(textFieldLength.getText());
                     setMatrixSize(newRowCol, newRowCol);
                     onValueChanged.run();
                 }
@@ -206,7 +206,7 @@ public class MatrixInput extends JPanel {
         rowLabel.setForeground(Colors.slate100);
 
         inputPanel.add(rowLabel);
-        inputPanel.add(textFieldRow);
+        inputPanel.add(textFieldLength);
     }
     
     public Matrix getMatrix() {
@@ -222,15 +222,15 @@ public class MatrixInput extends JPanel {
         
         // Update text field for matrix sizw
         if(isMatrixSquare) {
-            textFieldRow.setText(this.row + "");
-            textFieldRow.repaint();
-            textFieldRow.revalidate();
+            textFieldLength.setText(this.row + "");
+            textFieldLength.repaint();
+            textFieldLength.revalidate();
         }
         else {
-            textFieldRow.setText(this.row + "");
+            textFieldLength.setText(this.row + "");
             textFieldCol.setText(this.col + "");
-            textFieldRow.repaint();
-            textFieldRow.revalidate();
+            textFieldLength.repaint();
+            textFieldLength.revalidate();
             textFieldCol.repaint();
             textFieldCol.revalidate();  
         }

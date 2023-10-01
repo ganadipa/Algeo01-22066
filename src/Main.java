@@ -106,7 +106,7 @@ public class Main {
     static void handleBicubic() {
         System.out.println("\n[Interpolasi Bicubic Spline]");
         BicubicSplineInterpolation bicubic = new BicubicSplineInterpolation();
-        bicubic.chooseReadVariablesMethodFromUserInput();
+        bicubic.readVariablesFromTextFile();
         bicubic.displaySolution();
     }
 
@@ -234,7 +234,7 @@ public class Main {
                 "Masukan harus dalam range 1 sampai 4",
                 (Integer n) -> n >= 1 && n <= 4);
 
-        SPL spl = new SPL(mat.row, mat.col);
+        SPL spl = new SPL();
         spl.chooseReadVariablesMethodFromUserInput();
         spl.setMethod(chosenMenu == 1 ? SPL.SPLMethod.Gauss
                 : chosenMenu == 2 ? SPL.SPLMethod.GaussJordan

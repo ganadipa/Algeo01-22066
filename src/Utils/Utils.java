@@ -104,7 +104,8 @@ public class Utils{
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, null, false))) {
             writer.write(s);
         } catch (IOException e) {
-            System.out.println("Terjadi kesalahan dalam menulis jawaban ke File");
+            // System.out.println("Terjadi kesalahan dalam menulis jawaban ke File");
+            System.out.println(e.getMessage());
         }
     }
 }

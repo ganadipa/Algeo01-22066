@@ -5,6 +5,7 @@ import Utils.Input;
 import Utils.Utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -13,11 +14,11 @@ import java.util.Scanner;
 
 public class Interpolasi extends Solvable {
     private Matrix matrix = new Matrix();
+    private Matrix inputMatrix = new Matrix();
     private double x;
     private SPL spl;
     private String persamaan = "";
     private double result = 0;
-    private String solution = "";
 
     @Override
     public void readVariablesFromUserInput() {
@@ -102,12 +103,15 @@ public class Interpolasi extends Solvable {
 
     @Override
     public void solve() {
+        solution = "";
+        persamaan = "";
         spl = new SPL(matrix.row, matrix.col);
         spl.setMatrix(matrix)
                 .setMethod(SPL.SPLMethod.GaussJordan)
                 .setShowProcess(false)
                 .solve();
-        result = 0;
+        this.result = 0;
+
         persamaan += "f(x) = ";
         for (int i = spl.augmentedMatrix.row - 1; i >= 0; i--) {
             String temp = "";
@@ -126,10 +130,11 @@ public class Interpolasi extends Solvable {
                     persamaan += " - ";
                 }
             }
-            result += (spl.augmentedMatrix.matrix[i][matrix.col - 1] * Math.pow(this.x, i));
+            this.result += (spl.augmentedMatrix.matrix[i][matrix.col - 1] * Math.pow(this.x, i));
+            // System.out.printf("result: %.4f", this.result);
         }
 
-        solution = String.format("%s\nf(%.4f) = %.4f\n", persamaan, x, result);
+        solution = String.format("%s\nf(%.4f) = %.4f\n", this.persamaan, x, this.result);
 
         setState(State.Solved);
     }
@@ -145,22 +150,22 @@ public class Interpolasi extends Solvable {
 
     public void displaySolutionToFile() {
         this.solve();
-        Utils.printFile(solution, "/output/outputInterpolasi.txt");
+        Utils.printFile(solution, "test/output/outputInterpolasi.txt");
         System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputInterpolasi.txt'");
 
     }
 
     public void displaySolutionToTerminal() {
-        result = 0;
-        spl = new SPL(matrix.row, matrix.col);
-        spl.setMatrix(matrix)
+        SPL spl2 = new SPL(matrix.row, matrix.col);
+        this.solve();
+        spl2.setMatrix(matrix)
                 .setMethod(SPL.SPLMethod.GaussJordan)
                 .setShowProcess(true);
         System.out.printf(
                 "--> Bentuk persamaan interpolasi yang akan terbentuk dari %d titik adalah sebagai berikut\n\n",
-                spl.augmentedMatrix.row);
+                spl2.augmentedMatrix.row);
         System.out.print("f(x) = ");
-        for (int i = spl.augmentedMatrix.row - 1; i >= 0; i--) {
+        for (int i = spl2.augmentedMatrix.row - 1; i >= 0; i--) {
             if (i > 1) {
                 System.out.printf("(a%d)x^%d", i + 1, i);
             } else if (i == 1) {
@@ -177,14 +182,14 @@ public class Interpolasi extends Solvable {
         System.out.println(
                 "--> Untuk dapat mencari persamaan interpolasi, titik yang anda inputkan akan diubah menjadi sebuah SPL sebagai berikut\n");
 
-        for (int i = 0; i < spl.augmentedMatrix.row; i++) {
-            System.out.printf("-> titik (%.4f, %.4f)\n| ", spl.augmentedMatrix.matrix[i][1],
-                    spl.augmentedMatrix.matrix[i][spl.augmentedMatrix.col - 1]);
-            for (int j = spl.augmentedMatrix.row - 1; j >= 0; j--) {
+        for (int i = 0; i < spl2.augmentedMatrix.row; i++) {
+            System.out.printf("-> titik (%.4f, %.4f)\n| ", spl2.augmentedMatrix.matrix[i][1],
+                    spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]);
+            for (int j = spl2.augmentedMatrix.row - 1; j >= 0; j--) {
                 if (j > 1) {
-                    System.out.printf("(%.4f)^%d(a%d)", spl.augmentedMatrix.matrix[i][1], j, j + 1);
+                    System.out.printf("(%.4f)^%d(a%d)", spl2.augmentedMatrix.matrix[i][1], j, j + 1);
                 } else if (j == 1) {
-                    System.out.printf("(%.4f)(a%d)", spl.augmentedMatrix.matrix[i][1], j + 1);
+                    System.out.printf("(%.4f)(a%d)", spl2.augmentedMatrix.matrix[i][1], j + 1);
                 } else {
                     System.out.printf("(a%d)", j + 1);
                 }
@@ -192,22 +197,22 @@ public class Interpolasi extends Solvable {
                     System.out.print(" + ");
                 }
             }
-            System.out.printf(" = %.4f\n| ", spl.augmentedMatrix.matrix[i][spl.augmentedMatrix.col - 1]);
-            for (int j = spl.augmentedMatrix.row - 1; j >= 0; j--) {
+            System.out.printf(" = %.4f\n| ", spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]);
+            for (int j = spl2.augmentedMatrix.row - 1; j >= 0; j--) {
                 if (j >= 1) {
-                    System.out.printf("%.4f(a%d)", spl.augmentedMatrix.matrix[i][j], j + 1);
+                    System.out.printf("%.4f(a%d)", spl2.augmentedMatrix.matrix[i][j], j + 1);
                 } else {
                     System.out.printf("(a%d)", j + 1);
                 }
                 if (j != 0) {
-                    if (spl.augmentedMatrix.matrix[i][j - 1] >= 0) {
+                    if (spl2.augmentedMatrix.matrix[i][j - 1] >= 0) {
                         System.out.print(" + ");
-                    } else if (spl.augmentedMatrix.matrix[i][j - 1] < 0) {
+                    } else if (spl2.augmentedMatrix.matrix[i][j - 1] < 0) {
                         System.out.print(" - ");
                     }
                 }
             }
-            System.out.printf(" = %.4f\n\n", spl.augmentedMatrix.matrix[i][spl.augmentedMatrix.col - 1]);
+            System.out.printf(" = %.4f\n\n", spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]);
         }
 
         System.out.println(
@@ -215,7 +220,7 @@ public class Interpolasi extends Solvable {
         System.out.println("--> Dalam penyelesaian SPL ini konstanta a1 = x1 dst");
         System.out.println("--> Penyelesaiannya adalah sebagai berikut\n");
 
-        spl.solve();
+        spl2.solve();
         setState(State.Solved);
 
         System.out.println(
@@ -228,36 +233,36 @@ public class Interpolasi extends Solvable {
                 this.x);
 
         System.out.printf("f(%.4f) = ", this.x);
-        for (int i = spl.augmentedMatrix.row - 1; i >= 0; i--) {
+        for (int i = spl2.augmentedMatrix.row - 1; i >= 0; i--) {
             if (i > 1) {
-                System.out.printf("%.4f(%.4f^%d)", Math.abs(spl.augmentedMatrix.matrix[i][matrix.col - 1]), this.x,
+                System.out.printf("%.4f(%.4f^%d)", Math.abs(spl2.augmentedMatrix.matrix[i][matrix.col - 1]), this.x,
                         i);
             } else if (i == 1) {
-                System.out.printf("%.4f(%.4f)", Math.abs(spl.augmentedMatrix.matrix[i][matrix.col - 1]), this.x);
+                System.out.printf("%.4f(%.4f)", Math.abs(spl2.augmentedMatrix.matrix[i][matrix.col - 1]), this.x);
             } else {
-                System.out.printf("%.4f", Math.abs(spl.augmentedMatrix.matrix[i][matrix.col - 1]));
+                System.out.printf("%.4f", Math.abs(spl2.augmentedMatrix.matrix[i][matrix.col - 1]));
             }
             if (i != 0) {
-                if (spl.augmentedMatrix.matrix[i - 1][spl.augmentedMatrix.col - 1] >= 0) {
+                if (spl2.augmentedMatrix.matrix[i - 1][spl2.augmentedMatrix.col - 1] >= 0) {
                     System.out.print(" + ");
-                } else if (spl.augmentedMatrix.matrix[i - 1][spl.augmentedMatrix.col - 1] < 0) {
+                } else if (spl2.augmentedMatrix.matrix[i - 1][spl2.augmentedMatrix.col - 1] < 0) {
                     System.out.print(" - ");
                 }
             }
         }
         System.out.println("");
         System.out.printf("f(%.4f) = ", this.x);
-        for (int i = spl.augmentedMatrix.row - 1; i >= 0; i--) {
+        for (int i = spl2.augmentedMatrix.row - 1; i >= 0; i--) {
             if (i >= 1) {
                 System.out.printf("%.4f(%.4f)",
-                        Math.abs(spl.augmentedMatrix.matrix[i][spl.augmentedMatrix.col - 1]), Math.pow(this.x, i));
+                        Math.abs(spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]), Math.pow(this.x, i));
             } else {
-                System.out.printf("%.4f", Math.abs(spl.augmentedMatrix.matrix[i][spl.augmentedMatrix.col - 1]));
+                System.out.printf("%.4f", Math.abs(spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]));
             }
             if (i != 0) {
-                if (spl.augmentedMatrix.matrix[i - 1][spl.augmentedMatrix.col - 1] >= 0) {
+                if (spl2.augmentedMatrix.matrix[i - 1][spl2.augmentedMatrix.col - 1] >= 0) {
                     System.out.print(" + ");
-                } else if (spl.augmentedMatrix.matrix[i - 1][spl.augmentedMatrix.col - 1] < 0) {
+                } else if (spl2.augmentedMatrix.matrix[i - 1][spl2.augmentedMatrix.col - 1] < 0) {
                     System.out.print(" - ");
                 }
             }
@@ -265,25 +270,106 @@ public class Interpolasi extends Solvable {
 
         System.out.println("");
         System.out.printf("f(%.4f) = ", this.x);
-        for (int i = spl.augmentedMatrix.row - 1; i >= 0; i--) {
+        for (int i = spl2.augmentedMatrix.row - 1; i >= 0; i--) {
             System.out.printf("%.4f",
-                    Math.abs(spl.augmentedMatrix.matrix[i][spl.augmentedMatrix.col - 1]) * Math.pow(this.x, i));
+                    Math.abs(spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]) * Math.pow(this.x, i));
             if (i != 0) {
-                if (spl.augmentedMatrix.matrix[i - 1][spl.augmentedMatrix.col - 1] >= 0) {
+                if (spl2.augmentedMatrix.matrix[i - 1][spl2.augmentedMatrix.col - 1] >= 0) {
                     System.out.print(" + ");
-                } else if (spl.augmentedMatrix.matrix[i - 1][spl.augmentedMatrix.col - 1] < 0) {
+                } else if (spl2.augmentedMatrix.matrix[i - 1][spl2.augmentedMatrix.col - 1] < 0) {
                     System.out.print(" - ");
                 }
             }
         }
         System.out.println("");
 
-        System.out.printf("f(%.4f) = %.4f\n", x, result);
+        System.out.printf("f(%.4f) = %.4f\n", x, this.result);
     }
 
 
-    public void setMatrix(Matrix matrix) {
-        this.matrix = matrix;
+    public Interpolasi setMatrix(Matrix inputMatrix) {
+
+        this.matrix.initMatrix(inputMatrix.row, inputMatrix.row + 1);
+
+        for (int i = 0; i < this.matrix.row; i++) {
+            double x = inputMatrix.matrix[i][0];
+            double y = inputMatrix.matrix[i][1];
+
+            for (int j = 0; j < this.matrix.col; j++) {
+                if (j == this.matrix.col - 1) {
+                    this.matrix.matrix[i][j] = y;
+                } else {
+                    this.matrix.matrix[i][j] = Math.pow(x, j);
+                }
+            }
+        }
+
         setState(State.Unsolved);
+        return this;
+    }
+    public Interpolasi setX(double newX) {
+        this.x = newX;
+        setState(State.Unsolved);
+        return this;
+    }
+    public double getX() {
+        return this.x;
+    }
+    public Matrix getInputMatrix() {
+        return this.inputMatrix;
+    }
+    @Override
+    public String getSolutionString() {
+        return solution;
+    }
+
+    public void setVariablesFromFile(File file) throws Exception{
+        // inputMatrix
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
+            bufferedReader.mark(1000);
+            int row = 0, col = 0;
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {   
+                int tmpCol = line.split(" ").length;
+                if (tmpCol < col) {
+                    continue;
+                }
+                col = Math.max(tmpCol, col);
+                row += 1;
+            }
+
+            inputMatrix.initMatrix(row, col);
+            bufferedReader.reset();
+
+            int i = 0;
+            while((line = bufferedReader.readLine()) != null) {
+                String[] elmts = line.split(" ");
+                if (elmts.length == 0) continue;
+                if (elmts.length == 1) {
+                    // kemungkinan baris terakhir
+                    // baris terakhir cuma 1 angka
+                    x = Double.parseDouble(line);
+                    break; // pasti line terakhir
+                }
+                for (int j = 0; j < 2; j++)
+                {
+                    inputMatrix.matrix[i][j] = Double.parseDouble(elmts[j]);
+                }
+
+                i++;
+            }
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            throw new Exception("File tidak ditemukan.");
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            throw new Exception("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            throw new Exception("Jumlah elemen pada setiap baris tidak konsisten.");
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

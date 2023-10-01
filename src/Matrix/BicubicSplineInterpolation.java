@@ -23,16 +23,6 @@ public class BicubicSplineInterpolation extends Solvable {
 
     }
 
-    public void readOutputFileYesOrNo() {
-        System.out.println("""
-                \nApakah hasil mau dikeluarkan di File atau tidak?
-                1. Ya
-                2. Tidak
-                """);
-        int isFile = Input.getInt("Masukan harus berupa integer 1 atau 2", (Integer num) -> num == 1 || num == 2);
-        setIsPrintFile(isFile == 1);
-    }
-
     @Override
     public void readVariablesFromTextFile() {
         Matrix mF = new Matrix();
@@ -40,7 +30,8 @@ public class BicubicSplineInterpolation extends Solvable {
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
         String fileName = Input.getScanner().next();
-        readOutputFileYesOrNo();
+        System.out.println("");
+        this.readOutputFileYesOrNo();
         String fileInputPath = "test/input/" + fileName;
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))) {
