@@ -199,7 +199,7 @@ Pilih cara input:
         """);
         int input = Input.getInt("Tidak ada pilihan dengan angka tersebut", (num) -> num == 1 || num == 2);
         if (input == 1) {
-            readSquareMatrix();
+            readMatrix();
         } else {
             readMatrixFromFile();
         }
@@ -428,7 +428,7 @@ Pilih cara input:
     * @see getDeterminant
     */
     public double getDeterminant() throws Error {
-        return getDeterminant(DeterminantMethod.CofactorExpansion);
+        return getDeterminant(DeterminantMethod.RowReduction);
     }
 
     public int getColomnNotEntirelyZero(int startRow, int endRow)
@@ -582,6 +582,8 @@ Pilih cara input:
                 Utils.plusMinusList(this.matrix[row], this.matrix[currRow], false, this.matrix[row][leadingOnePosition]);
             }
         }
+
+        this.normalizeMatrix();
     }
 
     // To normalize matrix, make the -0 to 0.
