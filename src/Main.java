@@ -38,6 +38,7 @@ public class Main {
                     handleCobaLagi(() -> {
                         handleSPL();
                     });
+                    break;
                 case 2:
                     handleDeterminan();
                     handleCobaLagi(() -> {
@@ -152,7 +153,7 @@ public class Main {
         if (isFile == 2) {
             System.out.printf("\nDeterminan: %.3f\n", determinan);
         } else {
-            Utils.printFile(String.format("Determinan: %.3f", determinan), "/output/outputDeterminan.txt");
+            Utils.printFile(String.format("Determinan: %.3f", determinan), "outputDeterminan.txt");
             System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputDeterminan.txt'");
 
         }
@@ -207,7 +208,7 @@ public class Main {
             }
             s += "]";
 
-            Utils.printFile(s, "/output/outputInverse.txt");
+            Utils.printFile(s, "outputInverse.txt");
             System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputInverse.txt'");
         }
     }
