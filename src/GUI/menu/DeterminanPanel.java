@@ -30,7 +30,11 @@ public class DeterminanPanel extends Menu {
         addBigText("Determinan");
 
         matrixInput = new MatrixInput(3,3, true);
-        add(matrixInput, BorderLayout.PAGE_START);
+        add(matrixInput);
+
+        // File chooser
+        add(fileChooserPanel);
+        
 
         resultPanel = new JPanel();
         resultPanel.setBackground(Colors.slate950);
@@ -41,11 +45,6 @@ public class DeterminanPanel extends Menu {
         answerLabel.setAlignmentX(LEFT_ALIGNMENT);
         resultPanel.add(answerLabel);
 
-        // File chooser
-        add(fileChooserPanel);
-        //
-
-        
         add(resultPanel, BorderLayout.PAGE_START);
 
         add(errorPanel);
@@ -58,6 +57,8 @@ public class DeterminanPanel extends Menu {
                 answerLabel.setText("Determinan: "+determinan);
                 answerLabel.repaint();
                 answerLabel.revalidate();
+
+                // all menu have this
                 setResult(determinan + "");
                 resetError();
                 add(exportPanel);

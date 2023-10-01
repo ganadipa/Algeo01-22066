@@ -23,15 +23,15 @@ import Matrix.Matrix;
 
 public class Menu extends JPanel {
     //import variable
-    public JPanel fileChooserPanel;
-    JFileChooser fileChooser = new JFileChooser();
-    NormalButton fileChooserButton = new NormalButton("Open");
-    JLabel fileChooserLabel = new JLabel("Import dari file: ");
-    JLabel choosenFileNameLabel = new JLabel("");
-    JLabel choosenFileLabel = new JLabel("");
+    protected JPanel fileChooserPanel;
+    private JFileChooser fileChooser = new JFileChooser();
+    private NormalButton fileChooserButton = new NormalButton("Open");
+    private JLabel fileChooserLabel = new JLabel("Import dari file: ");
+    private JLabel choosenFileNameLabel = new JLabel("");
+    private JLabel choosenFileLabel = new JLabel("");
 
-    JLabel errorMessage = new JLabel("");
-    JPanel errorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    private JLabel errorMessage = new JLabel("");
+    protected JPanel errorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     
     // export result
     public JPanel exportPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -81,7 +81,7 @@ public class Menu extends JPanel {
         exportPanel.add(exportButton);
         exportButton.addActionListener(e -> {
             fileChooser.setDialogTitle("Export hasil");
-            fileChooser.setSelectedFile(new File("fileToSave.txt"));
+            fileChooser.setSelectedFile(new File("output.txt"));
             fileChooser.showSaveDialog(this);
             try {
                 FileWriter myWriter = new FileWriter(fileChooser.getSelectedFile());
