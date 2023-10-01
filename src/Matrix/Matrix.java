@@ -475,7 +475,7 @@ Pilih cara input:
         {
             for (int j = 0; j < col; j++)
             {
-                tmp.matrix[i][j]=  this.matrix[row][col];
+                tmp.matrix[i][j]=  this.matrix[i][j];
             }
         }
 
