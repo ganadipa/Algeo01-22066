@@ -48,6 +48,24 @@ public class Matrix{
         return (this.row == this.col);
     }
 
+    public String getMatrixString() {
+        String matrixString = "";
+        for (int i = 0; i < this.row; i++)
+        {
+            for (int j = 0; j < this.col; j++)
+            {
+                if (j == 0) {
+                    matrixString += String.format("%.4f", this.matrix[i][j]);
+                    continue;
+                }
+                matrixString += String.format(" %.4f", this.matrix[i][j]);
+            }
+            if(!(i == this.row-1))
+                matrixString += "\n";
+        }
+        return matrixString;
+    }
+
     // read Matrix from user input
     public void readMatrix(){
         int row = 0;
