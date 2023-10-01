@@ -39,8 +39,8 @@ public class MultipleLinearRegression extends Solvable {
         System.out.println("Nilai yang akan ditaksir:");
         for(int i = 0; i < predictorAmount; i++) System.out.print("x"+(i+1)+" ");
         System.out.println("");
-        Input.userInput.nextLine();
-        String ln = Input.userInput.nextLine();
+        Input.getScanner().nextLine();
+        String ln = Input.getScanner().nextLine();
         String[] elmts = ln.split(" ");
         for (int i = 0; i < predictorAmount; i++)
         {
@@ -106,6 +106,8 @@ public class MultipleLinearRegression extends Solvable {
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "outputRegresi.txt");
+        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputRegresi.txt'");
+
     }
 
     public void displaySolutionToTerminal() {

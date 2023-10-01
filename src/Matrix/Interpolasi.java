@@ -23,13 +23,13 @@ public class Interpolasi extends Solvable {
     public void readVariablesFromUserInput() {
         System.out.print("Masukkan  banyak titik: ");
         int n = Input.getInt("Banyak titik harus lebih besar dari 0", (num) -> num > 0);
-        Input.userInput.nextLine(); // clear
+        Input.getScanner().nextLine(); // clear
 
         this.matrix.initMatrix(n, n + 1);
 
         for (int i = 0; i < this.matrix.row; i++) {
             System.out.printf("Masukan titik ke %d (x,y): ", i + 1);
-            String input = Input.userInput.nextLine();
+            String input = Input.getScanner().nextLine();
             String[] titik = input.split(" ");
             double x = Double.parseDouble(titik[0]);
             double y = Double.parseDouble(titik[1]);
@@ -146,6 +146,8 @@ public class Interpolasi extends Solvable {
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "/output/outputInterpolasi.txt");
+        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputInterpolasi.txt'");
+
     }
 
     public void displaySolutionToTerminal() {

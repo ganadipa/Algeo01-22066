@@ -13,6 +13,7 @@ public class Solvable {
                 2. Tidak
                 """);
         int isFile = Input.getInt("Masukan harus berupa integer 1 atau 2", (Integer num) -> num == 1 || num == 2);
+        
         setIsPrintFile(isFile == 1);
     }
 

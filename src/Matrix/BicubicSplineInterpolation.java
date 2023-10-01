@@ -39,7 +39,7 @@ public class BicubicSplineInterpolation extends Solvable {
         setMatrix(mF);
         System.out.println("Masukkan nama file beserta ekstensinya.");
         System.out.print("(dir: test/input): ");
-        String fileName = Input.userInput.next();
+        String fileName = Input.getScanner().next();
         readOutputFileYesOrNo();
         String fileInputPath = "test/input/" + fileName;
 
@@ -88,6 +88,7 @@ public class BicubicSplineInterpolation extends Solvable {
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "/output/outputBicubic.txt");
+        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputBicubic.txt'");
     }
 
     public void displaySolutionToTerminal() {
