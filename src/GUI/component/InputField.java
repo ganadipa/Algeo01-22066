@@ -38,6 +38,7 @@ public class InputField extends JTextField {
                 repaint();
             }
         });
+
     }
 
     public void setCornerRadius(int cornerRadius) {

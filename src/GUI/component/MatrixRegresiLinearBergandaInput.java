@@ -42,11 +42,13 @@ public class MatrixRegresiLinearBergandaInput extends MatrixInput {
             if(i < col) {
                 JLabel label = new JLabel("x" + (i+1));
                 label.setForeground(Colors.slate100);
+                label.setHorizontalAlignment(JLabel.CENTER);
                 matrixPanel.add(label);
                 continue;
             } else if(i == col) {
                 JLabel label = new JLabel("y");
                 label.setForeground(Colors.slate100);
+                label.setHorizontalAlignment(JLabel.CENTER);
                 matrixPanel.add(label);
                 continue;
             }

@@ -3,7 +3,7 @@ package Interface;
 import Utils.Input;
 
 public class Solvable {
-    protected String solution;
+    protected String solution = "";
     public String getSolutionString() {
         return solution;
     }

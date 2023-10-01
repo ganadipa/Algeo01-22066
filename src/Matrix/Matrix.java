@@ -428,7 +428,7 @@ Pilih cara input:
     * @see getDeterminant
     */
     public double getDeterminant() throws Error {
-        return getDeterminant(DeterminantMethod.CofactorExpansion);
+        return getDeterminant(DeterminantMethod.RowReduction);
     }
 
     public int getColomnNotEntirelyZero(int startRow, int endRow)
@@ -605,7 +605,7 @@ Pilih cara input:
     * @return  inverse matrix
     */
     public Matrix getInverse(InverseMethod method) throws Error{
-        if(getDeterminant(DeterminantMethod.CofactorExpansion) == 0) {
+        if(getDeterminant() == 0) {
             throw new Error("Determinan tidak boleh 0");
         }
         else if(row != col) {

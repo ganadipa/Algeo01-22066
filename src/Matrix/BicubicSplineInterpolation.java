@@ -5,10 +5,12 @@ import Utils.Input;
 import Utils.Utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class BicubicSplineInterpolation extends Solvable {
+    private Matrix inputMatrix = new Matrix(4, 4);
     private Matrix matrixX;
     private Matrix matrixF;
     private Matrix matrixA;
@@ -16,8 +18,6 @@ public class BicubicSplineInterpolation extends Solvable {
     private double a;
     private double b;
     private double result = 0;
-    private String solution = "";
-
     @Override
     public void readVariablesFromUserInput() {
 
@@ -72,6 +72,7 @@ public class BicubicSplineInterpolation extends Solvable {
 
     @Override
     public void solve() {
+        solution = "";
         inverseX = this.matrixX.getInverse();
         matrixA = inverseX.multiplyBy(matrixF);
         int rowA = 0;
@@ -82,7 +83,7 @@ public class BicubicSplineInterpolation extends Solvable {
             }
         }
         solution += String.format("f(%.4f, %.4f) = %.4f\n", this.a, this.b, result);
-
+        
     }
 
     public void displaySolutionToFile() {
@@ -214,6 +215,73 @@ public class BicubicSplineInterpolation extends Solvable {
                 row++;
             }
         }
+    }
+
+    public Matrix getInputMatrix() {
+        return this.inputMatrix;
+    }
+    public void setX(double[] x) {
+        a = x[0];
+        b = x[1];
+    }
+    public double[] getX() {
+        return new double[] {a,b};
+    }
+    public void setVariablesFromFile(File file) throws Exception{
+        // inputMatrix
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
+            bufferedReader.mark(1000);
+            int row = 0, col = 0;
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {   
+                int tmpCol = line.split(" ").length;
+                if (tmpCol < col) {
+                    continue;
+                }
+                col = Math.max(tmpCol, col);
+                row += 1;
+            }
+
+            inputMatrix.initMatrix(row, col);
+            bufferedReader.reset();
+
+            int i = 0;
+            while((line = bufferedReader.readLine()) != null) {
+                String[] elmts = line.split(" ");
+                if (elmts.length == 0) continue;
+                if (elmts.length == 2) {
+                    // kemungkinan baris terakhir
+                    // baris terakhir panjangnya pasti 2
+                    String[] elmtsLastLine = line.split(" ");
+                    a = Double.parseDouble(elmtsLastLine[0]);
+                    b = Double.parseDouble(elmtsLastLine[1]);
+                    break;
+                }
+                for (int j = 0; j < 4; j++)
+                {
+                    inputMatrix.matrix[i][j] = Double.parseDouble(elmts[j]);
+                }
+
+                i++;
+            }
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            throw new Exception("File tidak ditemukan.");
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            throw new Exception("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            throw new Exception("Jumlah elemen pada setiap baris tidak konsisten.");
+        } catch (Exception e) {
+            throw e;
+        }
+        Matrix m16x1 = new Matrix(16, 1);
+        for(int i = 0; i < 16; i++) {
+            m16x1.matrix[i][0] = inputMatrix.matrix[i/4][i%4];
+        }
+        setMatrix(m16x1);
     }
 
 }

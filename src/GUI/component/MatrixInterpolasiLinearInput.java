@@ -2,11 +2,8 @@ package GUI.component;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -15,13 +12,7 @@ import GUI.theme.Colors;
 import Matrix.Matrix;
 
 import java.awt.FlowLayout;
-import java.util.ArrayList;
 import java.awt.GridLayout;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
 
 public class MatrixInterpolasiLinearInput extends MatrixInput {
     
