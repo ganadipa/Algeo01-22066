@@ -429,7 +429,6 @@ Pilih cara input:
     */
     public double getDeterminant() throws Error {
         return getDeterminant(DeterminantMethod.RowReduction);
-        return getDeterminant(DeterminantMethod.RowReduction);
     }
 
     public int getColomnNotEntirelyZero(int startRow, int endRow)

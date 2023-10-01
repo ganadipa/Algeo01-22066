@@ -49,6 +49,7 @@ public class InterpolasiBicubicSplinePanel extends Menu {
         add(errorPanel);
 
         matrixInput.onValueChanged = () -> {
+            bsi.setInputMatrix(matrixInput.getMatrix());
             tryAnswer();   
         };
 
@@ -59,7 +60,6 @@ public class InterpolasiBicubicSplinePanel extends Menu {
     void tryAnswer() {
         try {
             bsi.setX(listInput.getList());
-
             bsi.solve(); // here's the problem
             
             answerLabel.setText(stringToHtml(bsi.getSolutionString()));
@@ -85,23 +85,12 @@ public class InterpolasiBicubicSplinePanel extends Menu {
     @Override
     public void onFileChoosen(File file) {
         try {
-            System.out.println("1==========================");
             bsi.setVariablesFromFile(file);
             matrixInput.setMatrix(bsi.getInputMatrix());
             listInput.setList(bsi.getX());
             matrixInput.repaint();
             matrixInput.revalidate();
             resetError();
-
-            // bsi.solve();
-            // answerLabel.setText(stringToHtml(bsi.getSolutionString()));
-            // answerLabel.repaint();
-            // answerLabel.revalidate();
-            // setResult(bsi.getSolutionString());
-            // resetError();
-            // add(exportPanel);
-            // repaint();
-            // revalidate();
         }
         catch(Exception e) {
             answerLabel.setText("");

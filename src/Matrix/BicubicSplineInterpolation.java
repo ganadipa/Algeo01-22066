@@ -211,6 +211,14 @@ public class BicubicSplineInterpolation extends Solvable {
     public Matrix getInputMatrix() {
         return this.inputMatrix;
     }
+    public void setInputMatrix(Matrix m) {
+        this.inputMatrix = m;
+        Matrix m16x1 = new Matrix(16, 1);
+        for(int i = 0; i < 16; i++) {
+            m16x1.matrix[i][0] = inputMatrix.matrix[i/4][i%4];
+        }
+        setMatrix(m16x1);
+    }
     public void setX(double[] x) {
         a = x[0];
         b = x[1];
