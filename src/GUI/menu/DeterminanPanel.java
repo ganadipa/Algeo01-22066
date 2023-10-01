@@ -5,12 +5,14 @@ import java.awt.FlowLayout;
 import java.io.File;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import GUI.component.MatrixInput;
+import GUI.component.RadioButton;
 import GUI.theme.Colors;
 import Matrix.Matrix;
 
@@ -20,6 +22,7 @@ public class DeterminanPanel extends Menu {
     JLabel answerLabel;
 
     MatrixInput matrixInput;
+    Matrix.DeterminantMethod determinantMethod = Matrix.DeterminantMethod.CofactorExpansion;
 
     public DeterminanPanel() {
         setBackground(Colors.transparent);
@@ -43,6 +46,34 @@ public class DeterminanPanel extends Menu {
         answerLabel.setAlignmentX(LEFT_ALIGNMENT);
         resultPanel.add(answerLabel);
 
+
+        // RadioButton
+        JPanel radioButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        RadioButton jRadioButton1 = new RadioButton("Reduksi Baris");
+        jRadioButton1.setSelected(true);
+        RadioButton jRadioButton2 = new RadioButton("Ekspansi Kofaktor");
+        JLabel L1 = new JLabel("Pilih Metode: ");
+        L1.setForeground(Colors.slate100);
+        ButtonGroup G1 = new ButtonGroup();
+        G1.add(jRadioButton1);
+        G1.add(jRadioButton2);
+        radioButtonPanel.add(L1);
+        radioButtonPanel.add(jRadioButton1);
+        radioButtonPanel.add(jRadioButton2);
+        radioButtonPanel.setBackground(Colors.slate950);
+        add(radioButtonPanel);
+        jRadioButton1.addActionListener(e -> {
+            determinantMethod = Matrix.DeterminantMethod.RowReduction;
+            matrixInput.onValueChanged.run();
+        });
+        jRadioButton2.addActionListener(e -> {
+            determinantMethod = Matrix.DeterminantMethod.CofactorExpansion;
+            matrixInput.onValueChanged.run();
+        });
+        // RadioButton end
+
+
+
         add(resultPanel, BorderLayout.PAGE_START);
 
         add(errorPanel);
@@ -51,7 +82,7 @@ public class DeterminanPanel extends Menu {
         matrixInput.onValueChanged = () -> {
             try {
                 Matrix matrix = matrixInput.getMatrix();
-                double determinan = matrix.getDeterminant();
+                double determinan = matrix.getDeterminant(determinantMethod);
                 answerLabel.setText("Determinan: "+determinan);
                 answerLabel.repaint();
                 answerLabel.revalidate();

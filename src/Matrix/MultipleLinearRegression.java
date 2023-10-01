@@ -218,8 +218,9 @@ public class MultipleLinearRegression extends Solvable {
             while((line = bufferedReader.readLine()) != null) {
                 String[] elmts = line.split(" ");
                 if (elmts.length == 0) continue;
-                if (elmts.length < matrix.col) {
+                if (elmts.length == matrix.col-1) {
                     // kemungkinan baris terakhir
+                    // baris terakhir panjangnya pasti 1 kurang dari
                     String[] elmtsLastLine = line.split(" ");
                     x = new double[elmtsLastLine.length];
                     for (int j = 0; j < elmtsLastLine.length; j++)

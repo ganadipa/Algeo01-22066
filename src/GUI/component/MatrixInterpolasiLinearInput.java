@@ -21,15 +21,29 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
-public class MatrixRegresiLinearBergandaInput extends MatrixInput {
-
-    // row = row, col = col+1
-    // pas di display, rownya row+1
-    public MatrixRegresiLinearBergandaInput(int row, int col, boolean isMatrixSquare) {
-        super(row, col, isMatrixSquare); // perhatikan col+1
+public class MatrixInterpolasiLinearInput extends MatrixInput {
+    
+    public MatrixInterpolasiLinearInput(int row) {
+        super(row, 2, false);
+        textFieldCol.setVisible(false);
     }
-    @Override
+
+    void setMatrixSize(int newRow) {
+        this.row = newRow;
+        matrixPanel.removeAll();
+        initMatrix();
+        matrixPanel.repaint();
+        matrixPanel.revalidate();
+    }
+
+    void initPanel () {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(inputPanel);
+        add(matrixPanel);
+    }
+
     void initMatrix() {
         GridLayout gl = new GridLayout(row+1, col);
         gl.setHgap(hGap);
@@ -37,55 +51,51 @@ public class MatrixRegresiLinearBergandaInput extends MatrixInput {
         matrixPanel.setBorder(BorderFactory.createEmptyBorder(hGap,hGap,hGap,hGap));
         matrixPanel.setLayout(gl);
         inputFieldList.clear();
-        for (int i = 0; i < (row+1)*(col+1); i++) { // perhatikan row+1
-            // baris pertama cuma label x1, x2, x3..., y
-            if(i < col) {
-                JLabel label = new JLabel("x" + (i+1));
-                label.setForeground(Colors.slate100);
-                matrixPanel.add(label);
-                continue;
-            } else if(i == col) {
-                JLabel label = new JLabel("y");
-                label.setForeground(Colors.slate100);
-                matrixPanel.add(label);
-                continue;
-            }
 
+        // label
+        JLabel labelX = new JLabel("x");
+        labelX.setForeground(Colors.slate100);
+        labelX.setBackground(Colors.slate950);
+        labelX.setHorizontalAlignment(JLabel.CENTER);
+        JLabel labelY = new JLabel("y");
+        labelY.setForeground(Colors.slate100);
+        labelX.setBackground(Colors.slate950);
+        labelY.setHorizontalAlignment(JLabel.CENTER);
+        matrixPanel.add(labelX);
+        matrixPanel.add(labelY);
 
+        for (int i = 0; i < row*col; i++) {
             InputField textField = new InputField(inputWidth);
             textField.setHorizontalAlignment(JTextField.CENTER);
             textField.setCaretColor(Colors.slate100);
             
             textField.getDocument().addDocumentListener(new DocumentListener() {
-                public void changedUpdate(DocumentEvent evt) {
-                    updateValue();
+            public void changedUpdate(DocumentEvent evt) {
+                updateValue();
+            }
+            public void removeUpdate(DocumentEvent evt) {
+                updateValue();
+            }
+            public void insertUpdate(DocumentEvent evt) {
+                updateValue();
+            }
+            void updateValue() {
+                try {
+                    onValueChanged.run();
                 }
-                public void removeUpdate(DocumentEvent evt) {
-                    updateValue();
+                catch(NumberFormatException e){
                 }
-                public void insertUpdate(DocumentEvent evt) {
-                    updateValue();
-                }
-                void updateValue() {
-                    try {
-                        onValueChanged.run();
-                    }
-                    catch(NumberFormatException e){
-                    }
-                }
-            });
-            
-            
+            }
+        });
             
             inputFieldList.add(textField);
             matrixPanel.add(textField);
         }
     }
     
-    @Override
+    
     void initInput() {
         textFieldLength.setText(this.row + "");
-        textFieldCol.setText(this.col + "");
 
         textFieldLength.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
         textFieldLength.getDocument().addDocumentListener(new DocumentListener() {
@@ -110,8 +120,20 @@ public class MatrixRegresiLinearBergandaInput extends MatrixInput {
             }
         });
         
-        textFieldCol.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
-        textFieldCol.getDocument().addDocumentListener(new DocumentListener() {
+        inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JLabel rowLabel = new JLabel("Banyak Titik:");
+        rowLabel.setForeground(Colors.slate100);
+
+        inputPanel.add(rowLabel);
+        inputPanel.add(textFieldLength);
+    }
+    
+    void initMatrixSquareInput() {
+        textFieldLength.setText(this.row + "");
+
+        textFieldLength.setBorder(BorderFactory.createEmptyBorder(7,10,7,10));
+        textFieldLength.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent evt) {
                 updateValue();
             }
@@ -123,8 +145,8 @@ public class MatrixRegresiLinearBergandaInput extends MatrixInput {
             }
             void updateValue() {
                 try {
-                    int newCol = Integer.parseInt(textFieldCol.getText());
-                    setMatrixSize(row,newCol);
+                    int newRowCol = Integer.parseInt(textFieldLength.getText());
+                    setMatrixSize(newRowCol, newRowCol);
                     onValueChanged.run();
                 }
                 catch(NumberFormatException e){
@@ -135,46 +157,43 @@ public class MatrixRegresiLinearBergandaInput extends MatrixInput {
         
         inputPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JLabel rowLabel = new JLabel("Banyak Sampel:");
+        JLabel rowLabel = new JLabel("Baris dan Kolom:");
         rowLabel.setForeground(Colors.slate100);
-        JLabel colLabel = new JLabel("Banyak Peubah x:");
-        colLabel.setForeground(Colors.slate100);
 
         inputPanel.add(rowLabel);
         inputPanel.add(textFieldLength);
-        inputPanel.add(colLabel);
-        inputPanel.add(textFieldCol);
     }
     
-    @Override
+    public Matrix getMatrix() {
+        Matrix matrix = new Matrix(row, col);
+        for (int i = 0; i < row*col; i++) {
+            matrix.matrix[i/col][i%col] = Double.parseDouble(inputFieldList.get(i).getText());
+        }
+        return matrix;
+    }
     public void setMatrix(Matrix matrix) {
         this.row = matrix.row;
-        this.col = matrix.col-1;
-
-        // Update text field for matrix size
+        this.col = matrix.col;
+        
+        // Update text field for matrix sizw
         textFieldLength.setText(this.row + "");
-        textFieldCol.setText(this.col + "");
         textFieldLength.repaint();
         textFieldLength.revalidate();
-        textFieldCol.repaint();
-        textFieldCol.revalidate(); 
 
         matrixPanel.removeAll();
         initMatrix();
-
-        for (int i = 0; i < row*(col+1); i++) {
-            inputFieldList.get(i).setText(matrix.matrix[i/(col+1)][i%(col+1)] + "");
+        for (int i = 0; i < row*col; i++) {
+            inputFieldList.get(i).setText(matrix.matrix[i/col][i%col] + "");
         }
         matrixPanel.repaint();
         matrixPanel.revalidate();
-        this.col += 1;
+
     }
-
-
+    
     public static void main(String[] args) {
         JFrame jf = new JFrame();
 
-        MatrixRegresiLinearBergandaInput mi = new MatrixRegresiLinearBergandaInput(3, 3, false);
+        MatrixInterpolasiLinearInput mi = new MatrixInterpolasiLinearInput(3);
         jf.add(mi);
 
         jf.pack();

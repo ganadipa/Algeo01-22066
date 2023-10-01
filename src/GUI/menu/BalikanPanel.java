@@ -25,6 +25,8 @@ public class BalikanPanel extends Menu {
     MatrixDisplay matrixDisplay;
     MatrixInput matrixInput;
 
+    Matrix.InverseMethod inverseMethod = Matrix.InverseMethod.GaussJordan;
+
     public BalikanPanel() {
         setBackground(Colors.transparent);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -52,6 +54,33 @@ public class BalikanPanel extends Menu {
         resultLabel.setAlignmentX(LEFT_ALIGNMENT);
         resultPanel.add(resultLabel);
 
+              
+        // RadioButton
+        JPanel radioButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        RadioButton jRadioButton1 = new RadioButton("Gauss Jordan");
+        jRadioButton1.setSelected(true);
+        RadioButton jRadioButton2 = new RadioButton("Adjoin");
+        JLabel L1 = new JLabel("Pilih Metode: ");
+        L1.setForeground(Colors.slate100);
+        ButtonGroup G1 = new ButtonGroup();
+        G1.add(jRadioButton1);
+        G1.add(jRadioButton2);
+        radioButtonPanel.add(L1);
+        radioButtonPanel.add(jRadioButton1);
+        radioButtonPanel.add(jRadioButton2);
+        radioButtonPanel.setBackground(Colors.slate950);
+        add(radioButtonPanel);
+        jRadioButton1.addActionListener(e -> {
+            inverseMethod = Matrix.InverseMethod.GaussJordan;
+            matrixInput.onValueChanged.run();
+        });
+        jRadioButton2.addActionListener(e -> {
+            inverseMethod = Matrix.InverseMethod.Adjoin;
+            matrixInput.onValueChanged.run();
+        });
+        // RadioButton end
+
+
         add(resultPanel);
 
         matrixDisplay = new MatrixDisplay(new Matrix(3,3));
@@ -59,35 +88,11 @@ public class BalikanPanel extends Menu {
         add(matrixDisplay);
 
         add(errorPanel);
-        
-
-        // Langkah
-        // addText("Langkah: ");
-        // addText("<html>Hello World!<br/>blahblahblah</html>");
-        
-        // RadioButton
-        // JPanel radioButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // RadioButton jRadioButton1 = new RadioButton("Gauss Jordan");
-        // jRadioButton1.setSelected(true);
-        // RadioButton jRadioButton2 = new RadioButton("Adjoin");
-        // JLabel L1 = new JLabel("Pilih Metode: ");
-        // L1.setForeground(Colors.slate100);
-        // ButtonGroup G1 = new ButtonGroup();
-        // G1.add(jRadioButton1);
-        // G1.add(jRadioButton2);
-        // radioButtonPanel.add(L1);
-        // radioButtonPanel.add(jRadioButton1);
-        // radioButtonPanel.add(jRadioButton2);
-        // radioButtonPanel.setBackground(Colors.slate950);
-        // add(radioButtonPanel);
-        // RadioButton end
-
-        // addText("Langkah: ");
 
 
         matrixInput.onValueChanged = () -> {
             try {
-                Matrix inverseMatrix = matrixInput.getMatrix().getInverse();
+                Matrix inverseMatrix = matrixInput.getMatrix().getInverse(inverseMethod);
                 matrixDisplay.setMatrix(inverseMatrix);
                 resultLabel.setText("Inverse: ");
                 matrixDisplay.setVisible(true);

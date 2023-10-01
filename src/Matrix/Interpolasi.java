@@ -5,6 +5,7 @@ import Utils.Input;
 import Utils.Utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -13,11 +14,11 @@ import java.util.Scanner;
 
 public class Interpolasi extends Solvable {
     private Matrix matrix = new Matrix();
+    private Matrix inputMatrix = new Matrix();
     private double x;
     private SPL spl;
     private String persamaan = "";
     private double result = 0;
-    private String solution = "";
 
     @Override
     public void readVariablesFromUserInput() {
@@ -102,6 +103,8 @@ public class Interpolasi extends Solvable {
 
     @Override
     public void solve() {
+        solution = "";
+        persamaan = "";
         spl = new SPL(matrix.row, matrix.col);
         spl.setMatrix(matrix)
                 .setMethod(SPL.SPLMethod.GaussJordan)
@@ -282,8 +285,89 @@ public class Interpolasi extends Solvable {
     }
 
 
-    public void setMatrix(Matrix matrix) {
-        this.matrix = matrix;
+    public Interpolasi setMatrix(Matrix inputMatrix) {
+
+        this.matrix.initMatrix(inputMatrix.row, inputMatrix.row + 1);
+
+        for (int i = 0; i < this.matrix.row; i++) {
+            double x = inputMatrix.matrix[i][0];
+            double y = inputMatrix.matrix[i][1];
+
+            for (int j = 0; j < this.matrix.col; j++) {
+                if (j == this.matrix.col - 1) {
+                    this.matrix.matrix[i][j] = y;
+                } else {
+                    this.matrix.matrix[i][j] = Math.pow(x, j);
+                }
+            }
+        }
+
         setState(State.Unsolved);
+        return this;
+    }
+    public Interpolasi setX(double newX) {
+        this.x = newX;
+        setState(State.Unsolved);
+        return this;
+    }
+    public double getX() {
+        return this.x;
+    }
+    public Matrix getInputMatrix() {
+        return this.inputMatrix;
+    }
+    @Override
+    public String getSolutionString() {
+        return solution;
+    }
+
+    public void setVariablesFromFile(File file) throws Exception{
+        // inputMatrix
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
+            bufferedReader.mark(1000);
+            int row = 0, col = 0;
+            String line;
+            while ((line = bufferedReader.readLine()) != null)
+            {   
+                int tmpCol = line.split(" ").length;
+                if (tmpCol < col) {
+                    continue;
+                }
+                col = Math.max(tmpCol, col);
+                row += 1;
+            }
+
+            inputMatrix.initMatrix(row, col);
+            bufferedReader.reset();
+
+            int i = 0;
+            while((line = bufferedReader.readLine()) != null) {
+                String[] elmts = line.split(" ");
+                if (elmts.length == 0) continue;
+                if (elmts.length == 1) {
+                    // kemungkinan baris terakhir
+                    // baris terakhir cuma 1 angka
+                    x = Double.parseDouble(line);
+                    break; // pasti line terakhir
+                }
+                for (int j = 0; j < 2; j++)
+                {
+                    inputMatrix.matrix[i][j] = Double.parseDouble(elmts[j]);
+                }
+
+                i++;
+            }
+        } catch (IOException e) {
+            // Handle case saat file not found atau ada IO error.
+            throw new Exception("File tidak ditemukan.");
+        } catch (NumberFormatException e) {
+            // Handle case saat ada nonnumeric di input.
+            throw new Exception("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
+        } catch (IllegalArgumentException e) {
+            // Jumlah elemen di setiap baris tidak konsisten.
+            throw new Exception("Jumlah elemen pada setiap baris tidak konsisten.");
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

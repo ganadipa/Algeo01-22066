@@ -4,10 +4,12 @@ import java.awt.FlowLayout;
 import java.io.File;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import GUI.component.MatrixInput;
+import GUI.component.RadioButton;
 import GUI.theme.Colors;
 import Matrix.Matrix;
 import Matrix.SPL;
@@ -20,7 +22,7 @@ public class SPLPanel extends Menu {
 
     MatrixInput matrixInput;
     SPL spl;
-    SPLMethod method = SPLMethod.GaussJordan;
+    SPLMethod splMethod = SPLMethod.GaussJordan;
 
     public SPLPanel() {
         setBackground(Colors.transparent);
@@ -38,6 +40,51 @@ public class SPLPanel extends Menu {
         resultPanel = new JPanel();
         resultPanel.setBackground(Colors.slate950);
         resultPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+
+
+        // RadioButton
+        JPanel radioButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Gauss, GaussJordan, Inverse, Cramer
+        RadioButton rb1 = new RadioButton("Gauss");
+        RadioButton rb2 = new RadioButton("Gauss Jordan");
+        RadioButton rb3 = new RadioButton("Inverse");
+        RadioButton rb4 = new RadioButton("Cramer");
+        rb1.setSelected(true);
+        JLabel L1 = new JLabel("Pilih Metode: ");
+        L1.setForeground(Colors.slate100);
+        ButtonGroup G1 = new ButtonGroup();
+        G1.add(rb1);
+        G1.add(rb2);
+        G1.add(rb3);
+        G1.add(rb4);
+        radioButtonPanel.add(L1);
+        radioButtonPanel.add(rb1);
+        radioButtonPanel.add(rb2);
+        radioButtonPanel.add(rb3);
+        radioButtonPanel.add(rb4);
+        radioButtonPanel.setBackground(Colors.slate950);
+        add(radioButtonPanel);
+        rb1.addActionListener(e -> {
+            splMethod = SPL.SPLMethod.Gauss;
+            matrixInput.onValueChanged.run();
+        });
+        rb2.addActionListener(e -> {
+            splMethod = SPL.SPLMethod.GaussJordan;
+            matrixInput.onValueChanged.run();
+        });
+        rb3.addActionListener(e -> {
+            splMethod = SPL.SPLMethod.Inverse;
+            matrixInput.onValueChanged.run();
+        });
+        rb4.addActionListener(e -> {
+            splMethod = SPL.SPLMethod.Cramer;
+            matrixInput.onValueChanged.run();
+        });
+        // RadioButton end
+
+
+
         
         addText("Hasil: ");
 
@@ -55,7 +102,7 @@ public class SPLPanel extends Menu {
             try {
                 Matrix matrix = matrixInput.getMatrix();
                 spl = new SPL(matrix.row, matrix.col-1);
-                spl.setMethod(method);
+                spl.setMethod(splMethod);
                 spl.setMatrix(matrix);
                 spl.solve(false);
 
