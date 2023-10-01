@@ -15,10 +15,8 @@ import GUI.theme.Colors;
 import Matrix.Matrix;
 
 public class DeterminanPanel extends Menu {
-    JPanel titlePanel;
     JPanel resultPanel;
 
-    JLabel titleLabel;
     JLabel answerLabel;
 
     MatrixInput matrixInput;

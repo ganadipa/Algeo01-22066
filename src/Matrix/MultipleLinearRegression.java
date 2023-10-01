@@ -14,7 +14,6 @@ public class MultipleLinearRegression extends Solvable {
     private SPL spl;
     private double x[]; // nilai yang ingin diestimasi
     private String persamaan = "";
-    private String solution = "";
     private double result = 0;
     private boolean isPrintFile = false;
 

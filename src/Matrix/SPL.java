@@ -190,7 +190,6 @@ public class SPL extends Solvable {
 
     private SPLMethod method = SPLMethod.Gauss;
     private boolean showProcess = false;
-    private String solution = "";
 
     @Override
     public void readVariablesFromUserInput() {
@@ -253,8 +252,11 @@ public class SPL extends Solvable {
 
     }
 
+    
+
     @Override
     public void solve() {
+        solution = "";
         if (this.method == SPLMethod.Gauss) {
             solveUsingGauss(this.showProcess);
         } else if (this.method == SPLMethod.GaussJordan) {

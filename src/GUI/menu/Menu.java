@@ -169,4 +169,8 @@ public class Menu extends JPanel {
     protected void setResult(String text) {
         stringResult = text;
     }
+
+    protected String stringToHtml(String s) {
+        return "<html>" + s.replaceAll("\n", "<br/>") + "</html>";
+    }
 }

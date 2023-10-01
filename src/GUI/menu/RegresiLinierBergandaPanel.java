@@ -125,8 +125,6 @@ public class RegresiLinierBergandaPanel extends Menu {
         }
     }
 
-    String stringToHtml(String s) {
-        return "<html>" + s.replaceAll("\n", "<br/>") + "</html>";
-    }
+    
 
 }
