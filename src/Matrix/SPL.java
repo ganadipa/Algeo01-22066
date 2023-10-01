@@ -146,7 +146,7 @@ class Parametric {
 
     public void showParametric(SolutionStatus status) {
         if (!this.hasParametricVariables()) {
-            System.out.println(this.c);
+            System.out.printf("%.4f\n", this.c);
             return;
         }
         String parametricNames = "abcdefghijklmnopqrstuvwyz";
@@ -228,29 +228,41 @@ public class SPL extends Solvable {
             for (int col = 0; col < n; col++) {
                 this.augmentedMatrix.displayMatrix();
                 if (col == n - 1) {
-                    System.out.println("in b");
                     this.augmentedMatrix.matrix[row][col] = this.B.matrix[row][0];
 
                     continue;
                 }
-                System.out.println("in a");
                 this.augmentedMatrix.matrix[row][col] = this.A.matrix[row][col];
             }
         }
 
-        System.out.println("begin loop param");
 
         this.x = new Parametric[n - 1];
         for (int i = 0; i < n - 1; i++) {
             x[i] = new Parametric(n - 1);
         }
 
+
     }
 
     @Override
     public void readVariablesFromTextFile() {
+        Matrix m2 = new Matrix(3, 3);
+        try {
+            m2.readMatrixFromFile();
+            // m2.displayMatrix();
+            // if (m2.isEchelon()) System.out.println("Check isEchelon passed!");
+            // if (m2.isReducedEchelon()) System.out.println("Check isReducedEchelon passed!");
 
+            initSPL(m2.row, m2.col);
+            // System.out.println("passed");
+            // m2.displayMatrix();
+            m2.normalizeMatrix();
+            fromMatrix(m2);
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
 
     public SPL() {
 
@@ -258,6 +270,7 @@ public class SPL extends Solvable {
 
     @Override
     public void solve() {
+        updateMatrix();
         solution = "";
         if (this.method == SPLMethod.Gauss) {
             solveUsingGauss(this.showProcess);
@@ -278,11 +291,11 @@ public class SPL extends Solvable {
 
     public void displaySolutionToTerminal() {
         this.solve();
-        for (int i = 0; i < this.x.length; i++) {
-            // If there is a not-assigned-variables, then it is not yet solved.
-            if (!this.x[i].getIsAssigned())
-                this.showSolution(true);
-        }
+        // for (int i = 0; i < this.x.length; i++) {
+        //     // If there is a not-assigned-variables, then it is not yet solved.
+        //     if (!this.x[i].getIsAssigned())
+        //         this.showSolution(true);
+        // }
 
         System.out.println(solution);
         // int lengthX = this.x.length;
@@ -378,8 +391,9 @@ public class SPL extends Solvable {
         this.initSPL(countEquations, countVariables);
     }
 
-    public void fromMatrix(Matrix m) {
 
+
+    public void fromMatrix(Matrix m) {
         this.initSPL(m.row, m.col);
 
         for (int row = 0; row < m.matrix.length; row++) {
@@ -411,6 +425,7 @@ public class SPL extends Solvable {
     }
 
     public void solve(boolean stay) {
+        updateMatrix();
         if (!stay)
             this.solve();
 
@@ -485,6 +500,7 @@ public class SPL extends Solvable {
                 System.out.println("Program selesai.");
                 return;
             }
+            System.out.println("  | Semua persamaan konsisten, lanjut ke step berikutnya.\n");
 
             // STEP 4
             System.out.println("""
@@ -530,6 +546,7 @@ public class SPL extends Solvable {
     }
 
     public void setSolution(boolean isHasSolution, String error) {
+        updateMatrix();
         if (isHasSolution) {
 
             int lengthX = this.x.length;
@@ -539,7 +556,7 @@ public class SPL extends Solvable {
                 int cnt = 0;
                 solution += String.format("x%d = ", i + 1);
                 if (Utils.isNotEqual(this.x[i].getConstant(), 0) || !this.x[i].hasParametricVariables()) {
-                    solution += String.format("%.4f ", this.x[i].getConstant());
+                    solution += String.format("%.4f", this.x[i].getConstant());
                     cnt++;
                 }
 
@@ -555,6 +572,7 @@ public class SPL extends Solvable {
                         cnt++;
                     }
                 }
+                solution += "\n";
             }
         } else {
             solution = error;
@@ -596,6 +614,9 @@ public class SPL extends Solvable {
                 System.out.println("Program selesai.");
                 return;
             }
+
+            System.out.println("  | Semua persamaan konsisten, lanjut ke step berikutnya.\n");
+
 
             // STEP 3
             System.out.println("""
@@ -895,15 +916,16 @@ public class SPL extends Solvable {
         this.A = new Matrix(row, col - 1);
         this.B = new Matrix(row, 1);
         this.augmentedMatrix = new Matrix(row, col);
-
+        
         this.x = new Parametric[col - 1];
         for (int i = 0; i < col - 1; i++) {
             x[i] = new Parametric(col - 1);
         }
-
+        
     }
 
     public boolean hasSolution(boolean stay) {
+        updateMatrix();
         if (!stay)
             return hasSolution();
         else {
@@ -913,7 +935,25 @@ public class SPL extends Solvable {
         }
     }
 
+    private void updateMatrix() {
+        for (int i = 0; i < this.augmentedMatrix.row; i++)
+        {
+            for (int j= 0; j < this.augmentedMatrix.col; j++)
+            {
+                if (j==this.augmentedMatrix.col-1)
+                {
+                    this.B.matrix[i][0] = this.augmentedMatrix.matrix[i][j];
+                } else {
+
+                    this.A.matrix[i][j]= this.augmentedMatrix.matrix[i][j];
+                }
+
+            }
+        }
+    }
+
     public boolean hasSolution() {
+        updateMatrix();
         if (!this.augmentedMatrix.isEchelon()) {
             return hasSolution(true);
         }
@@ -933,6 +973,7 @@ public class SPL extends Solvable {
                 allZeroRow[row] = 1;
         }
 
+
         for (int row = 0; row < allZeroRow.length; row++) {
             if (allZeroRow[row] == 1 && Utils.isNotEqual(this.B.matrix[row][0], 0.0)) {
                 if (showProcess) {
@@ -940,6 +981,7 @@ public class SPL extends Solvable {
                             "***) Dapat dilihat bahwa persamaan ke-%d tak konsisten, karena tidak akan ada \n***) nilai variabel yang memenuhi persamaan tsb.\n\n",
                             row + 1);
                 }
+                
                 return false;
             }
         }
@@ -972,9 +1014,10 @@ public class SPL extends Solvable {
         this.x[leadingOnePosition]
                 .setConstant(this.x[leadingOnePosition].getConstant() + rowArray[rowArray.length - 1]);
 
-        if (showProcess)
-            System.out.println(" | Kita dapati:");
-        for (int i = rowArray.length - 2; i > leadingOnePosition; i--) {
+
+        if (showProcess) System.out.println("  | Kita dapati:");
+        for (int i = rowArray.length - 2; i > leadingOnePosition; i--)
+        {
             double multiplier = rowArray[i];
             if (!this.x[i].getIsAssigned()) {
                 this.x[i].setAsBaseParametric(i);

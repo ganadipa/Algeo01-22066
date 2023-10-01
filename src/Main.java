@@ -231,7 +231,7 @@ public class Main {
         System.out.println("Pilih menu (Angka): ");
 
         int chosenMenu = Input.getInt(
-                "Masukan harus dalam range 1 sampai 7",
+                "Masukan harus dalam range 1 sampai 4",
                 (Integer n) -> n >= 1 && n <= 4);
 
         SPL spl = new SPL();

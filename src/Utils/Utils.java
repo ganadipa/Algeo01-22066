@@ -31,6 +31,10 @@ public class Utils{
         return res;
     }
 
+    public static double getTolerance(){
+        return tolerance;
+    }
+
     public static boolean isEqual(double val1, double val2)
     {
         return (Math.abs(val1-val2) < tolerance);
