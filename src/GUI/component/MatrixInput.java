@@ -26,7 +26,7 @@ import java.util.List;
 public class MatrixInput extends JPanel {
     public int row = 3;
     public int col = 3;
-    boolean isMatrixSquare = false;
+    public boolean isMatrixSquare = false;
 
     public int hGap = 5;
     public int vGap = 3;
@@ -41,8 +41,8 @@ public class MatrixInput extends JPanel {
 
     List<InputField> inputFieldList = new ArrayList<InputField>();
     
-
-    public MatrixInput(int row, int col) {
+    public MatrixInput(int row, int col, boolean isMatrixSquare) {
+        this.isMatrixSquare = isMatrixSquare;
         setBackground(Colors.slate950);
         matrixPanel.setBackground(Colors.slate950);
         inputPanel.setBackground(Colors.slate950);
@@ -51,15 +51,10 @@ public class MatrixInput extends JPanel {
         
         initMatrix();
 
-        if(!isMatrixSquare) initMatrixSquareInput();
+        if(isMatrixSquare) initMatrixSquareInput();
         else initInput();
         
         initPanel();
-    }
-
-    public MatrixInput(int row, int col, boolean isMatrixSquare) {
-        this(row, col);
-        this.isMatrixSquare = isMatrixSquare;
     }
 
     void setMatrixSize(int newRow, int newCol) {
@@ -264,7 +259,6 @@ public class MatrixInput extends JPanel {
                 col = Math.max(tmpCol, col);
                 row += 1;
             }
-
             if(isMatrixSquare && (row != col)) throw new Exception("Matrix harus berbentuk persegi.");
 
             matrix.initMatrix(row, col);
@@ -301,7 +295,7 @@ public class MatrixInput extends JPanel {
     public static void main(String[] args) {
         JFrame jf = new JFrame();
 
-        MatrixInput mi = new MatrixInput(3, 3);
+        MatrixInput mi = new MatrixInput(3, 3, false);
         jf.add(mi);
 
         jf.pack();

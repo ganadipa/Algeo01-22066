@@ -36,7 +36,7 @@ public class Menu extends JPanel {
     // export result
     public JPanel exportPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     NormalButton exportButton = new NormalButton("Export hasil");
-    StringBuilder sb = new StringBuilder();
+    String stringResult = "";
 
     public Menu () {
         fileChooserLabel.setForeground(Colors.slate100);
@@ -85,7 +85,7 @@ public class Menu extends JPanel {
             fileChooser.showSaveDialog(this);
             try {
                 FileWriter myWriter = new FileWriter(fileChooser.getSelectedFile());
-                myWriter.write(sb.toString());
+                myWriter.write(stringResult);
                 myWriter.close();
             } catch (Exception ex) {
                 onError(ex);
@@ -167,7 +167,6 @@ public class Menu extends JPanel {
     }
 
     protected void setResult(String text) {
-        sb.setLength(0);
-        sb.append(text);
+        stringResult = text;
     }
 }
