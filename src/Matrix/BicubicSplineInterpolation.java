@@ -66,7 +66,7 @@ public class BicubicSplineInterpolation extends Solvable {
     @Override
     public void solve() {
         solution = "";
-        inverseX = this.matrixX.getInverse();
+        inverseX = matrixX.getInverse();
         matrixA = inverseX.multiplyBy(matrixF);
         // inverseX.displayMatrix();
         // matrixF.displayMatrix();
