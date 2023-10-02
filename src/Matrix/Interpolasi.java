@@ -152,8 +152,6 @@ public class Interpolasi extends Solvable {
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "outputInterpolasi.txt");
-        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputInterpolasi.txt'");
-
     }
 
     public void displaySolutionToTerminal() {

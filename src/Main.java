@@ -154,8 +154,6 @@ public class Main {
             System.out.printf("\nDeterminan: %.3f\n", determinan);
         } else {
             Utils.printFile(String.format("Determinan: %.3f", determinan), "outputDeterminan.txt");
-            System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputDeterminan.txt'");
-
         }
 
     }
@@ -209,7 +207,6 @@ public class Main {
             s += "]";
 
             Utils.printFile(s, "outputInverse.txt");
-            System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputInverse.txt'");
         }
     }
 

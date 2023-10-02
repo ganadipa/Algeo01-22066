@@ -164,8 +164,6 @@ public class MultipleLinearRegression extends Solvable {
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "outputRegresi.txt");
-        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputRegresi.txt'");
-
     }
 
     public void displaySolutionToTerminal() {

@@ -288,7 +288,6 @@ public class SPL extends Solvable {
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "outputSPL.txt");
-        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputSPL.txt'");
     }
 
     public void displaySolutionToTerminal() {

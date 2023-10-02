@@ -84,7 +84,6 @@ public class BicubicSplineInterpolation extends Solvable {
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "outputBicubic.txt");
-        System.out.println("Jawaban akan terdapat pada folder output dengan nama file 'outputBicubic.txt'");
     }
 
     public void displaySolutionToTerminal() {
@@ -96,8 +95,6 @@ public class BicubicSplineInterpolation extends Solvable {
                 "\n--> Kemudian akan dicari matrix X melalui persamaan bicubic spline interpolation yang telah diberikan");
         System.out.println("--> Akan didapat matrix X sebagi berikut\n");
 
-        this.matrixX.displayMatrix();
-        this.matrixX.toReducedRowEchelon();
         this.matrixX.displayMatrix();
 
         System.out.println("\n--> Persamaan matrix bicubic spline interpolation adalah y = Xa");
