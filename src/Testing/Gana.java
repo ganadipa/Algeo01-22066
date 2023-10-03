@@ -34,7 +34,7 @@ public class Gana {
 
 
         try {
-            SimpleImage img = new SimpleImage("gana.png");
+            SimpleImage img = new SimpleImage("foto.jpg");
             img.setFactor(4);
             img.setOptions(SimpleImage.ColorOptions.NORMAL);
             img.EnlargeImage();

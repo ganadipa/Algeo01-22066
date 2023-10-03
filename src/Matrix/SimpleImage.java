@@ -48,7 +48,7 @@ public class SimpleImage {
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
-                int color = img.getRGB(row, col);
+                int color = img.getRGB(col, row);
 
                 int redWeight = ((color & 0xff0000) >> 16);
                 this.RGBMatrix[0].matrix[row][col] = redWeight;
@@ -229,7 +229,7 @@ public class SimpleImage {
             theImage = new BufferedImage(enlargedMatrix.col, enlargedMatrix.row, BufferedImage.TYPE_BYTE_GRAY);
             for (int y = 0; y < enlargedMatrix.row; y++) {
                 for (int x = 0; x < enlargedMatrix.col; x++) {
-                    theImage.setRGB(x, y, ((int) Math.round(enlargedMatrix.matrix[x][y])));
+                    theImage.setRGB(x, y, ((int) Math.round(enlargedMatrix.matrix[y][x])));
                 }
             }
         
@@ -237,14 +237,14 @@ public class SimpleImage {
             theImage = new BufferedImage(enlargedMatrix.col, enlargedMatrix.row, BufferedImage.TYPE_INT_RGB);
             for (int x = 0; x < enlargedMatrix.row; x++) {
                 for (int y = 0; y < enlargedMatrix.col; y++) {
-                    theImage.setRGB(x, y, ((int) Math.round(enlargedMatrix.matrix[x][y])));
+                    theImage.setRGB(y, x, ((int) Math.round(enlargedMatrix.matrix[x][y])));
                 }
             }
         }else {
             theImage = new BufferedImage(enlargedMatrix.col, enlargedMatrix.row, BufferedImage.TYPE_INT_RGB);
             for (int x = 0; x < enlargedMatrix.row; x++) {
                 for (int y = 0; y < enlargedMatrix.col; y++) {
-                    theImage.setRGB(x, y, ((int) Math.round(enlargedMatrix.matrix[x][y])) << numshift);
+                    theImage.setRGB(y, x, ((int) Math.round(enlargedMatrix.matrix[x][y])) << numshift);
                 }
             }
         }
@@ -295,39 +295,44 @@ public class SimpleImage {
     private Matrix EnlargedMatrix(Matrix m, double factor) {
         int newRow = (int) Math.round(m.row * factor);
         int newCol = (int) Math.round(m.col * factor);
-        int range = newRow / (m.row - 1);
+        System.out.println(newCol);
+        int range1 = newRow / (m.row - 1);
+        int range2 = newCol / (m.col - 1);
         int sisaX = newRow % (m.row - 1);
-        int sisaY = newRow % (m.row - 1);
+        int sisaY = newCol % (m.col - 1);
         Matrix resultMatrix = new Matrix(newRow, newCol);
         int x = 0;
         int y = 0;
 
         int i, j, k, l;
         for (i = 0; i < m.row - 1; i++) {
-            int rangeY = range;
-            if (sisaY != 0) {
-                rangeY = range + 1;
-                sisaY--;
+            int rangeX = range1;
+            if (sisaX != 0) {
+                rangeX = range1 + 1;
+                sisaX--;
             }
             for (j = 0; j < m.col - 1; j++) {
                 Matrix a = getMatrixA(j, i, color);
-                int rangeX = range;
-                if (sisaX != 0) {
-                    rangeX = range + 1;
-                    sisaX--;
+                int rangeY = range2;
+                if (sisaY != 0) {
+                    rangeY = range2 + 1;
+                    sisaY--;
                 }
                 double gapX = 1.0 / (double) (rangeX - 1);
                 double gapY = 1.0 / (double) (rangeY - 1);
-                for (k = 0; k < rangeY; k++) {
-                    for (l = 0; l < rangeX; l++) {
-                        resultMatrix.matrix[x + l][y + k] = interpolate(l * gapX, k * gapY, a);
+                for (k = 0; k < rangeX; k++) {
+                    for (l = 0; l < rangeY; l++) {
+                        resultMatrix.matrix[x + k][y + l] = interpolate(l * gapY, k * gapX, a);
+
                     }
                 }
-                x += rangeX;
+                y += rangeY;
             }
-            x = 0;
-            sisaX = newRow % (m.row - 1);
-            y += rangeY;
+            y = 0;
+            sisaY = newCol % (m.col - 1);
+            x += rangeX;
+            // System.out.println(x);
+
         }
 
         return resultMatrix;
@@ -342,7 +347,7 @@ public class SimpleImage {
         this.matrixXInv = cpy.getInverse();
         // System.out.println(this.matrixXInv.getDeterminant());
         this.matrixXI = this.matrixXInv.multiplyBy(this.matrixD);
-        this.matrixX.displayMatrix();
+        // this.matrixX.displayMatrix();
         // this.matrixD.displayMatrix();
         // this.matrixXInv.displayMatrix();
         // System.exit(0);
@@ -414,13 +419,13 @@ public class SimpleImage {
         for (int y = -1; y < 3; y++) {
             for (int x = -1; x < 3; x++) {
                 if (color == ColorOptions.RED)
-                    i.matrix[cnt][0] = this.RGBMatrixHandleSides[0].matrix[tlx + x + 1][tly + y + 1];
+                    i.matrix[cnt][0] = this.RGBMatrixHandleSides[0].matrix[tly + x + 1][tlx + y + 1];
                 if (color == ColorOptions.GREEN)
-                    i.matrix[cnt][0] = this.RGBMatrixHandleSides[1].matrix[tlx + x + 1][tly + y + 1];
+                    i.matrix[cnt][0] = this.RGBMatrixHandleSides[1].matrix[tly + x + 1][tlx + y + 1];
                 if (color == ColorOptions.BLUE)
-                    i.matrix[cnt][0] = this.RGBMatrixHandleSides[2].matrix[tlx + x + 1][tly + y + 1];
+                    i.matrix[cnt][0] = this.RGBMatrixHandleSides[2].matrix[tly + x + 1][tlx + y + 1];
                 if (color == ColorOptions.GRAYSCALE)
-                    i.matrix[cnt][0] = this.grayScaleMatrixHandleSides.matrix[tlx + x + 1][tly + y + 1];
+                    i.matrix[cnt][0] = this.grayScaleMatrixHandleSides.matrix[tly + x + 1][tlx + y + 1];
                 cnt++;
             }
         }
