@@ -180,13 +180,13 @@ public class BicubicSplineInterpolation extends Solvable {
                 if (rowA > 0) {
                     if (this.matrixA.matrix[rowA][0] * Math.pow(this.a, i) * Math.pow(this.b, j) < 0) {
                         System.out.printf(" - %.4f",
-                                Math.abs(this.matrixA.matrix[rowA][0] * Math.pow(this.a, i) * Math.pow(this.b, j)));
+                                Math.abs(this.matrixA.matrix[rowA++][0] * Math.pow(this.a, i) * Math.pow(this.b, j)));
                     } else if (this.matrixA.matrix[rowA][0] * Math.pow(this.a, i) * Math.pow(this.b, j) >= 0) {
                         System.out.printf(" + %.4f",
-                                Math.abs(this.matrixA.matrix[rowA][0] * Math.pow(this.a, i) * Math.pow(this.b, j)));
+                                Math.abs(this.matrixA.matrix[rowA++][0] * Math.pow(this.a, i) * Math.pow(this.b, j)));
                     }
                 } else {
-                    System.out.printf("%.4f", this.matrixA.matrix[rowA][0] * Math.pow(this.a, i) * Math.pow(this.b, j));
+                    System.out.printf("%.4f", this.matrixA.matrix[rowA++][0] * Math.pow(this.a, i) * Math.pow(this.b, j));
                 }
             }
         }

@@ -351,15 +351,19 @@ public class Matrix {
 
     public int toMatrixSegitiga() {
         int swap = 0;
+        boolean isSwap = false;
         for (int i = 0; i < this.col; i++) {
             if (this.matrix[i][i] == 0) {
+                isSwap = false;
                 for (int l = i + 1; l < this.row; l++) {
                     if (this.matrix[l][i] != 0) {
                         this.swapRow(i, l);
                         swap++;
+                        isSwap = true;
                         break;
                     }
                 }
+                if (!isSwap) return -1;
             }
 
             for (int j = i + 1; j < this.row; j++) {
@@ -391,10 +395,15 @@ public class Matrix {
         if (method == DeterminantMethod.RowReduction) {
             Matrix copy = this.getCopyMatrix();
             int swap = copy.toMatrixSegitiga();
-            double total = (swap % 2 != 0) ? -1 : 1;
+            this.displayMatrix();
+            System.out.println("\n\n");
+            copy.displayMatrix();
+            double total = 0;
+            total = swap == -1 ? 0 : ((swap % 2 != 0) ? -1 : 1);
             for (int i = 0; i < copy.matrix.length; i++) {
                 total *= copy.matrix[i][i];
             }
+
             return total;
         } else { // (method == DeterminantMethod.CofactorExpansion)
             if (this.matrix.length == 2) {
