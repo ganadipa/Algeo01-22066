@@ -76,7 +76,7 @@ public class Interpolasi extends Solvable {
         this.batas[0] = this.matrix.matrix[0][1];
         this.batas[1] = this.matrix.matrix[this.matrix.row - 1][1];
 
-        if (x > this.matrix.matrix[this.matrix.row - 1][1] || x > this.matrix.matrix[0][1]) {
+        if (x > this.matrix.matrix[this.matrix.row - 1][1] || x < this.matrix.matrix[0][1]) {
             isValidX = false;
         }
 
@@ -122,7 +122,7 @@ public class Interpolasi extends Solvable {
             this.batas[0] = this.matrix.matrix[0][1];
             this.batas[1] = this.matrix.matrix[this.matrix.row - 1][1];
 
-            if (x > this.matrix.matrix[this.matrix.row - 1][1] || x > this.matrix.matrix[0][1]) {
+            if (x > this.matrix.matrix[this.matrix.row - 1][1] || x < this.matrix.matrix[0][1]) {
                 isValidX = false;
             }
             setState(State.Unsolved);
