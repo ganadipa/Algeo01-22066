@@ -73,12 +73,12 @@ public class RegresiLinierBergandaPanel extends Menu {
                 mlr.setupMlrMatrix();
 
                 mlr.solve();
-                answerLabel.setText(stringToHtml(mlr.getMLRMatrixString()+"\n"+mlr.getSolutionString()));
+                answerLabel.setText(stringToHtml(mlr.getSolutionString()));
                 answerLabel.repaint();
                 answerLabel.revalidate();
 
                 // all menu have this
-                setResult(mlr.getMLRMatrixString()+"\n"+mlr.getSolutionString());
+                setResult(mlr.getSolutionString());
                 resetError();
                 repaint();
                 revalidate();

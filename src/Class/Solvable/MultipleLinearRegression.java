@@ -144,6 +144,7 @@ public class MultipleLinearRegression extends Solvable {
         s += (") = ");
         s += String.format("%.3f\n", result);
 
+        solution = getMLRMatrixString() + "\n";
         solution += String.format("%s\n%s", persamaan, s);
         setState(State.Solved);
     }
