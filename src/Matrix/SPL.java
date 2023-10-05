@@ -635,8 +635,8 @@ public class SPL extends Solvable {
                     --> Wrapping up, sekaligus merapihkan penamaan variabel, solusi dari SPL tersebut adalah
                     """);
 
-            this.solve_helper();
             this.setSolution();
+            this.solve_helper();
             // this.displaySolution();
         } else {
             this.augmentedMatrix.toReducedRowEchelon();

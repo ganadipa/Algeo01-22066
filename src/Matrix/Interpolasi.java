@@ -179,6 +179,7 @@ public class Interpolasi extends Solvable {
     //prosedur untuk menampilkan solusi dari interpolasi polinom kepada pengguna melalui terminal
     public void displaySolutionToTerminal() {
         SPL spl2 = new SPL(matrix.row, matrix.col);
+        spl2.setMatrix(matrix);
         this.solve();
         spl2.setMatrix(matrix)
                 .setMethod(SPL.SPLMethod.GaussJordan)
@@ -242,7 +243,7 @@ public class Interpolasi extends Solvable {
         System.out.println("--> Dalam penyelesaian SPL ini konstanta a1 = x1 dst");
         System.out.println("--> Penyelesaiannya adalah sebagai berikut\n");
 
-        spl2.solve();
+        spl2.displaySolutionToTerminal();
         setState(State.Solved);
 
         System.out.println(
@@ -257,8 +258,14 @@ public class Interpolasi extends Solvable {
         System.out.printf("f(%.4f) = ", this.x);
         for (int i = spl2.augmentedMatrix.row - 1; i >= 0; i--) {
             if (i > 1) {
-                System.out.printf("%.4f(%.4f^%d)", Math.abs(spl2.augmentedMatrix.matrix[i][matrix.col - 1]), this.x,
+                if (i == spl.augmentedMatrix.row - 1){
+                     System.out.printf("%.4f(%.4f^%d)", spl2.augmentedMatrix.matrix[i][matrix.col - 1], this.x,
                         i);
+                } else {
+                     System.out.printf("%.4f(%.4f^%d)", Math.abs(spl2.augmentedMatrix.matrix[i][matrix.col - 1]), this.x,
+                        i);
+                }
+               
             } else if (i == 1) {
                 System.out.printf("%.4f(%.4f)", Math.abs(spl2.augmentedMatrix.matrix[i][matrix.col - 1]), this.x);
             } else {
@@ -276,8 +283,14 @@ public class Interpolasi extends Solvable {
         System.out.printf("f(%.4f) = ", this.x);
         for (int i = spl2.augmentedMatrix.row - 1; i >= 0; i--) {
             if (i >= 1) {
-                System.out.printf("%.4f(%.4f)",
+                if (i == spl.augmentedMatrix.row - 1){
+                     System.out.printf("%.4f(%.4f)",
+                        (spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]), Math.pow(this.x, i));
+                } else {
+                     System.out.printf("%.4f(%.4f)",
                         Math.abs(spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]), Math.pow(this.x, i));
+                }
+                
             } else {
                 System.out.printf("%.4f", Math.abs(spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]));
             }
@@ -293,8 +306,14 @@ public class Interpolasi extends Solvable {
         System.out.println("");
         System.out.printf("f(%.4f) = ", this.x);
         for (int i = spl2.augmentedMatrix.row - 1; i >= 0; i--) {
-            System.out.printf("%.4f",
+            if (i == spl.augmentedMatrix.row - 1){
+                     System.out.printf("%.4f",
+                    (spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]) * Math.pow(this.x, i));
+                } else {
+                     System.out.printf("%.4f",
                     Math.abs(spl2.augmentedMatrix.matrix[i][spl2.augmentedMatrix.col - 1]) * Math.pow(this.x, i));
+            }
+            
             if (i != 0) {
                 if (spl2.augmentedMatrix.matrix[i - 1][spl2.augmentedMatrix.col - 1] >= 0) {
                     System.out.print(" + ");
