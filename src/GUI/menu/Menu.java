@@ -5,16 +5,10 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.io.File;
 import java.io.FileWriter;
-import java.lang.reflect.Executable;
 
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.TableModel;
 
 import Class.Matrix;
 import GUI.component.NormalButton;
@@ -51,7 +45,6 @@ public class Menu extends JPanel {
         fileChooserPanel.setForeground(Colors.slate100);
         fileChooserPanel.setBackground(Colors.slate950);
         fileChooserButton.addActionListener(e -> {
-            int returnVal = fileChooser.showOpenDialog(this);
             fileChooser.setDialogTitle("Pilih file");
             choosenFileNameLabel.setText(fileChooser.getSelectedFile().getName());
             choosenFileNameLabel.repaint();

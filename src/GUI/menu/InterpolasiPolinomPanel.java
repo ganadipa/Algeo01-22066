@@ -1,20 +1,16 @@
 package GUI.menu;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.io.File;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import Class.Solvable.Interpolasi;
-import Class.Solvable.SPL;
 import GUI.component.InputField;
-import GUI.component.MatrixInput;
 import GUI.component.MatrixInterpolasiLinearInput;
 import GUI.theme.Colors;
 
