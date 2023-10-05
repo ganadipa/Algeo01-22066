@@ -124,7 +124,7 @@ public class MultipleLinearRegression extends Solvable {
         persamaan += "f(x) = ";
         persamaan += String.format("%.3f", spl.x[0].getConstant());
         for (int i = 1; i < spl.x.length; i++) {
-            if (spl.x[i].getConstant() >= 0) {
+            if (spl.x[i].getConstant() > 0) {
                 persamaan += String.format(" + %.3fx%d", Math.abs(spl.x[i].getConstant()), i);
             } else if (spl.x[i].getConstant() < 0) {
                 persamaan += String.format(" - %.3fx%d", Math.abs(spl.x[i].getConstant()), i);
@@ -312,9 +312,9 @@ public class MultipleLinearRegression extends Solvable {
                 } else if(j == mlrMatrix.col -1) { // paling kanan
                     mlr += String.format(" = %.3f%d", mlrMatrix.matrix[i][j], j);
                 } else { // tengah
-                    if (mlrMatrix.matrix[i][j] >= 0) {
+                    if (mlrMatrix.matrix[i][j] > 0) {
                         mlr += String.format(" + %.3fx%d", mlrMatrix.matrix[i][j], j);
-                    } else { //if (mlrMatrix.matrix[i][j] < 0)
+                    } else if (mlrMatrix.matrix[i][j] < 0) {
                         mlr += String.format(" - %.3fx%d", mlrMatrix.matrix[i][j], j);
                     }
                 }
