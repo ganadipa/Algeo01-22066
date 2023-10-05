@@ -16,13 +16,13 @@ Tugas besar ini berisi program dalam bahasa Java yang berisi fungsi-fungsi elimi
 Untuk _run_ program ini menggunakan GUI lakukan:
 
 ```bash
-sh compile&rungui.sh
+sh compilerungui.sh
 ```
 
 atau, jika ingin _run_ program ini dengan terminal, lakukan:
 
 ```bash
-sh compile&run.sh
+sh compilerun.sh
 ```
 
 ### _Compile_
@@ -77,6 +77,6 @@ untuk menjalankan bytecode program melalui terminal.
 
 #### Anggota Kelompok
 
-13522066 - Nyoman Ganadipa Narayana
-13522084 - Dhafin Fawwaz Ikramullah
-13522117 - Mesach Harmasendro
+- 13522066 - Nyoman Ganadipa Narayana
+- 13522084 - Dhafin Fawwaz Ikramullah
+- 13522117 - Mesach Harmasendro
