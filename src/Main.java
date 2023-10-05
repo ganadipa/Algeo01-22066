@@ -1,8 +1,12 @@
+import java.io.IOException;
+import java.util.Scanner;
+
 import Class.Matrix;
 import Class.Solvable.BicubicSplineInterpolation;
 import Class.Solvable.Interpolasi;
 import Class.Solvable.MultipleLinearRegression;
 import Class.Solvable.SPL;
+import Class.Solvable.SimpleImage;
 import Utils.Input;
 import Utils.Utils;
 
@@ -22,15 +26,16 @@ public class Main {
                             4. Interpolasi Polinom
                             5. Interpolasi Bicubic Spline
                             6. Regresi linier berganda
-                            7. Keluar
+                            7. Perbesaran foto
+                            8. Keluar
                             """);
 
             System.out.println("Pilih menu (Angka): ");
 
             int chosenMenu;
             chosenMenu = Input.getInt(
-                    "Masukan harus dalam range 1 sampai 7",
-                    (Integer n) -> n >= 1 && n <= 7);
+                    "Masukan harus dalam range 1 sampai 8",
+                    (Integer n) -> n >= 1 && n <= 8);
 
             switch (chosenMenu) {
                 case 1:
@@ -70,6 +75,12 @@ public class Main {
                     });
                     break;
                 case 7:
+                    handlePerbesarFoto();
+                    handleCobaLagi(() -> {
+                        handlePerbesarFoto();
+                    });
+                    break;
+                case 8:
                     System.out.println("Keluar");
                     Input.closeScanner();
                     return;
@@ -242,4 +253,28 @@ public class Main {
         spl.setShowProcess(true);
         spl.displaySolution();
     }
+
+    static void handlePerbesarFoto(){
+         try {
+            Scanner scanner = Input.getScanner();
+            System.out.print("Masukan nama file foto yang ingin diperbesar beserta extensinya: ");
+            String filename = scanner.next();
+            scanner.nextLine();
+            System.out.print("Masukan berapa kali perbesaran yang diinginkan: ");
+            double factor = Input.getDouble("Masukan harus positif >= 1", (Double num) -> num >= 1);
+            System.out.println();
+
+            System.out.println("Foto akan diperbesar mohon tunggu sebentar");
+
+            SimpleImage img = new SimpleImage(filename);
+            img.setFactor(factor);
+            img.setOptions(SimpleImage.ColorOptions.NORMAL);
+            img.EnlargeImage();
+
+            System.out.println("Foto berhasil diperbesar dan akan disimpan di folder tes/output/enlarge<filename>");
+        } catch (IOException e) {
+            System.out.println("Terdapat kesalahan dalam mengambil foto");
+        }
+    }
 }
+
