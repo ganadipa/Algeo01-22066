@@ -125,9 +125,9 @@ public class MultipleLinearRegression extends Solvable {
         persamaan += String.format("%.3f", spl.x[0].getConstant());
         for (int i = 1; i < spl.x.length; i++) {
             if (spl.x[i].getConstant() > 0) {
-                persamaan += String.format(" + %.3fx%d", spl.x[i].getConstant(), i);
+                persamaan += String.format(" + %.3fx%d", Math.abs(spl.x[i].getConstant()), i);
             } else if (spl.x[i].getConstant() < 0) {
-                persamaan += String.format(" - %.3fx%d", spl.x[i].getConstant(), i);
+                persamaan += String.format(" - %.3fx%d", Math.abs(spl.x[i].getConstant()), i);
             }
         }
 
@@ -135,7 +135,7 @@ public class MultipleLinearRegression extends Solvable {
 
         String s = "";
 
-        s += "\nEstimate:\n";
+        s += "\nTaksiran:\n";
         s += "f(";
         s += String.format("%.3f", x[0]);
         for (int i = 1; i < x.length; i++) {
@@ -301,5 +301,26 @@ public class MultipleLinearRegression extends Solvable {
 
     public String getSolutionString() {
         return solution;
+    }
+    public String getMLRMatrixString() {
+        String mlr = "Normal Estimation Equation for Multiple Linear Regression:\n";
+        for(int i = 0; i < mlrMatrix.row; i++) {
+            for(int j = 0; j < mlrMatrix.col; j++) {
+
+                if(j == 0) { // paling kiri
+                    mlr += String.format("%.3fx%d", mlrMatrix.matrix[i][j], j);
+                } else if(j == mlrMatrix.col -1) { // paling kanan
+                    mlr += String.format(" = %.3f%d", mlrMatrix.matrix[i][j], j);
+                } else { // tengah
+                    if (mlrMatrix.matrix[i][j] > 0) {
+                        mlr += String.format(" + %.3fx%d", mlrMatrix.matrix[i][j], j);
+                    } else if (mlrMatrix.matrix[i][j] < 0) {
+                        mlr += String.format(" - %.3fx%d", mlrMatrix.matrix[i][j], j);
+                    }
+                }
+            }
+            mlr += "\n";
+        }
+        return mlr;
     }
 }
