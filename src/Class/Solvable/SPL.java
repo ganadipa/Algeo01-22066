@@ -917,7 +917,6 @@ public class SPL extends Solvable {
         this.augmentedMatrix = new Matrix(row, col);
 
         this.x = new Parametric[col - 1];
-        System.out.println(this.x.length);
         for (int i = 0; i < col - 1; i++) {
             x[i] = new Parametric(col - 1);
         }
