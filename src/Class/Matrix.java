@@ -437,7 +437,7 @@ public class Matrix {
      * @see getDeterminant
      */
     public double getDeterminant() throws Error {
-        return getDeterminant(DeterminantMethod.RowReduction);
+        return getDeterminant(DeterminantMethod.CofactorExpansion);
     }
 
     public int getColomnNotEntirelyZero(int startRow, int endRow) {
@@ -651,7 +651,7 @@ public class Matrix {
      * @return inverse matrix
      */
     public Matrix getInverse() throws Error {
-        return getInverse(InverseMethod.GaussJordan);
+        return getInverse(InverseMethod.Adjoin);
     }
 
     /**
