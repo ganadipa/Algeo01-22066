@@ -11,12 +11,12 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import Class.Solvable.Interpolasi;
+import Class.Solvable.SPL;
 import GUI.component.InputField;
 import GUI.component.MatrixInput;
 import GUI.component.MatrixInterpolasiLinearInput;
 import GUI.theme.Colors;
-import Matrix.Interpolasi;
-import Matrix.SPL;
 
 public class InterpolasiPolinomPanel extends Menu {
     MatrixInterpolasiLinearInput matrixInput;

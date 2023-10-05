@@ -1,8 +1,10 @@
-package Matrix;
+package Class.Solvable;
 
 import java.io.*;
 
 import javax.imageio.ImageIO;
+
+import Class.Matrix;
 
 import java.awt.image.BufferedImage;
 

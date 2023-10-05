@@ -1,4 +1,4 @@
-package Interface;
+package Class.Solvable;
 
 import Utils.Input;
 

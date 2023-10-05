@@ -4,8 +4,8 @@ package Testing;
 
 import java.io.IOException;
 
-import Matrix.*;
-import Matrix.SPL.SPLMethod;
+import Class.Solvable.*;
+import Class.Solvable.SPL.SPLMethod;
 import Utils.Utils;
 
 public class Gana {

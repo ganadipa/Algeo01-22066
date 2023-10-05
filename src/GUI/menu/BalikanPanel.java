@@ -9,11 +9,11 @@ import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import Class.Matrix;
 import GUI.component.MatrixDisplay;
 import GUI.component.MatrixInput;
 import GUI.component.RadioButton;
 import GUI.theme.Colors;
-import Matrix.Matrix;
 
 public class BalikanPanel extends Menu {
 

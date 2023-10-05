@@ -16,10 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
+import Class.Matrix;
 import GUI.component.NormalButton;
 import GUI.theme.Colors;
 import GUI.theme.Fonts;
-import Matrix.Matrix;
 
 public class Menu extends JPanel {
     //import variable

@@ -1,9 +1,9 @@
-package Matrix;
+package Class.Solvable;
 
 import java.util.*;
 
-import Interface.Solvable;
-import Matrix.Parametric.SolutionStatus;
+import Class.Matrix;
+import Class.Solvable.Parametric.SolutionStatus;
 import Utils.Input;
 import Utils.Utils;
 

@@ -1,6 +1,5 @@
-package Matrix;
+package Class.Solvable;
 
-import Interface.Solvable;
 import Utils.Input;
 import Utils.Utils;
 
@@ -8,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import Class.Matrix;
 
 //class untuk menyelesaikan persoalan interpolasi bicubic spline
 public class BicubicSplineInterpolation extends Solvable {

@@ -1,6 +1,5 @@
-package Matrix;
+package Class.Solvable;
 
-import Interface.Solvable;
 import Utils.Input;
 import Utils.Utils;
 
@@ -11,6 +10,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+
+import Class.Matrix;
 
 //class untuk menyelesaikan persoalan interpolasi polinom
 public class Interpolasi extends Solvable {

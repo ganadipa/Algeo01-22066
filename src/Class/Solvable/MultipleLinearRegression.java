@@ -1,4 +1,4 @@
-package Matrix;
+package Class.Solvable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import Interface.Solvable;
+import Class.Matrix;
 import Utils.Input;
 import Utils.Utils;
 

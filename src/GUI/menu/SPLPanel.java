@@ -8,11 +8,11 @@ import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import Class.Matrix;
+import Class.Solvable.SPL;
 import GUI.component.MatrixAugmentedInput;
 import GUI.component.RadioButton;
 import GUI.theme.Colors;
-import Matrix.Matrix;
-import Matrix.SPL;
 
 public class SPLPanel extends Menu {
     JPanel resultPanel;

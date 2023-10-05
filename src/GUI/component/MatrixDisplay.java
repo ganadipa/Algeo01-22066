@@ -10,8 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import Class.Matrix;
 import GUI.theme.Colors;
-import Matrix.Matrix;
 
 public class MatrixDisplay extends JPanel {
     Matrix matrix;

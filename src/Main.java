@@ -1,10 +1,10 @@
-import Matrix.Matrix;
-import Matrix.MultipleLinearRegression;
-import Matrix.SPL;
+import Class.Matrix;
+import Class.Solvable.BicubicSplineInterpolation;
+import Class.Solvable.Interpolasi;
+import Class.Solvable.MultipleLinearRegression;
+import Class.Solvable.SPL;
 import Utils.Input;
 import Utils.Utils;
-import Matrix.Interpolasi;
-import Matrix.BicubicSplineInterpolation;
 
 public class Main {
 

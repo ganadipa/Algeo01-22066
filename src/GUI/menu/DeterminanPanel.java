@@ -11,10 +11,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import Class.Matrix;
 import GUI.component.MatrixInput;
 import GUI.component.RadioButton;
 import GUI.theme.Colors;
-import Matrix.Matrix;
 
 public class DeterminanPanel extends Menu {
     JPanel resultPanel;

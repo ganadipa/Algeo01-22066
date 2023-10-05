@@ -1,7 +1,8 @@
 package Testing;
 
-import Matrix.BicubicSplineInterpolation;
-import Matrix.Matrix;
+import Class.Matrix;
+import Class.Solvable.BicubicSplineInterpolation;
+import Class.Solvable.Solvable;
 
 public class Mesach {
 

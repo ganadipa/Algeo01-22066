@@ -6,10 +6,10 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import Class.Solvable.BicubicSplineInterpolation;
 import GUI.component.ListInput;
 import GUI.component.MatrixInput;
 import GUI.theme.Colors;
-import Matrix.BicubicSplineInterpolation;
 
 public class InterpolasiBicubicSplinePanel extends Menu {
     MatrixInput matrixInput;
