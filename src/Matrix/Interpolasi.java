@@ -16,27 +16,36 @@ import java.util.Scanner;
 public class Interpolasi extends Solvable {
     /* ***** ATRIBUTE ***** */
 
-    //data masukan titik akan diubah ke dalam bentuk matriks spl dan disimpan dalam variabel ini
+    // data masukan titik akan diubah ke dalam bentuk matriks spl dan disimpan dalam
+    // variabel ini
     private Matrix matrix = new Matrix();
 
-    //matriks representasi dari masukan GUI
+    // matriks representasi dari masukan GUI
     private Matrix inputMatrix = new Matrix();
 
-    //nilai x yang mau diaproksimasi hasilnya
+    // nilai x yang mau diaproksimasi hasilnya
     private double x;
 
-    //Objek spl untuk membantu menyelesaikan persoalan interpolasi
+    // Objek spl untuk membantu menyelesaikan persoalan interpolasi
     private SPL spl;
 
-    //menyimpan bentuk persamaan interpolasi yang didapatkan
+    // menyimpan bentuk persamaan interpolasi yang didapatkan
     private String persamaan = "";
 
-    //hasil dari nilai p(x) untuk nilai x yang telah dimasukan pengguna (nilai x yang ingin diaproksimasi hasilnya)
+    // hasil dari nilai p(x) untuk nilai x yang telah dimasukan pengguna (nilai x
+    // yang ingin diaproksimasi hasilnya)
     private double result = 0;
+
+    // boolean untuk penanda apakah nilai x yang mau diaproksimasi nilai f(x) nya berada di dalam range interpolasi yang sesuai atau tidak
+    private boolean isValidX = true;
+
+    //range untuk nilai x yang valid
+    private double[] batas = new double[]{0, 0};
 
     /* ***** FUNGSI DAN PROSEDUR ***** */
 
-    //prosedur untuk mengambil data dari masukan user melalui terminal, data masukan kemudian akan diolah dan disesuaikan menjadi bentuk matriks spl
+    // prosedur untuk mengambil data dari masukan user melalui terminal, data
+    // masukan kemudian akan diolah dan disesuaikan menjadi bentuk matriks spl
     @Override
     public void readVariablesFromUserInput() {
         System.out.print("Masukkan  banyak titik: ");
@@ -64,12 +73,19 @@ public class Interpolasi extends Solvable {
         System.out.print("Masukkan nilai x yang ingin ditafsir nilai f(x) nya: ");
         this.x = Input.getDouble();
 
+        this.batas[0] = this.matrix.matrix[0][1];
+        this.batas[1] = this.matrix.matrix[this.matrix.row - 1][1];
+
+        if (x > this.matrix.matrix[this.matrix.row - 1][1] || x > this.matrix.matrix[0][1]) {
+            isValidX = false;
+        }
+
         setState(State.Unsolved);
         readOutputFileYesOrNo();
     }
 
-    
-    //prosedur untuk mengambil data dari masukan user melalui file, data masukan kemudian akan diolah dan disesuaikan menjadi bentuk matriks spl
+    // prosedur untuk mengambil data dari masukan user melalui file, data masukan
+    // kemudian akan diolah dan disesuaikan menjadi bentuk matriks spl
     @Override
     public void readVariablesFromTextFile() {
         Scanner userInput = Input.getScanner();
@@ -103,6 +119,12 @@ public class Interpolasi extends Solvable {
             }
 
             this.x = Double.parseDouble(titiks.get(titiks.size() - 1));
+            this.batas[0] = this.matrix.matrix[0][1];
+            this.batas[1] = this.matrix.matrix[this.matrix.row - 1][1];
+
+            if (x > this.matrix.matrix[this.matrix.row - 1][1] || x > this.matrix.matrix[0][1]) {
+                isValidX = false;
+            }
             setState(State.Unsolved);
 
         } catch (IOException e) {
@@ -118,7 +140,9 @@ public class Interpolasi extends Solvable {
 
     }
 
-    //prosedur untuk menyelesaikan persoalan interpolasi polinom, hasil dari prosedur ini adalah persamaan interpolasi dan hasil aproksimasi untuk nilai x yang dimasukan
+    // prosedur untuk menyelesaikan persoalan interpolasi polinom, hasil dari
+    // prosedur ini adalah persamaan interpolasi dan hasil aproksimasi untuk nilai x
+    // yang dimasukan
     @Override
     public void solve() {
         solution = "";
@@ -134,7 +158,7 @@ public class Interpolasi extends Solvable {
         for (int i = spl.augmentedMatrix.row - 1; i >= 0; i--) {
             String temp = "";
             if (i > 1) {
-                if (i == spl.augmentedMatrix.row - 1){
+                if (i == spl.augmentedMatrix.row - 1) {
                     temp = String.format("%.4fx^%d", spl.augmentedMatrix.matrix[i][matrix.col - 1], i);
                 } else {
                     temp = String.format("%.4fx^%d", Math.abs(spl.augmentedMatrix.matrix[i][matrix.col - 1]), i);
@@ -155,12 +179,16 @@ public class Interpolasi extends Solvable {
             this.result += (spl.augmentedMatrix.matrix[i][matrix.col - 1] * Math.pow(this.x, i));
         }
 
-        solution = String.format("%s\nf(%.4f) = %.4f\n", this.persamaan, x, this.result);
+        solution = String.format("%s\n\nf(%.4f) = %.4f\n", this.persamaan, x, this.result);
+
+        if (!isValidX){
+            solution += String.format("\nHasil aproksimasi tidak akurat karena x berada di luar range [%.4f, %.4f]", batas[0], batas[1]);
+        }
 
         setState(State.Solved);
     }
 
-    //prosedur untuk menampilkan solusi dari interpolasi polinom kepada pengguna
+    // prosedur untuk menampilkan solusi dari interpolasi polinom kepada pengguna
     @Override
     public void displaySolution() {
         if (!getIsPrintFile()) {
@@ -169,14 +197,16 @@ public class Interpolasi extends Solvable {
             this.displaySolutionToFile();
         }
     }
-    
-    //prosedur untuk menampilkan solusi dari interpolasi polinom kepada pengguna melalui file (solusi akan dituliskan di file)
+
+    // prosedur untuk menampilkan solusi dari interpolasi polinom kepada pengguna
+    // melalui file (solusi akan dituliskan di file)
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "outputInterpolasi.txt");
     }
 
-    //prosedur untuk menampilkan solusi dari interpolasi polinom kepada pengguna melalui terminal
+    // prosedur untuk menampilkan solusi dari interpolasi polinom kepada pengguna
+    // melalui terminal
     public void displaySolutionToTerminal() {
         SPL spl2 = new SPL(matrix.row, matrix.col);
         spl2.setMatrix(matrix);
@@ -325,10 +355,14 @@ public class Interpolasi extends Solvable {
         System.out.println("");
 
         System.out.printf("f(%.4f) = %.4f\n", x, this.result);
+
+        
+        if (!isValidX){
+            System.out.printf("\nHasil aproksimasi tidak akurat karena x berada di luar range [%.4f, %.4f]\n", batas[0], batas[1]);
+        }
     }
 
-
-    //fungsi untuk menetapkan nilai matrix spl dari inputMatrix GUI
+    // fungsi untuk menetapkan nilai matrix spl dari inputMatrix GUI
     public Interpolasi setMatrix(Matrix inputMatrix) {
 
         this.matrix.initMatrix(inputMatrix.row, inputMatrix.row + 1);
@@ -350,38 +384,37 @@ public class Interpolasi extends Solvable {
         return this;
     }
 
-    //setter untuk atribut x
+    // setter untuk atribut x
     public Interpolasi setX(double newX) {
         this.x = newX;
         setState(State.Unsolved);
         return this;
     }
 
-    //getter untuk atribut x
+    // getter untuk atribut x
     public double getX() {
         return this.x;
     }
 
-    //getter untuk atribut inputMatrix
+    // getter untuk atribut inputMatrix
     public Matrix getInputMatrix() {
         return this.inputMatrix;
     }
 
-    //getter untuk atribut solution (atribut dari parent class)
+    // getter untuk atribut solution (atribut dari parent class)
     @Override
     public String getSolutionString() {
         return solution;
     }
 
-    //prosedur untuk menetapkan nilai dari inputMatrix dari masukan file (GUI)
-    public void setVariablesFromFile(File file) throws Exception{
+    // prosedur untuk menetapkan nilai dari inputMatrix dari masukan file (GUI)
+    public void setVariablesFromFile(File file) throws Exception {
         // inputMatrix
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             bufferedReader.mark(1000);
             int row = 0, col = 0;
             String line;
-            while ((line = bufferedReader.readLine()) != null)
-            {   
+            while ((line = bufferedReader.readLine()) != null) {
                 int tmpCol = line.split(" ").length;
                 if (tmpCol < col) {
                     continue;
@@ -394,17 +427,17 @@ public class Interpolasi extends Solvable {
             bufferedReader.reset();
 
             int i = 0;
-            while((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 String[] elmts = line.split(" ");
-                if (elmts.length == 0) continue;
+                if (elmts.length == 0)
+                    continue;
                 if (elmts.length == 1) {
                     // kemungkinan baris terakhir
                     // baris terakhir cuma 1 angka
                     x = Double.parseDouble(line);
                     break; // pasti line terakhir
                 }
-                for (int j = 0; j < 2; j++)
-                {
+                for (int j = 0; j < 2; j++) {
                     inputMatrix.matrix[i][j] = Double.parseDouble(elmts[j]);
                 }
 
