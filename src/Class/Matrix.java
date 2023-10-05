@@ -434,7 +434,7 @@ public class Matrix {
      * @see getDeterminant
      */
     public double getDeterminant() throws Error {
-        return getDeterminant(DeterminantMethod.CofactorExpansion);
+        return getDeterminant(DeterminantMethod.RowReduction);
     }
 
     public int getColomnNotEntirelyZero(int startRow, int endRow) {

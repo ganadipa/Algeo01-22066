@@ -261,7 +261,7 @@ public class Main {
             String filename = scanner.next();
             scanner.nextLine();
             System.out.print("Masukan berapa kali perbesaran yang diinginkan: ");
-            double factor = Input.getDouble("Masukan harus positif >= 1", (Double num) -> num >= 1);
+            double factor = Input.getDouble("Masukan harus positif > 1", (Double num) -> num > 1);
             System.out.println();
 
             System.out.println("Foto akan diperbesar mohon tunggu sebentar");
