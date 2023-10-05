@@ -9,20 +9,41 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+//class untuk menyelesaikan persoalan interpolasi bicubic spline
 public class BicubicSplineInterpolation extends Solvable {
+    /* ***** ATRIBUTE ***** */
+
+    //masukan dari GUI akan direpresentaskan sebagai sebuah matriks
     private Matrix inputMatrix = new Matrix(4, 4);
+
+    //matrix X yang merupakan koefisien dari a
     private Matrix matrixX;
+
+    //matriks yang berisi nilai dari f, fx, fy, dan fxy yang diberikan oleh pengguna
     private Matrix matrixF;
+
+    //matriks a yang akan dicari nilainya
     private Matrix matrixA;
+
+    //balikan dari matrix x
     private Matrix inverseX;
+
+    //masukan sebuah nilai a dan b dari pengguna untuk nantinya akan diaproksimasi nilai dari f(a,b)
     private double a;
     private double b;
+
+    //hasil dari aproksimasi f(a,b)
     private double result = 0;
+
+
+    /* ***** FUNGSI DAN PROSEDUR ***** */
+    //prosedur untuk mengambil data dari masukan user melalui terminal, data masukan kemudian akan diolah dan disesuaikan menjadi bentuk matriks spl
     @Override
     public void readVariablesFromUserInput() {
 
     }
 
+    //prosedur untuk mengambil data dari masukan user melalui file, data masukan kemudian akan diolah dan disesuaikan menjadi bentuk matriks spl
     @Override
     public void readVariablesFromTextFile() {
         Matrix mF = new Matrix();
@@ -32,7 +53,6 @@ public class BicubicSplineInterpolation extends Solvable {
         String fileName = Input.getScanner().next();
         Input.getScanner().nextLine();
         this.readOutputFileYesOrNo();
-        // this.setIsPrintFile(false);
         String fileInputPath = "test/input/" + fileName;
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileInputPath))) {
@@ -63,13 +83,12 @@ public class BicubicSplineInterpolation extends Solvable {
 
     }
 
+    //prosedur untuk menyelesaikan persoalan interpolasi bicubic spline, hasil dari prosedur ini adalah nilai dari f(a,b)
     @Override
     public void solve() {
         solution = "";
         inverseX = matrixX.getInverse();
         matrixA = inverseX.multiplyBy(matrixF);
-        // inverseX.displayMatrix();
-        // matrixF.displayMatrix();
         int rowA = 0;
         result = 0;
         for (int j = 0; j < 4; j++) {
@@ -81,11 +100,14 @@ public class BicubicSplineInterpolation extends Solvable {
         
     }
 
+
+    //prosedur untuk menampilkan solusi dari interpolasi bicubic spline kepada pengguna melalui file (solusi akan dituliskan di file)
     public void displaySolutionToFile() {
         this.solve();
         Utils.printFile(solution, "outputBicubic.txt");
     }
 
+    //prosedur untuk menampilkan solusi dari interpolasi bicubic spline kepada pengguna melalui terminal
     public void displaySolutionToTerminal() {
         this.solve();
         System.out.println("\n--> Input yang anda masukan akan diubah menjadi matrix Y sebagai berikut\n");
@@ -101,12 +123,10 @@ public class BicubicSplineInterpolation extends Solvable {
         System.out.println(
                 "--> Pada fungsi ini akan dicari nilai matrix a dengan cara mengubah persamaan diatas menjadi a = (X^-1)y");
         System.out.println("--> Akan dicari matrix balikan dari matrix X sebagai berikut\n");
-        // Matrix inverseX = this.matrixX.getInverse();
         inverseX.displayMatrix();
 
         System.out.println(
                 "\n--> Setelah didapat X^-1 akan dicari nilai matrix a dengan mengkalikan matrix balikan X dengan matrix y dan akan diperoleh hasil sebagai berikut");
-        // matrixA = inverseX.multiplyBy(matrixF);
         matrixA.displayMatrix();
 
         System.out.println("\n--> Matrix a diatas sebenarnya merepresentasikan konstanta aij dimana 0 <= i, j <= 3.");
@@ -153,7 +173,6 @@ public class BicubicSplineInterpolation extends Solvable {
         }
 
         rowA = 0;
-        // result = 0;
         System.out.printf("\nf(%.4f, %.4f) = ", this.a, this.b);
         for (int j = 0; j < 4; j++) {
             for (int i = 0; i < 4; i++) {
@@ -168,14 +187,13 @@ public class BicubicSplineInterpolation extends Solvable {
                 } else {
                     System.out.printf("%.4f", this.matrixA.matrix[rowA][0] * Math.pow(this.a, i) * Math.pow(this.b, j));
                 }
-                // result += (this.matrixA.matrix[rowA++][0] * Math.pow(this.a, i) *
-                // Math.pow(this.b, j));
             }
         }
 
         System.out.printf("\nf(%.4f, %.4f) = %.4f\n", this.a, this.b, result);
     }
 
+    //prosedur untuk menampilkan solusi dari interpolasi bicubic spline kepada pengguna
     @Override
     public void displaySolution() {
         if (!getIsPrintFile()){
@@ -186,7 +204,7 @@ public class BicubicSplineInterpolation extends Solvable {
     }
 
 
-
+    //fungsi untuk meng-genarate matrix x
     public void setMatrix(Matrix m) {
         this.matrixF = m;
         matrixX = new Matrix(16, 16);
@@ -211,9 +229,12 @@ public class BicubicSplineInterpolation extends Solvable {
         }
     }
 
+    //setter untuk atribut getInputMatrix
     public Matrix getInputMatrix() {
         return this.inputMatrix;
     }
+
+    //setter untuk atribut inputMatrix sekaligus untuk menguabah inputMatrix menjadi matrixF
     public void setInputMatrix(Matrix m) {
         this.inputMatrix = m;
         Matrix m16x1 = new Matrix(16, 1);
@@ -222,13 +243,19 @@ public class BicubicSplineInterpolation extends Solvable {
         }
         setMatrix(m16x1);
     }
+
+    //setter untuk atribut a dan b
     public void setX(double[] x) {
         a = x[0];
         b = x[1];
     }
+
+    //getter untuk atribut a dan b
     public double[] getX() {
         return new double[] {a,b};
     }
+
+    //prosedur untuk menetapkan nilai dari inputMatrix dari masukan file (GUI)
     public void setVariablesFromFile(File file) throws Exception{
         // inputMatrix
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){

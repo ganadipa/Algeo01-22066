@@ -4,29 +4,56 @@ import java.io.*;
 
 import javax.imageio.ImageIO;
 
-import Utils.Utils;
-
 import java.awt.image.BufferedImage;
 
+//class untuk memperbesar suatu foto
 public class SimpleImage {
+    /* ***** ATRIBUTE ***** */
+
+    //matriks yang menyimpan nilai RGB dari suatu foto (index 0 RED, index 1 GREEN, index 2 BLUE)
     private Matrix RGBMatrix[];
+
+    //matriks yang menyimpan nilai grayscale dari suatu foto
     private Matrix grayScaleMatrix;
+
+    //matrix hasil perkalian matrix I dan matrix X inverse
     private Matrix matrixXI;
+
+    //matrix x yang merupakan koefisien dari a (bicubic spline interpolation)
     private Matrix matrixX;
+
+    //matrix dengan ukuran panjang dan lebar ditambah 2 untuk mempermudah saat perhitungan interpolasi
     private Matrix RGBMatrixHandleSides[];
     private Matrix grayScaleMatrixHandleSides;
+
+    //lebar foto
     private int width;
+
+    //tinggi foto
     private int height;
+
+    //balikan dari matrix x
     private Matrix matrixXInv;
+
+    //matrix D yang merupakan koefisien dalam persamaan I, Ix, Iy, dan Ixy
     private Matrix matrixD;
+
+    //pilihan warna untuk foto yang akan diperbesar
     private ColorOptions color;
+
+    //berapa kali perbesaran foto yang diinginkan
     private double factor;
+
+    //nama file dari foto yang akan diperbesar
     private String fileName;
 
+    //enum untuk pilihan warna yang tersedia
     public enum ColorOptions {
         RED, GREEN, BLUE, GRAYSCALE, NORMAL
     }
 
+    /* ***** FUNGSI DAN PROSEDUR ***** */
+    //konstruktor untuk menginisialisasi objeck SimpleImage
     public SimpleImage(String fileName) throws IOException {
         this.fileName = fileName;
         BufferedImage img = ImageIO.read(new File("test/input/" + fileName));
@@ -61,7 +88,6 @@ public class SimpleImage {
                 int blueWeight = color & 0xff;
                 this.RGBMatrix[2].matrix[row][col] = blueWeight;
                 this.RGBMatrixHandleSides[2].matrix[row + 1][col + 1] = blueWeight;
-                // System.out.printf("%d %d %d\n", redWeight, greenWeight, blueWeight);
 
                 double grayScaleColor = 0.299 * redWeight + 0.587 * greenWeight + 0.114 * blueWeight;
                 this.grayScaleMatrix.matrix[row][col] = grayScaleColor;
@@ -74,49 +100,57 @@ public class SimpleImage {
 
     }
 
+    //setter factor
     public void setFactor(double factor) {
         this.factor = factor;
     }
 
+    //setter colorOptions
     public void setOptions(ColorOptions color) {
         this.color = color;
     }
 
+    //getter RGBMatrix untuk warna merah
     public Matrix getRedMatrix() {
         return this.RGBMatrix[0];
     }
 
+    //getter RGBMatrix untuk warna hijau
     public Matrix getGreenMatrix() {
         return this.RGBMatrix[1];
     }
 
+    //getter RGBMatrix untuk warna biru
     public Matrix getBlueMatrix() {
         return this.RGBMatrix[2];
     }
 
+    //getter grayScaleMatrix
     public Matrix getGrayscaleMatrix() {
         return this.grayScaleMatrix;
     }
 
-    public void saveImage(Matrix m) throws IOException {
-        BufferedImage theImage = new BufferedImage(m.col, m.row,
-                color == ColorOptions.GRAYSCALE ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_INT_RGB);
 
-        int numshift = 0;
-        if (color == ColorOptions.RED)
-            numshift = 16;
-        else if (color == ColorOptions.GREEN)
-            numshift = 8;
+    // public void saveImage(Matrix m) throws IOException {
+    //     BufferedImage theImage = new BufferedImage(m.col, m.row,
+    //             color == ColorOptions.GRAYSCALE ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_INT_RGB);
 
-        for (int x = 0; x < m.row; x++) {
-            for (int y = 0; y < m.col; y++) {
-                theImage.setRGB(x, y, (int) m.matrix[x][y] << numshift);
-            }
-        }
-        File outputfile = new File("test/output/gana.png");
-        ImageIO.write(theImage, "png", outputfile);
-    }
+    //     int numshift = 0;
+    //     if (color == ColorOptions.RED)
+    //         numshift = 16;
+    //     else if (color == ColorOptions.GREEN)
+    //         numshift = 8;
 
+    //     for (int x = 0; x < m.row; x++) {
+    //         for (int y = 0; y < m.col; y++) {
+    //             theImage.setRGB(x, y, (int) m.matrix[x][y] << numshift);
+    //         }
+    //     }
+    //     File outputfile = new File("test/output/gana.png");
+    //     ImageIO.write(theImage, "png", outputfile);
+    // }
+
+    //prosedure untuk menginisialisasi matrix handle sides
     private void handleSides() {
         int row, col;
         this.grayScaleMatrixHandleSides.matrix[0][0] = this.grayScaleMatrixHandleSides.matrix[1][1];
@@ -173,6 +207,8 @@ public class SimpleImage {
         }
     }
 
+    //prosedure untuk memulai proses perbesaran foto hasil dari prosedur ini adalah output file foto yang sudah diperbesar
+    //nama file foto yang sudah diperbesar akan menjadi 'enlarge<filename>'
     public void EnlargeImage() throws IOException {
         Matrix enlargedMatrix = new Matrix();
         int numshift = 0;
@@ -181,12 +217,10 @@ public class SimpleImage {
             enlargedMatrix = EnlargedMatrix(grayScaleMatrix, factor);
         } else if (this.color == ColorOptions.RED) {
             enlargedMatrix = EnlargedMatrix(RGBMatrix[0], factor);
-            // enlargedMatrix.displayMatrix();
 
             numshift = 16;
         } else if (this.color == ColorOptions.GREEN) {
             enlargedMatrix = EnlargedMatrix(RGBMatrix[1], factor);
-            // enlargedMatrix.displayMatrix();
 
             numshift = 8;
         } else if (this.color == ColorOptions.BLUE) {
@@ -203,7 +237,6 @@ public class SimpleImage {
             enlargedMatrixB = EnlargedMatrix(RGBMatrix[2], factor);
             this.color = ColorOptions.NORMAL;
 
-            // enlargedMatrixB.displayMatrix();
 
             enlargedMatrix = new Matrix(enlargedMatrixB.row, enlargedMatrixB.col);
 
@@ -212,10 +245,6 @@ public class SimpleImage {
                     int RGB = (((int)(Math.round(enlargedMatrixR.matrix[row][col]))) << 16) |
                             (((int)(Math.round(enlargedMatrixG.matrix[row][col]))) << 8)
                             | (int)(Math.round(enlargedMatrixB.matrix[row][col]));
-                    // System.out.printf("R: %f\n", (enlargedMatrixR.matrix[row][col]));
-                    // System.out.printf("G: %x\n", ((int)(Math.round(enlargedMatrixG.matrix[row][col]))) << 8);
-                    // System.out.printf("B: %x\n", (int)(Math.round(enlargedMatrixB.matrix[row][col])));
-                    // System.out.printf("RGB: %x\n", RGB);
                     enlargedMatrix.matrix[row][col] = RGB;
                 }
             }
@@ -253,45 +282,7 @@ public class SimpleImage {
         ImageIO.write(theImage, "png", outputfile);
     }
 
-    private Matrix EnlargedMatrix2(Matrix m, int factor) {
-        Matrix resultMatrix = new Matrix(m.row * factor, m.col * factor);
-
-        double incCol = (m.col - 1) / (double) (resultMatrix.col - 1);
-        double incRow = (m.row - 1) / (double) (resultMatrix.row - 1);
-        System.out.println(incCol);
-        int usingX = 0;
-        int usingY = 0;
-
-        Matrix a = getMatrixA(usingX, usingY, color);
-        int i = 0;
-        for (double row = 0; row <= m.row - 2 + Utils.getTolerance(); row += incRow) {
-            int j = 0;
-            for (double col = 0; col <= m.col - 2 + Utils.getTolerance(); col += incCol) {
-                int roundedRow = (int) Math.floor(row);
-                int roundedCol = (int) Math.floor(col);
-
-                if ((usingX != (roundedCol)) || (usingY != (roundedRow))) {
-                    usingX = roundedCol;
-                    usingY = roundedRow;
-                    a = getMatrixA(roundedRow, roundedCol, color);
-                }
-
-                double color;
-                if ((Math.abs(col - roundedCol) < 10e-3) || (Math.abs(row - roundedRow) < 10e-3))
-                    color = m.matrix[(int) Math.round(row)][(int) Math.round(col)];
-                else
-                    color = interpolate(col - usingX, row - usingY, a);
-
-                resultMatrix.matrix[i][j] = color;
-                // System.out.printf("currenly in %d %d and color is %.4f \n", i, j, color);
-                j++;
-            }
-            i++;
-        }
-
-        return resultMatrix;
-    }
-
+    //fungsi yang digunakan untuk memperbesar suatu matrix yang merepresentasikan sebuah foto
     private Matrix EnlargedMatrix(Matrix m, double factor) {
         int newRow = (int) Math.round(m.row * factor);
         int newCol = (int) Math.round(m.col * factor);
@@ -331,33 +322,23 @@ public class SimpleImage {
             y = 0;
             sisaY = newCol % (m.col - 1);
             x += rangeX;
-            // System.out.println(x);
 
         }
 
         return resultMatrix;
     }
 
+    //prosedure untuk membantu proses inisialisasi objek SimpleImage
     private void init() {
-        // RAPIHIN !!!
         setMatrixX();
         setMatrixD();
-        // this.matrixX.displayMatrix();
         Matrix cpy = this.matrixX.getCopyMatrix();
         this.matrixXInv = cpy.getInverse();
-        // System.out.println(this.matrixXInv.getDeterminant());
         this.matrixXI = this.matrixXInv.multiplyBy(this.matrixD);
-        // this.matrixX.displayMatrix();
-        // this.matrixD.displayMatrix();
-        // this.matrixXInv.displayMatrix();
-        // System.exit(0);
     }
 
-    // public void setMatrixF(int row, int col) {
-    //     this.matrixF = new Matrix(16, 1);
 
-    // }
-
+    //prosedur untuk meng-generate matrix x
     public void setMatrixX() {
         this.matrixX = new Matrix(16, 16);
 
@@ -381,6 +362,7 @@ public class SimpleImage {
 
     }
 
+    //fungsi untuk meng-generate matrix D
     private void setMatrixD() {
         this.matrixD = new Matrix(16, 16);
         int row = 0;
@@ -389,10 +371,6 @@ public class SimpleImage {
                 int col = 0;
                 for (int y2 = -1; y2 < 3; y2++) {
                     for (int x2 = -1; x2 < 3; x2++) {
-                        // matrixD.matrix[row][col] = 4 * (x2 == x ? 1 : 0) * (y2 == y ? 1 : 0);
-                        // matrixD.matrix[row + 4][col] = 2 * ((x2 == (x + 1)) ? 1 : 0) * (y2 == (y) ? 1 : 0) - 2 * ((x2 == (x - 1) ? 1 : 0) * (y2 == y ? 1 : 0));
-                        // matrixD.matrix[row + 8][col] = 2 * ((x2 == x ? 1 : 0) * (y2 == (y + 1) ? 1 : 0))- 2 * ((x2 == x ? 1 : 0) * (y2 == (y - 1) ? 1 : 0));
-                        // matrixD.matrix[row + 12][col] = (((x2 == (x - 1)) && (y2 == (y - 1))) ? 1 : 0)+ (((x2 == (x + 1)) && (y2 == (y + 1))) ? 1 : 0)- (((x2 == (x + 1)) && (y2 == (y - 1))) ? 1 : 0)- (((x2 == (x - 1)) && (y2 == (y + 1))) ? 1 : 0);
                         matrixD.matrix[row][col] = (x == x2 && y == y2) ? 1 : 0;
                         matrixD.matrix[row + 4][col] = (y2 == y && (x2 == x + 1 || x2 == x-1) ? 0.5 : 0) * (y2 == y && (x2 == x-1) ? -1: 1);
                         matrixD.matrix[row + 8][col] = (x2 == x && (y2 == y + 1 || y2 == y-1) ? 0.5 : 0) * (x2 == x && (y2 == y-1) ? -1: 1);
@@ -403,14 +381,17 @@ public class SimpleImage {
                 row++;
             }
         }
-        // this.matrixD.MultiplyByConst(4).displayMatrix();
     }
 
+    //getter matrixD
     public Matrix getMatrixD() {
         return this.matrixD;
 
     }
 
+    //fungsi untuk mendapatkan nilai a pada sebuah sistem persamaan interpolasi bicubic spline
+    //nilai a akan disimpan dalam bentuk matrix
+    //tlx dan tly merupakan koordinat pada foto untuk nilai I(0,0)
     private Matrix getMatrixA(int tlx, int tly, ColorOptions color) {
         // TLX, TLY WILL BE 0 <= tlx, tly <= (width, height) -2
         Matrix i = new Matrix(16, 1);
@@ -435,17 +416,14 @@ public class SimpleImage {
         return a;
     }
 
+    //fungsi untuk menghitung aproksimasi nilai f(x,y) dengan nilai a berasal dari matrix a yang dikirimkan lewat parameter
     private double interpolate(double x, double y, Matrix a) {
         double res = 0;
         for (int j = 0; j < 4; j++) {
             for (int i = 0; i < 4; i++) {
-                // System.out.printf("x is %.4f\n", x);
-                // System.out.printf("y is %.4f\n", y);
                 res += a.matrix[j * 4 + i][0] * Math.pow(x, i) * Math.pow(y, j);
             }
         }
-        // System.out.println(res);
-        // a.displayMatrix();
         return res;
     }
 

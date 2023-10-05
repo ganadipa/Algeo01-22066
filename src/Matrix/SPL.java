@@ -226,7 +226,7 @@ public class SPL extends Solvable {
         this.augmentedMatrix = new Matrix(m, n);
         for (int row = 0; row < m; row++) {
             for (int col = 0; col < n; col++) {
-                this.augmentedMatrix.displayMatrix();
+                // this.augmentedMatrix.displayMatrix();
                 if (col == n - 1) {
                     this.augmentedMatrix.matrix[row][col] = this.B.matrix[row][0];
 
@@ -261,7 +261,6 @@ public class SPL extends Solvable {
             fromMatrix(m2);
     } catch (Exception e) {
         e.printStackTrace();
-        
     }
 
 }
@@ -286,6 +285,7 @@ public class SPL extends Solvable {
     }
 
     public void displaySolutionToFile() {
+        this.setShowProcess(false);
         this.solve();
         Utils.printFile(solution, "outputSPL.txt");
     }
@@ -521,6 +521,7 @@ public class SPL extends Solvable {
 
             this.solve_helper();
             // this.displaySolution();/
+            this.setSolution();
         } else {
 
             this.augmentedMatrix.toRowEchelon();
@@ -537,7 +538,6 @@ public class SPL extends Solvable {
             this.solve_helper();
             // this.displaySolution();
         }
-        this.setSolution();
 
     }
 
@@ -636,6 +636,7 @@ public class SPL extends Solvable {
                     """);
 
             this.solve_helper();
+            this.setSolution();
             // this.displaySolution();
         } else {
             this.augmentedMatrix.toReducedRowEchelon();
@@ -652,7 +653,6 @@ public class SPL extends Solvable {
             this.solve_helper();
             // this.displaySolution();
         }
-        this.setSolution();
     }
 
     private void solveUsingInverse(boolean showProcess) {
@@ -708,6 +708,7 @@ public class SPL extends Solvable {
                 this.x[row].setConstant(inversedMatrix.matrix[row][0]);
             }
 
+            this.setSolution();
             // this.displaySolution();
         } else {
             try {
@@ -731,8 +732,6 @@ public class SPL extends Solvable {
 
             // this.displaySolution();
         }
-        this.setSolution();
-
     }
 
     private void solveUsingCramer(boolean showProcess) {
@@ -843,6 +842,8 @@ public class SPL extends Solvable {
             }
             System.out.println("--> Wrapping up, solusi SPL ini adalah");
             // this.displaySolution();
+            this.setSolution();
+
         } else {
             double detA;
             try {
@@ -909,7 +910,6 @@ public class SPL extends Solvable {
             }
             // this.displaySolution();
         }
-        this.setSolution();
     }
 
     public void initSPL(int row, int col) {

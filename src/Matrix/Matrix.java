@@ -30,7 +30,6 @@ public class Matrix {
         this.initMatrix(row, col);
     }
 
-    // ***********************************************************************************
 
     // Inisialisasi matriks
     public void initMatrix(int row, int col) {

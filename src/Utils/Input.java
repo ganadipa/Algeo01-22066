@@ -94,10 +94,10 @@ public class Input {
     public static double getDouble()
     {
         success = false;
-        int res = -1;
+        double res = -1;
         while (!success) {
             try {
-                res = userInput.nextInt();
+                res = userInput.nextDouble();
                 success = true;
             } catch (InputMismatchException e) {
                 success = false;
