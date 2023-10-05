@@ -248,7 +248,7 @@ public class MultipleLinearRegression extends Solvable {
 
         Matrix matrix = new Matrix();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            bufferedReader.mark(1000);
+            bufferedReader.mark(10000);
             int row = 0, col = 0;
             String line;
             while ((line = bufferedReader.readLine()) != null) {
