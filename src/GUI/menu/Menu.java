@@ -45,6 +45,7 @@ public class Menu extends JPanel {
         fileChooserPanel.setForeground(Colors.slate100);
         fileChooserPanel.setBackground(Colors.slate950);
         fileChooserButton.addActionListener(e -> {
+            fileChooser.showOpenDialog(this);
             fileChooser.setDialogTitle("Pilih file");
             choosenFileNameLabel.setText(fileChooser.getSelectedFile().getName());
             choosenFileNameLabel.repaint();
