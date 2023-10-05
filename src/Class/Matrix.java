@@ -172,15 +172,12 @@ public class Matrix {
             System.out.println(e.getMessage());
             // Handle case saat file not found atau ada IO error.
             System.out.println("File tidak ditemukan.");
-            System.exit(0);
         } catch (NumberFormatException e) {
             // Handle case saat ada nonnumeric di input.
             System.out.println("Sepertinya terdapat suatu nonnumeric value di file Anda. Program berhenti.");
-            System.exit(0);
         } catch (IllegalArgumentException e) {
             // Jumlah elemen di setiap baris tidak konsisten.
             System.out.println("Jumlah elemen pada setiap baris tidak konsisten, program berhenti.");
-            System.exit(0);
         }
 
     }
