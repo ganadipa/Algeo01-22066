@@ -98,7 +98,7 @@ public class DeterminanPanel extends Menu {
                 answerLabel.setText("Determinan: ");
                 answerLabel.repaint();
                 answerLabel.revalidate();
-                onError(e);
+                onException(e);
                 remove(exportPanel);
                 repaint();
                 revalidate();
@@ -119,7 +119,7 @@ public class DeterminanPanel extends Menu {
             answerLabel.setText("Determinan: ");
             answerLabel.repaint();
             answerLabel.revalidate();
-            onError(e);
+            onException(e);
             remove(exportPanel);
             repaint();
             revalidate();

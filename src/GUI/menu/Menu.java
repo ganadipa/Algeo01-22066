@@ -88,7 +88,7 @@ public class Menu extends JPanel {
                 myWriter.write(stringResult);
                 myWriter.close();
             } catch (Exception ex) {
-                onError(ex);
+                onException(ex);
             }
             
         });
@@ -154,8 +154,18 @@ public class Menu extends JPanel {
 
     }
 
-    protected void onError(Exception e) {
-        errorMessage.setText("Error: " + e.getMessage());
+    protected void onException(Exception e) {
+        setErrorMessage(e.getMessage());
+    }
+    protected void onError(Error e) {
+        setErrorMessage(e.getMessage());
+    }
+    void setErrorMessage(String message){
+        if(message.equals("empty String"))
+            errorMessage.setText("Error: masih ada elemen yang kosong");
+        else 
+            errorMessage.setText("Error: " + message);
+        
         errorMessage.repaint();
         errorMessage.revalidate();
         setResult("");

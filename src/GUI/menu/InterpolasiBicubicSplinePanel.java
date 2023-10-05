@@ -75,7 +75,7 @@ public class InterpolasiBicubicSplinePanel extends Menu {
             answerLabel.setText("");
             answerLabel.repaint();
             answerLabel.revalidate();
-            onError(e);
+            onException(e);
             remove(exportPanel);
             repaint();
             revalidate();
@@ -96,7 +96,7 @@ public class InterpolasiBicubicSplinePanel extends Menu {
             answerLabel.setText("");
             answerLabel.repaint();
             answerLabel.revalidate();
-            onError(e);
+            onException(e);
             remove(exportPanel);
             repaint();
             revalidate();

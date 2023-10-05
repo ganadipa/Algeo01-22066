@@ -33,6 +33,7 @@ public class RegresiLinierBergandaPanel extends Menu {
 
         // File chooser
         add(fileChooserPanel);
+        addText("Hasil:");
 
         answerLabel.setForeground(Colors.slate100);
         answerPanel.setBackground(Colors.slate950);
@@ -57,7 +58,7 @@ public class RegresiLinierBergandaPanel extends Menu {
                 answerLabel.revalidate();
 
                 // all menu have this
-                onError(e);
+                onException(e);
                 remove(exportPanel);
                 repaint();
                 revalidate();
@@ -89,7 +90,7 @@ public class RegresiLinierBergandaPanel extends Menu {
                 answerLabel.revalidate();
 
                 // all menu have this
-                onError(e);
+                onException(e);
                 remove(exportPanel);
                 repaint();
                 revalidate();
@@ -116,7 +117,7 @@ public class RegresiLinierBergandaPanel extends Menu {
             answerLabel.setText("");
             answerLabel.repaint();
             answerLabel.revalidate();
-            onError(e);
+            onException(e);
             remove(exportPanel);
             repaint();
             revalidate();

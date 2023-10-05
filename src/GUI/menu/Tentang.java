@@ -40,7 +40,7 @@ public class Tentang extends Menu {
         hyperlink.setForeground(Colors.indigo600);
         hyperlink.setBackground(Colors.slate950);
         hyperlink.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        hyperlink.setText("See repository on GitHub");
+        hyperlink.setText("Lihat repository di GitHub");
         hyperlink.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

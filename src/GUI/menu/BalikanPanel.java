@@ -108,6 +108,11 @@ public class BalikanPanel extends Menu {
             catch(Exception e) {
                 matrixDisplay.setMatrix(new Matrix(matrixInput.row, matrixInput.col));
                 matrixDisplay.setVisible(false);
+                onException(e);
+            }
+            catch(Error e) {
+                matrixDisplay.setMatrix(new Matrix(matrixInput.row, matrixInput.col));
+                matrixDisplay.setVisible(false);
                 onError(e);
             }
         };
@@ -122,6 +127,16 @@ public class BalikanPanel extends Menu {
             resetError();
         }
         catch(Exception e) {
+            resultLabel.setText("Inverse: ");
+            resultLabel.repaint();
+            resultLabel.revalidate();
+            matrixDisplay.setVisible(false);
+            onException(e);
+            remove(exportPanel);
+            repaint();
+            revalidate();
+        }
+        catch(Error e) {
             resultLabel.setText("Inverse: ");
             resultLabel.repaint();
             resultLabel.revalidate();

@@ -266,13 +266,14 @@ public class SPL extends Solvable {
 }
 
     public SPL() {
-
+        this.method = SPLMethod.Gauss;
     }
 
     @Override
     public void solve() {
-        updateMatrix();
         solution = "";
+        updateMatrix();
+
         if (this.method == SPLMethod.Gauss) {
             solveUsingGauss(this.showProcess);
         } else if (this.method == SPLMethod.GaussJordan) {
@@ -466,7 +467,6 @@ public class SPL extends Solvable {
     }
 
     private void solveUsingGauss(boolean showProcess) {
-
         if (showProcess) {
             // STEP 1
 
@@ -537,6 +537,8 @@ public class SPL extends Solvable {
             }
             this.solve_helper();
             // this.displaySolution();
+            this.setSolution();
+
         }
 
     }
@@ -1078,6 +1080,11 @@ public class SPL extends Solvable {
 
     public void displayAugmentedMatrix() {
         this.augmentedMatrix.displayAugmentedMatrix(-2);
+    }
+
+    @Override 
+    public String getSolutionString() {
+        return solution;
     }
 
 }

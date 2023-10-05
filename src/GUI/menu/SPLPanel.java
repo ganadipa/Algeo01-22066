@@ -9,12 +9,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import GUI.component.MatrixAugmentedInput;
-import GUI.component.MatrixInput;
 import GUI.component.RadioButton;
 import GUI.theme.Colors;
 import Matrix.Matrix;
 import Matrix.SPL;
-import Matrix.SPL.SPLMethod;
 
 public class SPLPanel extends Menu {
     JPanel resultPanel;
@@ -23,7 +21,6 @@ public class SPLPanel extends Menu {
 
     MatrixAugmentedInput matrixInput;
     SPL spl;
-    SPLMethod splMethod = SPLMethod.GaussJordan;
 
     public SPLPanel() {
         setBackground(Colors.transparent);
@@ -31,7 +28,7 @@ public class SPLPanel extends Menu {
 
         addBigText("Sistem Persamaan Linear");
 
-        matrixInput = new MatrixAugmentedInput(3,3);
+        matrixInput = new MatrixAugmentedInput(3,4);
         add(matrixInput);
 
         // File chooser
@@ -67,19 +64,19 @@ public class SPLPanel extends Menu {
         radioButtonPanel.setBackground(Colors.slate950);
         add(radioButtonPanel);
         rb1.addActionListener(e -> {
-            splMethod = SPL.SPLMethod.Gauss;
+            spl.setMethod(SPL.SPLMethod.Gauss);
             matrixInput.onValueChanged.run();
         });
         rb2.addActionListener(e -> {
-            splMethod = SPL.SPLMethod.GaussJordan;
+            spl.setMethod(SPL.SPLMethod.GaussJordan);
             matrixInput.onValueChanged.run();
         });
         rb3.addActionListener(e -> {
-            splMethod = SPL.SPLMethod.Inverse;
+            spl.setMethod(SPL.SPLMethod.Inverse);
             matrixInput.onValueChanged.run();
         });
         rb4.addActionListener(e -> {
-            splMethod = SPL.SPLMethod.Cramer;
+            spl.setMethod(SPL.SPLMethod.Cramer);
             matrixInput.onValueChanged.run();
         });
         // RadioButton end
@@ -103,9 +100,8 @@ public class SPLPanel extends Menu {
             try {
                 Matrix matrix = matrixInput.getMatrix();
                 spl = new SPL(matrix.row, matrix.col-1);
-                spl.setMethod(splMethod);
                 spl.setMatrix(matrix);
-                spl.solve(false);
+                spl.solve();
 
                 answerLabel.setText(stringToHtml(spl.getSolutionString()));
                 setResult(spl.getSolutionString());
@@ -120,10 +116,10 @@ public class SPLPanel extends Menu {
                 revalidate();
             }
             catch(Exception e) {
-                answerLabel.setText("Determinan: ");
+                answerLabel.setText("");
                 answerLabel.repaint();
                 answerLabel.revalidate();
-                onError(e);
+                onException(e);
                 remove(exportPanel);
                 repaint();
                 revalidate();
@@ -141,10 +137,10 @@ public class SPLPanel extends Menu {
             resetError();
         }
         catch(Exception e) {
-            answerLabel.setText("Determinan: ");
+            answerLabel.setText("");
             answerLabel.repaint();
             answerLabel.revalidate();
-            onError(e);
+            onException(e);
             remove(exportPanel);
             repaint();
             revalidate();
