@@ -16,13 +16,13 @@ Tugas besar ini berisi program dalam bahasa Java yang berisi fungsi-fungsi elimi
 Untuk _run_ program ini menggunakan GUI lakukan:
 
 ```bash
-sh compile&rungui.sh
+sh compilerungui.sh
 ```
 
 atau, jika ingin _run_ program ini dengan terminal, lakukan:
 
 ```bash
-sh compile&run.sh
+sh compilerun.sh
 ```
 
 ### _Compile_
