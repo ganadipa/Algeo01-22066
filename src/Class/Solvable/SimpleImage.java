@@ -253,8 +253,6 @@ public class SimpleImage {
 
         }
 
-        System.out.println("NOW OUTPUT file");
-
         BufferedImage theImage;
         if (color == ColorOptions.GRAYSCALE) {
             theImage = new BufferedImage(enlargedMatrix.col, enlargedMatrix.row, BufferedImage.TYPE_BYTE_GRAY);
@@ -288,7 +286,6 @@ public class SimpleImage {
     private Matrix EnlargedMatrix(Matrix m, double factor) {
         int newRow = (int) Math.round(m.row * factor);
         int newCol = (int) Math.round(m.col * factor);
-        System.out.println(newCol);
         int range1 = newRow / (m.row - 1);
         int range2 = newCol / (m.col - 1);
         int sisaX = newRow % (m.row - 1);
@@ -297,17 +294,20 @@ public class SimpleImage {
         int x = 0;
         int y = 0;
 
+        boolean d = true;
+        boolean e = true;
+
         int i, j, k, l;
         for (i = 0; i < m.row - 1; i++) {
             int rangeX = range1;
-            if (sisaX != 0) {
+            if (sisaX != 0 && d) {
                 rangeX = range1 + 1;
                 sisaX--;
             }
             for (j = 0; j < m.col - 1; j++) {
                 Matrix a = getMatrixA(j, i, color);
                 int rangeY = range2;
-                if (sisaY != 0) {
+                if (sisaY != 0 && e) {
                     rangeY = range2 + 1;
                     sisaY--;
                 }
@@ -320,10 +320,12 @@ public class SimpleImage {
                     }
                 }
                 y += rangeY;
+                e = !e;
             }
             y = 0;
             sisaY = newCol % (m.col - 1);
             x += rangeX;
+            d = !d;
 
         }
 

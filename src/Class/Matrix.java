@@ -154,7 +154,6 @@ public class Matrix {
                 String[] elmts = line.split(" ");
                 if (elmts.length < this.col)
                     throw new IllegalArgumentException();
-                System.out.println(Arrays.toString(elmts));
                 for (int k = 0; k < elmts.length; k++) {
                     if (elmts[k].length() == 0)
                         continue;
@@ -395,9 +394,7 @@ public class Matrix {
         if (method == DeterminantMethod.RowReduction) {
             Matrix copy = this.getCopyMatrix();
             int swap = copy.toMatrixSegitiga();
-            this.displayMatrix();
             System.out.println("\n\n");
-            copy.displayMatrix();
             double total = 0;
             total = swap == -1 ? 0 : ((swap % 2 != 0) ? -1 : 1);
             for (int i = 0; i < copy.matrix.length; i++) {
@@ -437,7 +434,7 @@ public class Matrix {
      * @see getDeterminant
      */
     public double getDeterminant() throws Error {
-        return getDeterminant(DeterminantMethod.CofactorExpansion);
+        return getDeterminant(DeterminantMethod.RowReduction);
     }
 
     public int getColomnNotEntirelyZero(int startRow, int endRow) {
@@ -611,7 +608,7 @@ public class Matrix {
      * @return inverse matrix
      */
     public Matrix getInverse(InverseMethod method) throws Error {
-        if (getDeterminant() == 0) {
+        if (Utils.isEqual(getDeterminant(), 0)) {
             throw new Error("Determinan tidak boleh 0");
         } else if (row != col) {
             throw new Error("Panjang baris dan kolom harus sama");

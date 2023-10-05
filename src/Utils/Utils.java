@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Utils {
 
-    private static double tolerance = 1e-6;
+    private static double tolerance = 1e-8;
 
     private static Scanner userInput = new Scanner(System.in);
 
