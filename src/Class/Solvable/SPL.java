@@ -697,8 +697,9 @@ public class SPL extends Solvable {
             System.out.println("""
                     --> Hitung matriks A^(-1)B,
                       | Matriks A^(-1)B = """);
-            inversedMatrix.multiply(this.B);
-            inversedMatrix.displayMatrix();
+            Matrix res = inversedMatrix.multiplyBy(this.B);
+            res.displayMatrix();
+            inversedMatrix = res.getCopyMatrix();
             System.out.println();
             System.out.println("""
                     --> Simpulkan.""");
