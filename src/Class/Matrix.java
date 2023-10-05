@@ -113,7 +113,12 @@ public class Matrix {
                 readMatrixFromUserInput();
                 isMatrixValid = true;
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                if(e.getMessage().substring(0, 5).equals("Index"))
+                    System.out.println("Masukan matriks harus berukuran "+N+"x"+N);
+                else if(e.getMessage().substring(0, 5).equals("For i"))
+                    System.out.println("Masukan matriks harus berupa bilangan real semua");
+                else
+                    System.out.println(e.getMessage());
                 isMatrixValid = false;
             }
         }
