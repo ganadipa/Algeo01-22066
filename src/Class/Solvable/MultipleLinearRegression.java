@@ -125,9 +125,9 @@ public class MultipleLinearRegression extends Solvable {
         persamaan += String.format("%.3f", spl.x[0].getConstant());
         for (int i = 1; i < spl.x.length; i++) {
             if (spl.x[i].getConstant() >= 0) {
-                persamaan += String.format(" + %.3fx%d", spl.x[i].getConstant(), i);
+                persamaan += String.format(" + %.3fx%d", Math.abs(spl.x[i].getConstant()), i);
             } else if (spl.x[i].getConstant() < 0) {
-                persamaan += String.format(" - %.3fx%d", spl.x[i].getConstant(), i);
+                persamaan += String.format(" - %.3fx%d", Math.abs(spl.x[i].getConstant()), i);
             }
         }
 
