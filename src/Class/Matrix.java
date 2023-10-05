@@ -608,7 +608,7 @@ public class Matrix {
      * @return inverse matrix
      */
     public Matrix getInverse(InverseMethod method) throws Error {
-        if (getDeterminant() == 0) {
+        if (Utils.isEqual(getDeterminant(), 0)) {
             throw new Error("Determinan tidak boleh 0");
         } else if (row != col) {
             throw new Error("Panjang baris dan kolom harus sama");
