@@ -77,6 +77,6 @@ untuk menjalankan bytecode program melalui terminal.
 
 #### Anggota Kelompok
 
-13522066 - Nyoman Ganadipa Narayana
-13522084 - Dhafin Fawwaz Ikramullah
-13522117 - Mesach Harmasendro
+- 13522066 - Nyoman Ganadipa Narayana
+- 13522084 - Dhafin Fawwaz Ikramullah
+- 13522117 - Mesach Harmasendro
