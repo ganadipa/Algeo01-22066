@@ -1,4 +1,4 @@
-# Tubes 1 Aljabar Linear & Geometri: Sistem Persamaan Linier, Determinan, dan Aplikasinya [Mathtricks]
+# Tubes 1 Aljabar Linear & Geometri: Sistem Persamaan Linier, Determinan, dan Aplikasinya [Eskrim]
 
 ## Table of contents
 
